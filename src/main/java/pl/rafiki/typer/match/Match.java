@@ -62,12 +62,12 @@ public class Match {
     @Column(
             name = "first_team_score"
     )
-    private int firstTeamScore;
+    private Integer firstTeamScore;
 
     @Column(
             name = "second_team_score"
     )
-    private int secondTeamScore;
+    private Integer secondTeamScore;
 
     @Column(
             name = "finished"
