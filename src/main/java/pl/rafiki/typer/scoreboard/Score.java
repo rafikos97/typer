@@ -1,4 +1,4 @@
-package pl.rafiki.typer.score;
+package pl.rafiki.typer.scoreboard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -8,21 +8,21 @@ import lombok.NoArgsConstructor;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.user.User;
 
-@Entity(name = "score")
-@Table(name = "score")
+@Entity(name = "scoreboard")
+@Table(name = "scoreboard")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Score {
     @Id
     @SequenceGenerator(
-            name = "score_sequence",
-            sequenceName = "score_sequence",
+            name = "scoreboard_sequence",
+            sequenceName = "scoreboard_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "score_sequence"
+            generator = "scoreboard_sequence"
     )
     Long id;
 
