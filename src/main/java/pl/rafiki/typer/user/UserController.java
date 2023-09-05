@@ -30,7 +30,7 @@ public class UserController {
         userService.registerUser(user);
     }
 
-    @PutMapping(path = "/user/{userId}")
+    @PutMapping(path = "/{userId}")
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody User user) {
         userService.putUpdateUser(userId, user);
     }
