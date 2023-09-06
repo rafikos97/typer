@@ -65,4 +65,18 @@ public class Tournament {
             foreignKey = @ForeignKey(name = "Fk_tournament_pointrules")
     )
     private PointRules pointRules;
+
+    public Tournament(String tournamentName, String tournamentCode, boolean finished, String pointRulesCode) {
+        this.tournamentName = tournamentName;
+        this.tournamentCode = tournamentCode;
+        this.finished = finished;
+        this.pointRulesCode = pointRulesCode;
+    }
+
+    public String getPointRulesCode() {
+        if (pointRulesCode != null && pointRules != null && !pointRulesCode.equals(pointRules.getPointRulesCode())) {
+            setPointRulesCode(pointRules.getPointRulesCode());
+        }
+        return pointRulesCode;
+    }
 }

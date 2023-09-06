@@ -46,7 +46,7 @@ public class UserService {
 
         boolean existsByLogin = userRepository.existsByUsername(user.getUsername());
         if (existsByLogin) {
-            throw new UsernameAlreadyTakenException("Login already taken!");
+            throw new UsernameAlreadyTakenException("Username already taken!");
         }
 
         return userRepository.save(user);
