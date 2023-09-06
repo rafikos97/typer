@@ -32,7 +32,7 @@ public class PointRulesService {
     }
 
     public void addNewPointRules(PointRules pointRules) {
-        boolean existsByCode = pointRulesRepository.existsByPointRulesCode(pointRules.getPointrulesCode());
+        boolean existsByCode = pointRulesRepository.existsByPointRulesCode(pointRules.getPointRulesCode());
         if (existsByCode) {
             throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
         }
@@ -47,11 +47,11 @@ public class PointRulesService {
 
         PointRules existingPointRules = pointRulesOptional.get();
 
-        String pointRulesCodeFromUpdate = pointRules.getPointrulesCode();
+        String pointRulesCodeFromUpdate = pointRules.getPointRulesCode();
         if (pointRulesRepository.existsByPointRulesCode(pointRulesCodeFromUpdate)) {
             throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
-        } else if (pointRulesCodeFromUpdate != null && pointRulesCodeFromUpdate.length() > 0 && !Objects.equals(existingPointRules.getPointrulesCode(), pointRulesCodeFromUpdate)) {
-            existingPointRules.setPointrulesCode(pointRulesCodeFromUpdate);
+        } else if (pointRulesCodeFromUpdate != null && pointRulesCodeFromUpdate.length() > 0 && !Objects.equals(existingPointRules.getPointRulesCode(), pointRulesCodeFromUpdate)) {
+            existingPointRules.setPointRulesCode(pointRulesCodeFromUpdate);
         }
 
         Integer scoreFromUpdate = pointRules.getScore();

@@ -36,7 +36,7 @@ public class PointRules {
             name = "pointrules_code",
             nullable = false
     )
-    private String pointrulesCode;
+    private String pointRulesCode;
 
     @Column(
             name = "winner",
@@ -50,8 +50,8 @@ public class PointRules {
     )
     private Integer score;
 
-    public PointRules(String pointrulesCode, Integer winner, Integer score) {
-        this.pointrulesCode = pointrulesCode;
+    public PointRules(String pointRulesCode, Integer winner, Integer score) {
+        this.pointRulesCode = pointRulesCode;
         this.winner = winner;
         this.score = score;
     }

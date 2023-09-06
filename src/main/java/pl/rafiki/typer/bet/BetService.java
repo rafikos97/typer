@@ -1,5 +1,6 @@
 package pl.rafiki.typer.bet;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.exceptions.BetAlreadyExistException;
@@ -9,6 +10,7 @@ import pl.rafiki.typer.bet.exceptions.CannotUpdateBetBecauseMatchAlreadyStartedE
 import pl.rafiki.typer.match.Match;
 import pl.rafiki.typer.match.MatchRepository;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
+import pl.rafiki.typer.scoreboard.ScoreboardService;
 import pl.rafiki.typer.user.User;
 import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
@@ -24,12 +26,14 @@ public class BetService {
     private final BetRepository betRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
+    private final ScoreboardService scoreboardService;
 
     @Autowired
-    public BetService(BetRepository betRepository, UserRepository userRepository, MatchRepository matchRepository) {
+    public BetService(BetRepository betRepository, UserRepository userRepository, MatchRepository matchRepository, ScoreboardService scoreboardService) {
         this.betRepository = betRepository;
         this.userRepository = userRepository;
         this.matchRepository = matchRepository;
+        this.scoreboardService = scoreboardService;
     }
 
     public void addNewBet(Long userId, Long matchId, Bet bet) {
@@ -100,5 +104,55 @@ public class BetService {
         }
 
         betRepository.save(existingBet);
+    }
+
+    @Transactional
+    public void closeBets(Long matchId) {
+        List<Bet> bets = betRepository.findAllByMatchId(matchId);
+
+        Optional<Match> matchOptional = matchRepository.findById(matchId);
+        if (matchOptional.isEmpty()) {
+            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
+        }
+        Match match = matchOptional.get();
+
+        Integer pointsForScore = match.getTournament().getPointRules().getScore();
+        Integer pointsForWinner = match.getTournament().getPointRules().getWinner();
+
+        int matchFirstTeamScore = match.getFirstTeamScore();
+        int matchSecondTeamScore = match.getSecondTeamScore();
+        boolean matchDraw = matchFirstTeamScore == matchSecondTeamScore;
+        boolean matchFirstTeamWin = matchFirstTeamScore > matchSecondTeamScore;
+        boolean matchSecondTeamWin = matchFirstTeamScore < matchSecondTeamScore;
+
+        if (!bets.isEmpty()) {
+            for (Bet bet : bets) {
+                bet.setFinished(true);
+
+                int betFirstTeamScore = bet.getFirstTeamScore();
+                int betSecondTeamScore = bet.getSecondTeamScore();
+                boolean betDraw = betFirstTeamScore == betSecondTeamScore;
+                boolean betFirstTeamWin = betFirstTeamScore > betSecondTeamScore;
+                boolean betSecondTeamWin = betFirstTeamScore < betSecondTeamScore;
+
+                if (matchDraw && betDraw) {
+                    bet.setWinner(pointsForWinner);
+                } else if ((matchFirstTeamWin && betFirstTeamWin) || (matchSecondTeamWin && betSecondTeamWin)) {
+                    bet.setWinner(pointsForWinner);
+                } else {
+                    bet.setWinner(0);
+                }
+
+                if (matchFirstTeamScore == betFirstTeamScore && matchSecondTeamScore == betSecondTeamScore) {
+                    bet.setScore(pointsForScore);
+                } else {
+                    bet.setScore(0);
+                }
+
+                bet.setTotalPoints(bet.getWinner() + bet.getScore());
+
+                scoreboardService.addScore(bet.getUser().getId(), match.getTournament().getId(), bet.getScore(), bet.getWinner());
+            }
+        }
     }
 }

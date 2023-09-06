@@ -36,4 +36,9 @@ public class MatchController {
     public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
         matchService.putUpdateMatch(matchId, match);
     }
+
+    @PostMapping(path = "/admin/{matchId}/finish")
+    public void finishMatch(@PathVariable(name = "matchId") Long matchId) {
+        matchService.finishMatch(matchId);
+    }
 }

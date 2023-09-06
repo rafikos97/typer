@@ -1,8 +1,11 @@
 package pl.rafiki.typer.match;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.rafiki.typer.bet.BetService;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
+import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
@@ -17,12 +20,14 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final TournamentRepository tournamentRepository;
+    private final BetService betService;
 
 
     @Autowired
-    public MatchService(MatchRepository matchRepository, TournamentRepository tournamentRepository) {
+    public MatchService(MatchRepository matchRepository, TournamentRepository tournamentRepository, BetService betService) {
         this.matchRepository = matchRepository;
         this.tournamentRepository = tournamentRepository;
+        this.betService = betService;
     }
 
     public List<Match> getMatches() {
@@ -95,5 +100,23 @@ public class MatchService {
         }
 
         matchRepository.save(existingMatch);
+    }
+
+    @Transactional
+    public void finishMatch(Long matchId) {
+        Optional<Match> matchOptional = matchRepository.findById(matchId);
+        if (matchOptional.isEmpty()) {
+            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
+        }
+
+        Match existingMatch = matchOptional.get();
+
+        if (existingMatch.isFinished()) {
+            throw new MatchIsAlreadyFinishedException("Match is already finished!");
+        } else {
+            existingMatch.setFinished(true);
+        }
+
+        betService.closeBets(matchId);
     }
 }

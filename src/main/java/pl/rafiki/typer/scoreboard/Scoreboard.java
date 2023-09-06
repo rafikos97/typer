@@ -13,7 +13,7 @@ import pl.rafiki.typer.user.User;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Score {
+public class Scoreboard {
     @Id
     @SequenceGenerator(
             name = "scoreboard_sequence",
@@ -31,7 +31,7 @@ public class Score {
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "user_id",
-            foreignKey = @ForeignKey(name = "Fk_user_score"),
+            foreignKey = @ForeignKey(name = "Fk_user_scoreboard"),
             updatable = false
     )
     private User user;
@@ -41,7 +41,7 @@ public class Score {
     @JoinColumn(
             name = "tournament_id",
             referencedColumnName = "tournament_id",
-            foreignKey = @ForeignKey(name = "Fk_tournament_score")
+            foreignKey = @ForeignKey(name = "Fk_tournament_scoreboard")
     )
     private Tournament tournament;
 
@@ -63,7 +63,7 @@ public class Score {
     )
     private Integer totalPoints;
 
-    public Score(User user, Tournament tournament, Integer winners, Integer scores, Integer totalPoints) {
+    public Scoreboard(User user, Tournament tournament, Integer winners, Integer scores, Integer totalPoints) {
         this.user = user;
         this.tournament = tournament;
         this.winners = winners;
