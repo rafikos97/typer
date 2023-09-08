@@ -15,22 +15,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/admin/all")
     public List<UserDTO> getUsers() {
         return userService.getUsers();
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "user/{userId}")
     public UserDTO getUser(@PathVariable("userId") Long userId) {
         return userService.getUser(userId);
     }
 
-    @PostMapping(path = "/register")
+    @PostMapping(path = "/admin/register")
     public void registerUser(@RequestBody User user) {
         userService.registerUser(user);
     }
 
-    @PutMapping(path = "/{userId}")
+    @PutMapping(path = "/user/{userId}")
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody User user) {
         userService.putUpdateUser(userId, user);
     }

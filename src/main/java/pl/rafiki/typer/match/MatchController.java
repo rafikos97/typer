@@ -17,22 +17,22 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/admin/all")
     public List<Match> getMatches() {
         return matchService.getMatches();
     }
 
-    @GetMapping(path = "/{matchId}")
+    @GetMapping(path = "/admin/{matchId}")
     public Match getMatch(@PathVariable(name = "matchId") Long matchId) {
         return matchService.getMatch(matchId);
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping(path = "/admin/add")
     public void addNewMatch(@RequestBody Match match) {
         matchService.addNewMatch(match);
     }
 
-    @PutMapping(path = "/{matchId}")
+    @PutMapping(path = "/admin/{matchId}")
     public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
         matchService.putUpdateMatch(matchId, match);
     }

@@ -16,22 +16,22 @@ public class TournamentController {
         this.tournamentService = tournamentService;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/admin/all")
     public List<Tournament> getTournaments() {
         return tournamentService.getTournaments();
     }
 
-    @GetMapping(path = "/{tournamentId}")
+    @GetMapping(path = "/admin/{tournamentId}")
     public Tournament getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
         return tournamentService.getTournament(tournamentId);
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping(path = "/admin/add")
     public void addNewTournament(@RequestBody Tournament tournament) {
         tournamentService.addNewTournament(tournament);
     }
 
-    @PutMapping(path = "/{tournamentId}")
+    @PutMapping(path = "admin/{tournamentId}")
     public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody Tournament tournament) {
         tournamentService.updateTournament(tournamentId, tournament);
     }

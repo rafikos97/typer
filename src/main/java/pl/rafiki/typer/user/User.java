@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import pl.rafiki.typer.security.models.Role;
+
+import java.util.Collection;
+import java.util.Set;
 
 @Entity(name = "app_user")
 @Table(
@@ -16,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -57,10 +63,42 @@ public class User {
     )
     private String email;
 
-    public User(String firstName, String lastName, String username, String email) {
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role_junction",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_role_id")}
+    )
+    private Set<Role> authorities;
+
+    public User(String firstName, String lastName, String username, String email, String password, Set<Role> authorities) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

@@ -1,7 +1,14 @@
 package pl.rafiki.typer.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
+import pl.rafiki.typer.security.models.Role;
+import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.user.exceptions.EmailAddressAlreadyTakenException;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
@@ -9,12 +16,16 @@ import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
 import java.util.*;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     public List<UserDTO> getUsers() {
@@ -46,8 +57,17 @@ public class UserService {
 
         boolean existsByLogin = userRepository.existsByUsername(user.getUsername());
         if (existsByLogin) {
-            throw new UsernameAlreadyTakenException("Username already taken!");
+            throw new UsernameAlreadyTakenException("Login already taken!");
         }
+
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        Role userRole = roleRepository.findByAuthority("USER").get();
+
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(userRole);
+
+        user.setAuthorities(authorities);
+        user.setPassword(encodedPassword);
 
         return userRepository.save(user);
     }
@@ -87,5 +107,14 @@ public class UserService {
         }
 
         userRepository.save(existingUser);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("In the user details service");
+
+        Optional<User> userOptional = userRepository.findUserByUsername(username);
+
+        return userOptional.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials!"));
     }
 }

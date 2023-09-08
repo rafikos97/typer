@@ -15,22 +15,22 @@ public class PointRulesController {
         this.pointRulesService = pointRulesService;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/admin/all")
     public List<PointRules> getAllPointRules() {
         return pointRulesService.getAllPointRules();
     }
 
-    @GetMapping(path = "/{pointrulesId}")
+    @GetMapping(path = "/admin/{pointrulesId}")
     public PointRules getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
         return pointRulesService.getPointRules(pointRulesId);
     }
 
-    @PostMapping()
+    @PostMapping(path = "/admin/add")
     public void addNewPointRules(@RequestBody PointRules pointRules) {
         pointRulesService.addNewPointRules(pointRules);
     }
 
-    @PutMapping(path = "/{pointrulesId}")
+    @PutMapping(path = "/admin/{pointrulesId}")
     public void updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody PointRules pointRules) {
         pointRulesService.updatePointRules(pointrulesId, pointRules);
     }

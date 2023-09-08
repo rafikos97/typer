@@ -19,7 +19,7 @@ public class ScoreboardController {
         this.scoreboardService = scoreboardService;
     }
 
-    @GetMapping(path = "/{tournamentId}")
+    @GetMapping(path = "/user/{tournamentId}")
     public List<Scoreboard> getScoreboard(@PathVariable(name = "tournamentId") Long tournamentId) {
         return scoreboardService.getScoreboard(tournamentId);
     }

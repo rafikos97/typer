@@ -16,27 +16,27 @@ public class BetController {
         this.betService = betService;
     }
 
-    @PostMapping(path = "/{userId}/{matchId}")
+    @PostMapping(path = "/user/{userId}/{matchId}")
     public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody Bet bet) {
         betService.addNewBet(userId, matchId, bet);
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/admin/all")
     public List<Bet> getBets() {
         return betService.getBets();
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "/user/{userId}")
     public List<Bet> getUserBets(@PathVariable(name = "userId") Long userId) {
         return betService.getBetsByUserId(userId);
     }
 
-    @GetMapping(path = "/match/{matchId}")
+    @GetMapping(path = "/admin/match/{matchId}")
     public List<Bet> getBetsByMatchId(@PathVariable(name = "matchId") Long matchId) {
         return betService.getBetsByMatchId(matchId);
     }
 
-    @PutMapping(path = "/{betId}")
+    @PutMapping(path = "/user/{betId}")
     public void updateBet(@PathVariable(name = "betId") Long betId, @RequestBody Bet bet) {
         betService.updateBet(betId, bet);
     }
