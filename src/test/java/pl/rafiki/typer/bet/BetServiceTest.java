@@ -6,9 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 import pl.rafiki.typer.bet.exceptions.BetAlreadyExistException;
 import pl.rafiki.typer.bet.exceptions.BetDoesNotExistException;
 import pl.rafiki.typer.bet.exceptions.CannotAddBetBecauseMatchAlreadyStartedException;
@@ -58,7 +55,7 @@ class BetServiceTest {
     }
 
     @Test
-    void addNewBet() {
+    void canAddNewBet() {
         // given
         Long userId = 1L;
         Long matchId = 1L;
@@ -200,7 +197,7 @@ class BetServiceTest {
     }
 
     @Test
-    void getBets() {
+    void canGetAllBets() {
         // when
         underTest.getBets();
 
@@ -209,7 +206,7 @@ class BetServiceTest {
     }
 
     @Test
-    void getUserBets() {
+    void canGetUserBets() {
         // given
         Long userId = 1L;
 
@@ -237,7 +234,7 @@ class BetServiceTest {
     }
 
     @Test
-    void getBetsByMatchId() {
+    void canGetBetsByMatchId() {
         // given
         Long matchId = 1L;
 
@@ -265,7 +262,7 @@ class BetServiceTest {
     }
 
     @Test
-    void updateBet() {
+    void canUpdateBet() {
         //given
         Long betId = 1L;
 
@@ -368,7 +365,7 @@ class BetServiceTest {
     }
 
     @Test
-    void closeBets_DrawWithScore() {
+    void canCloseBets_DrawWithScore() {
         // given
         Long matchId = 1L;
 
@@ -381,7 +378,6 @@ class BetServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 "pointRulesCode"
         );
 
@@ -422,7 +418,7 @@ class BetServiceTest {
     }
 
     @Test
-    void closeBets_DrawWithoutScore() {
+    void canCloseBets_DrawWithoutScore() {
         // given
         Long matchId = 1L;
 
@@ -435,7 +431,6 @@ class BetServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 "pointRulesCode"
         );
 
@@ -476,7 +471,7 @@ class BetServiceTest {
     }
 
     @Test
-    void closeBets_WinnerWithScore() {
+    void canCloseBets_WinnerWithScore() {
         // given
         Long matchId = 1L;
 
@@ -489,7 +484,6 @@ class BetServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 "pointRulesCode"
         );
 
@@ -530,7 +524,7 @@ class BetServiceTest {
     }
 
     @Test
-    void closeBets_WinnerWithoutScore() {
+    void canCloseBets_WinnerWithoutScore() {
         // given
         Long matchId = 1L;
 
@@ -543,7 +537,6 @@ class BetServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 "pointRulesCode"
         );
 
@@ -584,7 +577,7 @@ class BetServiceTest {
     }
 
     @Test
-    void closeBets_None() {
+    void canCloseBets_None() {
         // given
         Long matchId = 1L;
 
@@ -597,7 +590,6 @@ class BetServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 "pointRulesCode"
         );
 

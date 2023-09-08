@@ -26,7 +26,9 @@ class UserRepositoryTest {
                 "Andrew",
                 "Tester",
                 "tester",
-                mail
+                mail,
+                "password",
+                null
         );
         underTest.save(user);
 
@@ -38,19 +40,21 @@ class UserRepositoryTest {
     }
 
     @Test
-    void existsByLogin() {
+    void existsByUsername() {
         //given
-        String login = "tester";
+        String username = "tester";
         User user = new User(
                 "Andrew",
                 "Tester",
-                login,
-                "a.tester@mail.com"
+                username,
+                "a.tester@mail.com",
+                "password",
+                null
         );
         underTest.save(user);
 
         // when
-        boolean expected = underTest.existsByUsername(login);
+        boolean expected = underTest.existsByUsername(username);
 
         // then
         assertThat(expected).isTrue();

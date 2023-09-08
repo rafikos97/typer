@@ -73,11 +73,6 @@ public class TournamentService {
             existingTournament.setTournamentCode(tournamentCodeFromUpdate);
         }
 
-        boolean statusFromUpdate = tournament.isFinished();
-        if (!Objects.equals(existingTournament.isFinished(), statusFromUpdate)) {
-            existingTournament.setFinished(statusFromUpdate);
-        }
-
         String pointRulesCodeFromUpdate = tournament.getPointRulesCode();
         Optional<PointRules> pointRulesFromUpdateOpt = pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCodeFromUpdate);
         if (pointRulesFromUpdateOpt.isEmpty()) {

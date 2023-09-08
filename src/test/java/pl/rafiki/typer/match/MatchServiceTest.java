@@ -41,7 +41,7 @@ class MatchServiceTest {
     }
 
     @Test
-    void getMatches() {
+    void canGetAllMatches() {
         // when
         underTest.getMatches();
 
@@ -50,7 +50,7 @@ class MatchServiceTest {
     }
 
     @Test
-    void getMatch() {
+    void canGetMatch() {
         // given
         Long matchId = 1L;
 
@@ -78,7 +78,7 @@ class MatchServiceTest {
     }
 
     @Test
-    void addNewMatch() {
+    void canAddNewMatch() {
         // given
         String tournamentCode = "testTournament";
         Match match = new Match(
@@ -127,14 +127,13 @@ class MatchServiceTest {
     }
 
     @Test
-    void updateMatch() {
+    void canUpdateMatch() {
         // given
         Long matchId = 1L;
 
         Tournament tournament = new Tournament(
                 "testTournament",
                 "testTournament",
-                false,
                 "prCode"
         );
 
@@ -223,7 +222,105 @@ class MatchServiceTest {
     }
 
     @Test
-    void finishMatch() {
+    void canPatchUpdateMatch() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament",
+                "prCode"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false,
+                "tournamentCode"
+        );
+
+        MatchDTO updatedMatch = new MatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                1,
+                1,
+                false,
+                tournament.getTournamentCode()
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+        given(tournamentRepository.findByTournamentCode(tournament.getTournamentCode())).willReturn(Optional.of(tournament));
+
+        // when
+        underTest.patchUpdateMatch(matchId, updatedMatch);
+
+        // then
+        ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
+        verify(matchRepository).save(matchArgumentCaptor.capture());
+        Match capturedMatch = matchArgumentCaptor.getValue();
+        assertThat(capturedMatch.getFirstTeamName()).isEqualTo(updatedMatch.getFirstTeamName());
+        assertThat(capturedMatch.getSecondTeamName()).isEqualTo(updatedMatch.getSecondTeamName());
+        assertThat(capturedMatch.getStartDateAndTime()).isEqualTo(updatedMatch.getStartDateAndTime());
+        assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(updatedMatch.getFirstTeamScore());
+        assertThat(capturedMatch.isFinished()).isEqualTo(updatedMatch.isFinished());
+        assertThat(capturedMatch.getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
+    }
+
+    @Test
+    void willThrowWhenMatchDoesNotExistDuringPatchUpdate() {
+        // given
+        Long matchId = 1L;
+        String tournamentCode = "testTournament";
+        MatchDTO updatedMatch = new MatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                1,
+                1,
+                false,
+                tournamentCode
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateMatch(matchId, updatedMatch))
+                .isInstanceOf(MatchDoesNotExistException.class)
+                .hasMessageContaining("Match with id: " + matchId + " does not exist!");
+    }
+
+    @Test
+    void willThrowWhenTournamentDoesNotExistDuringPatchUpdate() {
+        // given
+        Long matchId = 1L;
+        String tournamentCode = "testTournament";
+        MatchDTO updatedMatch = new MatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                1,
+                1,
+                false,
+                tournamentCode
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
+        given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateMatch(matchId, updatedMatch))
+                .isInstanceOf(TournamentDoesNotExistException.class)
+                .hasMessageContaining("Tournament with code: " + tournamentCode + " does not exist!");
+    }
+
+    @Test
+    void canFinishMatch() {
         // given
         Long matchId = 1L;
 

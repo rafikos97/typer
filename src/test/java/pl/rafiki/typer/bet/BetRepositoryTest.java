@@ -19,16 +19,18 @@ class BetRepositoryTest {
 
     @Autowired
     private BetRepository underTest;
-    private User user;
+    private User applicationUser;
     private Match match;
 
     @BeforeEach
     void setUp() {
-        user = new User(
+        applicationUser = new User(
                 "Tester",
                 "Testowy",
-                "testlogin25",
-                "testmail@gmail.com"
+                "testusername25",
+                "testmail@gmail.com",
+                "password",
+                null
         );
 
         match = new Match(
@@ -49,7 +51,7 @@ class BetRepositoryTest {
                 1,
                 1,
                 match,
-                user,
+                applicationUser,
                 false,
                 0,
                 0,
@@ -59,7 +61,7 @@ class BetRepositoryTest {
         underTest.save(bet);
 
         // when
-        boolean expected = underTest.existsByUserIdAndMatchId(user.getId(), match.getId());
+        boolean expected = underTest.existsByUserIdAndMatchId(applicationUser.getId(), match.getId());
 
         // then
         assertThat(expected).isTrue();
@@ -74,7 +76,7 @@ class BetRepositoryTest {
                 1,
                 1,
                 match,
-                user,
+                applicationUser,
                 false,
                 0,
                 0,
@@ -99,7 +101,7 @@ class BetRepositoryTest {
                 1,
                 1,
                 match,
-                user,
+                applicationUser,
                 false,
                 0,
                 0,

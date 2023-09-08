@@ -6,7 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.rafiki.typer.security.models.Role;
+import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.user.exceptions.EmailAddressAlreadyTakenException;
+import pl.rafiki.typer.user.exceptions.IncorrectPasswordException;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
 
@@ -21,13 +25,19 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private UserService underTest;
     @Mock
     private UserRepository userRepository;
-    private UserService underTest;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private RoleRepository roleRepository;
+    @Mock
+    private User user;
 
     @BeforeEach
     void setUp() {
-        underTest = new UserService(userRepository);
+        underTest = new UserService(userRepository, passwordEncoder, roleRepository);
     }
 
     @Test
@@ -73,11 +83,16 @@ class UserServiceTest {
         User user = new User(
                 "Andrew",
                 "Tester",
-                "login",
-                "a.tester@mail.com"
+                "username",
+                "a.tester@mail.com",
+                "password",
+                null
         );
 
+        given(roleRepository.findByAuthority(any())).willReturn(Optional.of(new Role()));
+
         // when
+        when(passwordEncoder.encode(any())).thenReturn(user.getPassword());
         underTest.registerUser(user);
 
         // then
@@ -93,8 +108,10 @@ class UserServiceTest {
         User user = new User(
                 "Andrew",
                 "Tester",
-                "login",
-                "a.tester@mail.com"
+                "username",
+                "a.tester@mail.com",
+                "password",
+                null
         );
 
         given(userRepository.existsByEmail(user.getEmail())).willReturn(true);
@@ -114,8 +131,10 @@ class UserServiceTest {
         User user = new User(
                 "Andrew",
                 "Tester",
-                "login",
-                "a.tester@mail.com"
+                "username",
+                "a.tester@mail.com",
+                "password",
+                null
         );
 
         given(userRepository.existsByUsername(user.getUsername())).willReturn(true);
@@ -124,20 +143,22 @@ class UserServiceTest {
         // then
         assertThatThrownBy(() -> underTest.registerUser(user))
                 .isInstanceOf(UsernameAlreadyTakenException.class)
-                .hasMessageContaining("Username already taken!");
+                .hasMessageContaining("Login already taken!");
 
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void updateUser() {
+    void canUpdateUser() {
         // given
         Long userId = 1L;
         User updatedUser = new User(
-                "Adam",
-                "Nowak",
-                "updatedLogin",
-                "a.nowak@mail.com"
+                "Andrew",
+                "Tester",
+                "username",
+                "a.tester@mail.com",
+                null,
+                null
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
@@ -157,10 +178,12 @@ class UserServiceTest {
         // given
         Long userId = 1L;
         User updatedUser = new User(
-                "Adam",
-                "Nowak",
-                "updatedLogin",
-                "a.nowak@mail.com"
+                "Andrew",
+                "Tester",
+                "username",
+                "a.tester@mail.com",
+                null,
+                null
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -180,10 +203,12 @@ class UserServiceTest {
         Long userId = 1L;
         String email = "a.nowak@mail.com";
         User updatedUser = new User(
-                "Adam",
-                "Nowak",
-                "updatedLogin",
-                email
+                "Andrew",
+                "Tester",
+                "username",
+                email,
+                null,
+                null
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
@@ -199,19 +224,21 @@ class UserServiceTest {
     }
 
     @Test
-    void willThrowWhenEmailUsernameIsAlreadyTakenDuringUpdate() {
+    void willThrowWhenEmailLoginIsAlreadyTakenDuringUpdate() {
         // given
         Long userId = 1L;
-        String login = "updatedLogin";
+        String username = "updatedUsername";
         User updatedUser = new User(
-                "Adam",
-                "Nowak",
-                login,
-                "a.nowak@mail.com"
+                "Andrew",
+                "Tester",
+                username,
+                "a.tester@mail.com",
+                null,
+                null
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
-        given(userRepository.existsByUsername(login)).willReturn(true);
+        given(userRepository.existsByUsername(username)).willReturn(true);
 
         // when
         // then
@@ -220,5 +247,164 @@ class UserServiceTest {
                 .hasMessageContaining("Username already taken!");
 
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void canPatchUpdateUser() {
+        // given
+        Long userId = 1L;
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "testUsername",
+                "a.tester@mail.com"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.patchUpdateUser(userId, updatedUser);
+
+        // then
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User capturedUser = userArgumentCaptor.getValue();
+        assertThat(capturedUser.getFirstName()).isEqualTo(updatedUser.getFirstName());
+        assertThat(capturedUser.getLastName()).isEqualTo(updatedUser.getLastName());
+        assertThat(capturedUser.getUsername()).isEqualTo(updatedUser.getUsername());
+        assertThat(capturedUser.getEmail()).isEqualTo(updatedUser.getEmail());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistDuringPatchUpdate() {
+        // given
+        Long userId = 1L;
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "testUsername",
+                "a.tester@mail.com"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateUser(userId, updatedUser))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " does not exist!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenEmailAddressIsAlreadyTakenDuringPatchUpdate() {
+        // given
+        Long userId = 1L;
+        String email = "a.nowak@mail.com";
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "testUsername",
+                email
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+        given(userRepository.existsByEmail(email)).willReturn(true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateUser(userId, updatedUser))
+                .isInstanceOf(EmailAddressAlreadyTakenException.class)
+                .hasMessageContaining("Email address already taken!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenUsernameIsAlreadyTakenDuringPatchUpdate() {
+        // given
+        Long userId = 1L;
+        String username = "updatedUsername";
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                username,
+                "a.tester@mail.com"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+        given(userRepository.existsByUsername(username)).willReturn(true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateUser(userId, updatedUser))
+                .isInstanceOf(UsernameAlreadyTakenException.class)
+                .hasMessageContaining("Username already taken!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void canChangePassword() {
+        // given
+        Long userId = 1L;
+
+        PasswordDTO passwordDTO = new PasswordDTO(
+                "oldPassword",
+                "newPassword"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+
+        // when
+        underTest.updatePassword(userId, passwordDTO);
+
+        // then
+        verify(user).setPassword(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileChangingPassword() {
+        // given
+        Long userId = 1L;
+
+        PasswordDTO passwordDTO = new PasswordDTO(
+                "oldPassword",
+                "newPassword"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.updatePassword(userId, passwordDTO))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " does not exist!");
+
+        verify(user, never()).setPassword(any());
+    }
+
+    @Test
+    void willThrowWhenOldPasswordIsIncorrectWhileChangingPassword() {
+        // given
+        Long userId = 1L;
+
+        PasswordDTO passwordDTO = new PasswordDTO(
+                "oldPassword",
+                "newPassword"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(any(), any())).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.updatePassword(userId, passwordDTO))
+                .isInstanceOf(IncorrectPasswordException.class)
+                .hasMessageContaining("Old password is incorrect!");
+
+        verify(user, never()).setPassword(any());
     }
 }

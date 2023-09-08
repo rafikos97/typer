@@ -47,11 +47,6 @@ public class Tournament {
     private String tournamentCode;
 
     @Column(
-            name = "finished"
-    )
-    private boolean finished;
-
-    @Column(
             name = "point_rules_code",
             nullable = false
     )
@@ -66,10 +61,9 @@ public class Tournament {
     )
     private PointRules pointRules;
 
-    public Tournament(String tournamentName, String tournamentCode, boolean finished, String pointRulesCode) {
+    public Tournament(String tournamentName, String tournamentCode, String pointRulesCode) {
         this.tournamentName = tournamentName;
         this.tournamentCode = tournamentCode;
-        this.finished = finished;
         this.pointRulesCode = pointRulesCode;
     }
 

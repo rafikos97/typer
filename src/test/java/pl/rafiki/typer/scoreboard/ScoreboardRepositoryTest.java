@@ -2,13 +2,18 @@ package pl.rafiki.typer.scoreboard;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import pl.rafiki.typer.security.models.Role;
+import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.user.User;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -19,21 +24,26 @@ class ScoreboardRepositoryTest {
     private ScoreboardRepository underTest;
     private Tournament tournament;
     private User user;
+    @Mock
+    private RoleRepository roleRepository;
+
 
     @BeforeEach
     void setUp() {
         tournament = new Tournament(
                 "testTournament",
                 "tst2023",
-                false,
                 "tstPointRules"
         );
 
+        Set<Role> roles = new HashSet<>();
         user = new User(
-                "testName",
-                "testSurname",
-                "testLogin",
-                "tstmail@gmail.com"
+                "Andrew",
+                "Tester",
+                "username",
+                "a.tester@mail.com",
+                "password",
+                roles
         );
     }
 
@@ -51,10 +61,10 @@ class ScoreboardRepositoryTest {
         underTest.save(scoreboard);
 
         // when
-        List<Scoreboard> scoreList = underTest.findAllByTournamentId(tournament.getId());
+        List<Scoreboard> scoreboardList = underTest.findAllByTournamentId(tournament.getId());
 
         // then
-        assertThat(scoreList).asList().contains(scoreboard);
+        assertThat(scoreboardList).asList().contains(scoreboard);
     }
 
     @Test

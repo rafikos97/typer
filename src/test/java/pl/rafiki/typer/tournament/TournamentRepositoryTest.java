@@ -21,7 +21,6 @@ class TournamentRepositoryTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
-                false,
                 "pointRulesCode"
         );
 
@@ -41,7 +40,6 @@ class TournamentRepositoryTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
-                false,
                 "pointRulesCode"
         );
 

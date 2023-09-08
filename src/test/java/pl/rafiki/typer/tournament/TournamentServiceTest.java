@@ -31,9 +31,6 @@ class TournamentServiceTest {
     @Mock
     private PointRulesRepository pointRulesRepository;
 
-    @Mock
-    private PointRules pointRules;
-
     @BeforeEach
     void setUp() {
         underTest = new TournamentService(tournamentRepository, pointRulesRepository);
@@ -83,7 +80,6 @@ class TournamentServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 pointRulesCode
         );
 
@@ -106,7 +102,6 @@ class TournamentServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
-                false,
                 "testPointRulesCode"
         );
 
@@ -126,7 +121,6 @@ class TournamentServiceTest {
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 pointRulesCode
         );
 
@@ -140,22 +134,25 @@ class TournamentServiceTest {
     }
 
     @Test
-    void updateTournament() {
-//        // given
-
+    void canUpdateTournament() {
+        // given
         Long tournamentId = 1L;
-        String pointRulesCode = pointRules.getPointRulesCode();
+        String pointRulesCode = "testPointRulesCode";
+
+        PointRules pointRules = new PointRules(
+                pointRulesCode,
+                1,
+                2
+        );
+
         Tournament updatedTournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                true,
                 pointRulesCode
         );
 
-        updatedTournament.setPointRules(pointRules);
-
-        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
         given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
 
         // when
         underTest.updateTournament(tournamentId, updatedTournament);
@@ -165,7 +162,10 @@ class TournamentServiceTest {
         verify(tournamentRepository).save(tournamentArgumentCaptor.capture());
         Tournament capturedTournament = tournamentArgumentCaptor.getValue();
 
-        assertThat(capturedTournament).isEqualTo(updatedTournament);
+        assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
+        assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
+        assertThat(capturedTournament.getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
+        assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
     }
 
     @Test
@@ -176,7 +176,6 @@ class TournamentServiceTest {
         Tournament updatedTournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 pointRulesCode
         );
 
@@ -199,7 +198,6 @@ class TournamentServiceTest {
         Tournament updatedTournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
-                false,
                 "testPointRulesCode"
         );
 
@@ -223,7 +221,6 @@ class TournamentServiceTest {
         Tournament updatedTournament = new Tournament(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                false,
                 pointRulesCode
         );
 
@@ -233,6 +230,109 @@ class TournamentServiceTest {
         // when
         // then
         assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
+                .isInstanceOf(PointRulesDoesNotExistException.class)
+                .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
+
+        verify(tournamentRepository, never()).save(any());
+    }
+
+    @Test
+    void canPatchUpdateTournament() {
+        // given
+        Long tournamentId = 1L;
+        String pointRulesCode = "testPointRulesCode";
+
+        PointRules pointRules = new PointRules(
+                pointRulesCode,
+                1,
+                2
+        );
+
+        TournamentDTO updatedTournament = new TournamentDTO(
+                "Mistrzostwa Świata 2022",
+                "MS2022",
+                pointRulesCode
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
+
+        // when
+        underTest.patchUpdateTournament(tournamentId, updatedTournament);
+
+        // then
+        ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
+        verify(tournamentRepository).save(tournamentArgumentCaptor.capture());
+        Tournament capturedTournament = tournamentArgumentCaptor.getValue();
+
+        assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
+        assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
+        assertThat(capturedTournament.getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
+        assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
+    }
+
+    @Test
+    void willThrowWhenTournamentDoesNotExistDuringPatchUpdate() {
+        // given
+        Long tournamentId = 1L;
+        String pointRulesCode = "testPointRulesCode";
+        TournamentDTO updatedTournament = new TournamentDTO(
+                "Mistrzostwa Świata 2022",
+                "MS2022",
+                pointRulesCode
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
+                .isInstanceOf(TournamentDoesNotExistException.class)
+                .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
+
+        verify(tournamentRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenTournamentCodeIsAlreadyTakenDuringPatchUpdate() {
+        // given
+        Long tournamentId = 1L;
+        String tournamentCode = "MS2022";
+        TournamentDTO updatedTournament = new TournamentDTO(
+                "Mistrzostwa Świata 2022",
+                tournamentCode,
+                "testPointRulesCode"
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        given(tournamentRepository.existsByTournamentCode(tournamentCode)).willReturn(true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
+                .isInstanceOf(TournamentCodeAlreadyTakenException.class)
+                .hasMessageContaining("Tournament code: " + tournamentCode + " already taken!");
+
+        verify(tournamentRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenPointRulesCodeDoesNotExistDuringPatchUpdate() {
+        // given
+        Long tournamentId = 1L;
+        String pointRulesCode = "testPointRulesCode";
+        TournamentDTO updatedTournament = new TournamentDTO(
+                "Mistrzostwa Świata 2022",
+                "MS2022",
+                pointRulesCode
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(PointRulesDoesNotExistException.class)
                 .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
 
