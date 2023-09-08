@@ -16,7 +16,7 @@ import java.util.Set;
         name = "app_user",
         uniqueConstraints = {
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
-                @UniqueConstraint(name = "user_login_unique", columnNames = "login")
+                @UniqueConstraint(name = "user_username_unique", columnNames = "username")
         }
 )
 @Data
@@ -52,7 +52,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(
-            name = "login",
+            name = "username",
             nullable = false
     )
     private String username;
@@ -68,7 +68,7 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role_junction",
-            joinColumns = {@JoinColumn(name = "role_id")},
+            joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_role_id")}
     )
     private Set<Role> authorities;

@@ -34,4 +34,14 @@ public class UserController {
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody User user) {
         userService.putUpdateUser(userId, user);
     }
+
+    @PatchMapping(path = "/user/{userId}")
+    public void updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO dto) {
+        userService.patchUpdateUser(userId, dto);
+    }
+
+    @PatchMapping(path = "/user/{userId}/password")
+    public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordDTO dto) {
+        userService.updatePassword(userId, dto);
+    }
 }

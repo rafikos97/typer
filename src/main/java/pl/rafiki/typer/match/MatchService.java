@@ -102,6 +102,52 @@ public class MatchService {
         matchRepository.save(existingMatch);
     }
 
+    public void patchUpdateMatch(Long matchId, MatchDTO dto) {
+        Optional<Match> matchOptional = matchRepository.findById(matchId);
+        if (matchOptional.isEmpty()) {
+            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
+        }
+        Match existingMatch = matchOptional.get();
+
+        String tournamentCodeFromUpdate = dto.getTournamentCode();
+
+        if (tournamentCodeFromUpdate != null) {
+            Optional<Tournament> tournamentOptional = tournamentRepository.findByTournamentCode(tournamentCodeFromUpdate);
+            if (tournamentOptional.isEmpty()) {
+                throw new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!");
+            } else if (!Objects.equals(tournamentOptional.get(), existingMatch.getTournament())) {
+                existingMatch.setTournament(tournamentOptional.get());
+            }
+        }
+
+        String firstTeamNameFromUpdate = dto.getFirstTeamName();
+        if (firstTeamNameFromUpdate != null && firstTeamNameFromUpdate.length() > 0 && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
+            existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
+        }
+
+        String secondTeamNameFromUpdate = dto.getSecondTeamName();
+        if (secondTeamNameFromUpdate != null && secondTeamNameFromUpdate.length() > 0 && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
+            existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
+        }
+
+        Integer firstTeamScoreFromUpdate = dto.getFirstTeamScore();
+        if (!Objects.equals(firstTeamScoreFromUpdate, existingMatch.getFirstTeamScore())) {
+            existingMatch.setFirstTeamScore(firstTeamScoreFromUpdate);
+        }
+
+        Integer secondTeamScoreFromUpdate = dto.getSecondTeamScore();
+        if (!Objects.equals(secondTeamScoreFromUpdate, existingMatch.getSecondTeamScore())) {
+            existingMatch.setSecondTeamScore(secondTeamScoreFromUpdate);
+        }
+
+        LocalDateTime startDateTimeFromUpdate = dto.getStartDateAndTime();
+        if (startDateTimeFromUpdate != null && !Objects.equals(startDateTimeFromUpdate, existingMatch.getStartDateAndTime())) {
+            existingMatch.setStartDateAndTime(startDateTimeFromUpdate);
+        }
+
+        matchRepository.save(existingMatch);
+    }
+
     @Transactional
     public void finishMatch(Long matchId) {
         Optional<Match> matchOptional = matchRepository.findById(matchId);

@@ -24,6 +24,10 @@ public class Scoreboard {
             strategy = GenerationType.SEQUENCE,
             generator = "scoreboard_sequence"
     )
+    @Column(
+            name = "scoreboard_id",
+            updatable = false
+    )
     Long id;
 
     @JsonProperty(value = "userId")

@@ -1,5 +1,6 @@
 package pl.rafiki.typer.user;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.user.exceptions.EmailAddressAlreadyTakenException;
+import pl.rafiki.typer.user.exceptions.IncorrectPasswordException;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
 
@@ -107,6 +109,64 @@ public class UserService implements UserDetailsService {
         }
 
         userRepository.save(existingUser);
+    }
+
+    public void patchUpdateUser(Long userId, UserDTO dto) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
+        }
+
+        User existingUser = userOptional.get();
+
+        String firstNameFromUpdate = dto.getFirstName();
+        if (firstNameFromUpdate != null && firstNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
+            existingUser.setFirstName(firstNameFromUpdate);
+        }
+
+        String lastNameFromUpdate = dto.getLastName();
+        if (lastNameFromUpdate != null && lastNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
+            existingUser.setLastName(lastNameFromUpdate);
+        }
+
+        String emailFromUpdate = dto.getEmail();
+        if (emailFromUpdate != null) {
+            boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
+            if (existsByEmail) {
+                throw new EmailAddressAlreadyTakenException("Email address already taken!");
+            } else if (emailFromUpdate.length() > 0 && !Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
+                existingUser.setEmail(emailFromUpdate);
+            }
+        }
+
+        String usernameFromUpdate = dto.getUsername();
+        if (usernameFromUpdate != null) {
+            boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
+            if (existsByUsername) {
+                throw new UsernameAlreadyTakenException("Username already taken!");
+            } else if (usernameFromUpdate.length() > 0 && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
+                existingUser.setUsername(usernameFromUpdate);
+            }
+        }
+
+        userRepository.save(existingUser);
+    }
+
+    @Transactional
+    public void updatePassword(Long userId, PasswordDTO dto) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
+        }
+
+        User user = userOptional.get();
+
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new IncorrectPasswordException("Old password is incorrect!");
+        }
+
+        String encodedUpdatedPassword = passwordEncoder.encode(dto.getNewPassword());
+        user.setPassword(encodedUpdatedPassword);
     }
 
     @Override

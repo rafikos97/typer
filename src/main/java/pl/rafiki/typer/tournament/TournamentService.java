@@ -89,4 +89,40 @@ public class TournamentService {
 
         tournamentRepository.save(existingTournament);
     }
+
+    public void patchUpdateTournament(Long tournamentId, TournamentDTO dto) {
+        Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
+        if (tournamentOptional.isEmpty()) {
+            throw new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!");
+        }
+
+        Tournament existingTournament = tournamentOptional.get();
+
+        String tournamentNameFromUpdate = dto.getTournamentName();
+        if (tournamentNameFromUpdate != null && tournamentNameFromUpdate.length() > 0 && !Objects.equals(existingTournament.getTournamentName(), tournamentNameFromUpdate)) {
+            existingTournament.setTournamentName(tournamentNameFromUpdate);
+        }
+
+        String tournamentCodeFromUpdate = dto.getTournamentCode();
+        if (tournamentCodeFromUpdate != null) {
+            if (tournamentRepository.existsByTournamentCode(tournamentCodeFromUpdate)) {
+                throw new TournamentCodeAlreadyTakenException("Tournament code: " + tournamentCodeFromUpdate + " already taken!");
+            } else if (tournamentCodeFromUpdate.length() > 0 && !Objects.equals(existingTournament.getTournamentCode(), tournamentCodeFromUpdate)) {
+                existingTournament.setTournamentCode(tournamentCodeFromUpdate);
+            }
+        }
+
+        String pointRulesCodeFromUpdate = dto.getPointRulesCode();
+        if (pointRulesCodeFromUpdate != null) {
+            Optional<PointRules> pointRulesFromUpdateOpt = pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCodeFromUpdate);
+            if (pointRulesFromUpdateOpt.isEmpty()) {
+                throw new PointRulesDoesNotExistException("Point rules with code: " + pointRulesCodeFromUpdate + " does not exist!");
+            } else if (!Objects.equals(existingTournament.getPointRules(), pointRulesFromUpdateOpt.get())) {
+                existingTournament.setPointRules(pointRulesFromUpdateOpt.get());
+                existingTournament.setPointRulesCode(pointRulesCodeFromUpdate);
+            }
+        }
+
+        tournamentRepository.save(existingTournament);
+    }
 }

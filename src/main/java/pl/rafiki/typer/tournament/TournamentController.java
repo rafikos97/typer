@@ -35,4 +35,9 @@ public class TournamentController {
     public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody Tournament tournament) {
         tournamentService.updateTournament(tournamentId, tournament);
     }
+
+    @PatchMapping(path = "admin/{tournamentId}")
+    public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO dto) {
+        tournamentService.patchUpdateTournament(tournamentId, dto);
+    }
 }
