@@ -53,7 +53,7 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    public void updateTournament(Long tournamentId, Tournament tournament) {
+    public void putUpdateTournament(Long tournamentId, Tournament tournament) {
         Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
         if (tournamentOptional.isEmpty()) {
             throw new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!");

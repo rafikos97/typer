@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "typer/profile/")
+@RequestMapping(path = "/typer/profile/")
 public class UserController {
     private final UserService userService;
 
@@ -20,7 +20,7 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping(path = "user/{userId}")
+    @GetMapping(path = "/user/{userId}")
     public UserDTO getUser(@PathVariable("userId") Long userId) {
         return userService.getUser(userId);
     }

@@ -1,5 +1,6 @@
 package pl.rafiki.typer.scoreboard;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
@@ -18,6 +19,7 @@ public class ScoreboardService {
     private final UserRepository userRepository;
     private final TournamentRepository tournamentRepository;
 
+    @Autowired
     public ScoreboardService(ScoreboardRepository scoreboardRepository, UserRepository userRepository, TournamentRepository tournamentRepository) {
         this.scoreboardRepository = scoreboardRepository;
         this.userRepository = userRepository;

@@ -33,7 +33,7 @@ public class TournamentController {
 
     @PutMapping(path = "admin/{tournamentId}")
     public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody Tournament tournament) {
-        tournamentService.updateTournament(tournamentId, tournament);
+        tournamentService.putUpdateTournament(tournamentId, tournament);
     }
 
     @PatchMapping(path = "admin/{tournamentId}")
