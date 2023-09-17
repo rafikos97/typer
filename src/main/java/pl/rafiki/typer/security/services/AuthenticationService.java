@@ -2,6 +2,8 @@ package pl.rafiki.typer.security.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,8 +38,8 @@ public class AuthenticationService {
             long expirationTimeInSeconds = Duration.between(Instant.now(), endOfTokenValidity).getSeconds();
 
             return ResponseEntity.ok(new LoginResponseDTO(token, String.valueOf(expirationTimeInSeconds), "bearer"));
-        } catch (AuthenticationException e) {
-            throw new InvalidCredentialsException(e.getMessage());
+        } catch (AuthenticationException authenticationException) {
+            throw new InvalidCredentialsException("Invalid credentials!");
         }
     }
 }
