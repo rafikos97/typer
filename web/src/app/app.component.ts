@@ -9,9 +9,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     imports: [RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent {
-    title = 'Typer';
-
-    get routerActiveClassName(): string {
+    get routerActiveClassName() {
         return 'typer-link-active';
     }
 }

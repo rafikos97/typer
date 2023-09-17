@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, importProvidersFrom } from '@angular/core';
 
 @Component({
     templateUrl: './user-panel.component.html',
