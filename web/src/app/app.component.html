@@ -1,8 +1,13 @@
-<nav>
+<header><nav>
     <ul class="flex">
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li class="float-right">User</li>
+        <li><a [routerLink]="['/home']" [routerLinkActive]="routerActiveClassName">Home 2</a></li>
+        <li><a [routerLink]="['/home']" [routerLinkActive]="routerActiveClassName">Item 2</a></li>
+        <li><a [routerLink]="['/home']" [routerLinkActive]="routerActiveClassName">Item 3</a></li>
+        <li><a [routerLink]="['/user-panel']" [routerLinkActive]="routerActiveClassName">User</a></li>
     </ul>
 </nav>
+</header>
+<main>
+<router-outlet>
+</router-outlet>
+</main>

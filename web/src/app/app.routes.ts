@@ -1,16 +1,13 @@
-// app.routes.ts
-
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
 
 export const APP_ROUTES: Routes = [
     {
-        path: 'home',
-        component: AppComponent,
+        path: 'user-panel',
+        loadChildren: () => import('./modules/user-panel/user-panel.routes').then(routes => routes.USER_PANEL_ROUTES),
     },
     {
         path: '**',
         pathMatch: 'full',
-        redirectTo: 'home',
+        redirectTo: '',
     },
 ];
