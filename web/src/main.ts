@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideRouterStore } from '@ngrx/router-store';
+import { environment } from 'environments/environment';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -21,7 +22,7 @@ bootstrapApplication(AppComponent, {
             withDebugTracing(),
         ),
         provideStore(),
-        provideStoreDevtools(),
+        environment.serve ? provideStoreDevtools() : [],
         provideRouterStore(),
         importProvidersFrom(HttpClientModule),
     ],
