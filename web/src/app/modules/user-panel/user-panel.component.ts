@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Inject,
+    OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fetchUserInformation } from './+state/user-panel.actions';
 
@@ -7,7 +12,7 @@ import { fetchUserInformation } from './+state/user-panel.actions';
     styleUrls: ['./user-panel.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-user-panel',
-    standalone: true
+    standalone: true,
 })
 export class UserPanelComponent implements OnInit {
     private readonly store = Inject(Store);

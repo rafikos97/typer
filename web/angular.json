@@ -42,10 +42,12 @@
                                 }
                             ],
                             "outputHashing": "all",
-                            "fileReplacements": [{
-                                "replace": "./environments/environment.ts",
-                                "with": "./environments/environment.prod.ts"
-                            }]
+                            "fileReplacements": [
+                                {
+                                    "replace": "./environments/environment.ts",
+                                    "with": "./environments/environment.prod.ts"
+                                }
+                            ]
                         },
                         "development": {
                             "buildOptimizer": false,
@@ -54,11 +56,13 @@
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true,
-                            "fileReplacements": [{
-                                "replace": "./environments/environment.ts",
-                                "with": "./environments/environment.serve.ts"
-                            }]
-                        },
+                            "fileReplacements": [
+                                {
+                                    "replace": "./environments/environment.ts",
+                                    "with": "./environments/environment.serve.ts"
+                                }
+                            ]
+                        }
                     },
                     "defaultConfiguration": "production"
                 },
