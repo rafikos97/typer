@@ -1,3 +1,7 @@
 export interface UserInformation {
-    field: any;
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
 }

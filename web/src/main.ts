@@ -9,21 +9,18 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { APP_ROUTES } from './app/app.routes';
 import { importProvidersFrom } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideRouterStore } from '@ngrx/router-store';
-import { environment } from 'environments/environment';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 bootstrapApplication(AppComponent, {
     providers: [
+        importProvidersFrom(HttpClientModule),
         provideRouter(
             APP_ROUTES,
             withPreloading(PreloadAllModules),
             withDebugTracing(),
         ),
-        provideStore(),
-        environment.serve ? provideStoreDevtools() : [],
-        provideRouterStore(),
-        importProvidersFrom(HttpClientModule),
+        importProvidersFrom(StoreModule.forRoot({})),
+        importProvidersFrom(EffectsModule.forRoot()),
     ],
 }).catch((err) => console.error(err));

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
     fetchUserInformation,
@@ -10,8 +10,8 @@ import { UserInformation } from '../models/user-information.model';
 
 @Injectable()
 export class UserPanelEffects {
-    private readonly userPanelService = Inject(UserPanelService);
-    private readonly actions$ = Inject(Actions);
+    private readonly userPanelService = inject(UserPanelService);
+    private readonly actions$ = inject(Actions);
 
     readonly fetch$ = createEffect(() =>
         this.actions$.pipe(

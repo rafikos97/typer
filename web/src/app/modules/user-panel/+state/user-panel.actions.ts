@@ -6,6 +6,6 @@ export const fetchUserInformation = createAction(
 );
 
 export const fetchUserInformationSuccess = createAction(
-    '[User Panel] Fetch User Information',
+    '[User Panel] Fetch User Information Success',
     props<{ userInformation: UserInformation }>(),
 );
