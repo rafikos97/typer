@@ -1,6 +1,7 @@
 package pl.rafiki.typer.pointrules;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,18 +33,21 @@ public class PointRules {
     )
     private Long id;
 
+    @NotNull(message = "Point rules code cannot be null")
     @Column(
             name = "pointrules_code",
             nullable = false
     )
     private String pointRulesCode;
 
+    @NotNull(message = "Winner cannot be null")
     @Column(
             name = "winner",
             nullable = false
     )
     private Integer winner;
 
+    @NotNull(message = "Score cannot be null")
     @Column(
             name = "score",
             nullable = false

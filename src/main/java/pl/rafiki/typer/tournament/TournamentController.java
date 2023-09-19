@@ -1,12 +1,15 @@
 package pl.rafiki.typer.tournament;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/typer/tournament")
+@Validated
 public class TournamentController {
 
     private final TournamentService tournamentService;
@@ -27,12 +30,12 @@ public class TournamentController {
     }
 
     @PostMapping(path = "/admin/add")
-    public void addNewTournament(@RequestBody Tournament tournament) {
+    public void addNewTournament(@RequestBody @Valid Tournament tournament) {
         tournamentService.addNewTournament(tournament);
     }
 
     @PutMapping(path = "admin/{tournamentId}")
-    public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody Tournament tournament) {
+    public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid Tournament tournament) {
         tournamentService.putUpdateTournament(tournamentId, tournament);
     }
 

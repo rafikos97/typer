@@ -1,12 +1,15 @@
 package pl.rafiki.typer.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/typer/profile/")
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -26,12 +29,12 @@ public class UserController {
     }
 
     @PostMapping(path = "/admin/register")
-    public void registerUser(@RequestBody User user) {
+    public void registerUser(@RequestBody @Valid User user) {
         userService.registerUser(user);
     }
 
     @PutMapping(path = "/user/{userId}")
-    public void updateUser(@PathVariable("userId") Long userId, @RequestBody User user) {
+    public void updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
         userService.putUpdateUser(userId, user);
     }
 

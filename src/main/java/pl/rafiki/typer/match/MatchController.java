@@ -1,13 +1,15 @@
 package pl.rafiki.typer.match;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/typer/match")
+@Validated
 public class MatchController {
 
     private final MatchService matchService;
@@ -28,7 +30,7 @@ public class MatchController {
     }
 
     @PostMapping(path = "/admin/add")
-    public void addNewMatch(@RequestBody Match match) {
+    public void addNewMatch(@RequestBody @Valid Match match) {
         matchService.addNewMatch(match);
     }
 

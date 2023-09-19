@@ -16,6 +16,7 @@ import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,25 +61,46 @@ public class BetService {
         betRepository.save(bet);
     }
 
-    public List<Bet> getBets() {
-        return betRepository.findAll();
+    public List<BetDTO> getBets() {
+        List<Bet> betList = betRepository.findAll();
+        List<BetDTO> betResponseList = new ArrayList<>();
+
+        for (Bet bet : betList) {
+            betResponseList.add(new BetDTO(bet));
+        }
+
+        return betResponseList;
     }
 
 
-    public List<Bet> getBetsByUserId(Long userId) {
+    public List<BetDTO> getBetsByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
         }
 
-        return betRepository.findAllByUserId(userId);
+        List<Bet> betList = betRepository.findAllByUserId(userId);
+        List<BetDTO> betResponseList = new ArrayList<>();
+
+        for (Bet bet : betList) {
+            betResponseList.add(new BetDTO(bet));
+        }
+
+        return betResponseList;
     }
 
-    public List<Bet> getBetsByMatchId(Long matchId) {
+    public List<BetDTO> getBetsByMatchId(Long matchId) {
         if (!matchRepository.existsById(matchId)) {
             throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
         }
 
-        return betRepository.findAllByMatchId(matchId);
+        List<Bet> betList = betRepository.findAllByMatchId(matchId);
+        List<BetDTO> betResponseList = new ArrayList<>();
+
+        for (Bet bet : betList) {
+            betResponseList.add(new BetDTO(bet));
+        }
+
+        return betResponseList;
     }
 
     public void updateBet(Long betId, Bet bet) {

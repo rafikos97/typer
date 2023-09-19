@@ -1,14 +1,13 @@
 package pl.rafiki.typer.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.rafiki.typer.security.models.Role;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Entity(name = "app_user")
@@ -39,24 +38,28 @@ public class User implements UserDetails {
     )
     private Long id;
 
+    @NotNull(message = "First name cannot be null")
     @Column(
             name = "first_name",
             nullable = false
     )
     private String firstName;
 
+    @NotNull(message = "Last name cannot be null")
     @Column(
             name = "last_name",
             nullable = false
     )
     private String lastName;
 
+    @NotNull(message = "Username cannot be null")
     @Column(
             name = "username",
             nullable = false
     )
     private String username;
 
+    @NotNull(message = "Email address cannot be null")
     @Column(
             name = "email",
             nullable = false

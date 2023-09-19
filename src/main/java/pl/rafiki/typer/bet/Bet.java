@@ -2,6 +2,7 @@ package pl.rafiki.typer.bet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,18 +31,21 @@ public class Bet {
     )
     private Long id;
 
+    @NotNull(message = "First team score cannot be null")
     @Column(
             name = "first_team_score",
             nullable = false
     )
-    private int firstTeamScore;
+    private Integer firstTeamScore;
 
+    @NotNull(message = "Second team score cannot be null")
     @Column(
             name = "second_team_score",
             nullable = false
     )
-    private int secondTeamScore;
+    private Integer secondTeamScore;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "match_id",
@@ -94,4 +98,12 @@ public class Bet {
         this.score = score;
         this.totalPoints = totalPoints;
     }
+
+//    public Long getUserId() {
+//        return this.user.getId();
+//    }
+//
+//    public Long getMatchId() {
+//        return this.match.getId();
+//    }
 }

@@ -14,6 +14,14 @@ public class UserDTO {
     private String username;
     private String email;
 
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+    }
+
     public UserDTO(String firstName, String lastName, String username, String email) {
         this.firstName = firstName;
         this.lastName = lastName;

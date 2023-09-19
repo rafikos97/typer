@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
-import pl.rafiki.typer.user.exceptions.EmailAddressAlreadyTakenException;
-import pl.rafiki.typer.user.exceptions.IncorrectPasswordException;
-import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
-import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
+import pl.rafiki.typer.user.exceptions.*;
 
 import java.util.*;
+
+import static pl.rafiki.typer.user.validators.EmailValidator.isEmailValid;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -34,7 +33,7 @@ public class UserService implements UserDetailsService {
         List<User> userList = userRepository.findAll();
         List<UserDTO> userResponseList = new ArrayList<>();
         for (User user : userList) {
-            UserDTO userResponse = new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
+            UserDTO userResponse = new UserDTO(user);
             userResponseList.add(userResponse);
         }
         return userResponseList;
@@ -48,7 +47,7 @@ public class UserService implements UserDetailsService {
 
         User user = userOptional.get();
 
-        return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
+        return new UserDTO(user);
     }
 
     public User registerUser(User user) {
@@ -60,6 +59,10 @@ public class UserService implements UserDetailsService {
         boolean existsByLogin = userRepository.existsByUsername(user.getUsername());
         if (existsByLogin) {
             throw new UsernameAlreadyTakenException("Login already taken!");
+        }
+
+        if (!isEmailValid(user.getEmail())) {
+            throw new InvalidEmailException("Provided email is invalid!");
         }
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -94,9 +97,14 @@ public class UserService implements UserDetailsService {
 
         String emailFromUpdate = user.getEmail();
         boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
-        if (existsByEmail) {
+
+        if (!isEmailValid(emailFromUpdate)) {
+            throw new InvalidEmailException("Provided email is invalid!");
+        } else if (existsByEmail) {
             throw new EmailAddressAlreadyTakenException("Email address already taken!");
-        } else if (emailFromUpdate != null && emailFromUpdate.length() > 0 && !Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
+        }
+
+        if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
             existingUser.setEmail(emailFromUpdate);
         }
 
@@ -132,9 +140,14 @@ public class UserService implements UserDetailsService {
         String emailFromUpdate = dto.getEmail();
         if (emailFromUpdate != null) {
             boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
-            if (existsByEmail) {
+
+            if (!isEmailValid(emailFromUpdate)) {
+                throw new InvalidEmailException("Provided email is invalid!");
+            } else if (existsByEmail) {
                 throw new EmailAddressAlreadyTakenException("Email address already taken!");
-            } else if (emailFromUpdate.length() > 0 && !Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
+            }
+
+            if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
                 existingUser.setEmail(emailFromUpdate);
             }
         }

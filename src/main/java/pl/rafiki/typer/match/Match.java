@@ -32,51 +32,37 @@ public class Match {
     )
     private Long id;
 
-    @NotNull(
-            message = "First team name cannot be null!"
-    )
+    @NotNull(message = "First team name cannot be null")
     @Column(
             name = "first_team_name",
             nullable = false
     )
     private String firstTeamName;
 
-    @NotNull(
-            message = "Second team name cannot be null!"
-    )
+    @NotNull(message = "Second team name cannot be null")
     @Column(
             name = "second_team_name",
             nullable = false
     )
     private String secondTeamName;
 
-    @NotNull(
-            message = "Start date cannot be null!"
-    )
+    @NotNull(message = "Start date cannot be null")
     @Column(
             name = "start_date_time",
             nullable = false
     )
     private LocalDateTime startDateAndTime;
 
-    @Column(
-            name = "first_team_score"
-    )
+    @Column(name = "first_team_score")
     private Integer firstTeamScore;
 
-    @Column(
-            name = "second_team_score"
-    )
+    @Column(name = "second_team_score")
     private Integer secondTeamScore;
 
-    @Column(
-            name = "finished"
-    )
+    @Column(name = "finished")
     private boolean finished;
 
-    @NotNull(
-            message = "Tournament code cannot be null!"
-    )
+    @NotNull(message = "Tournament code cannot be null!")
     @Column(
             name = "tournament_code",
             nullable = false
