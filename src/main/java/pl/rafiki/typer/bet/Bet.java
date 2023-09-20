@@ -98,12 +98,4 @@ public class Bet {
         this.score = score;
         this.totalPoints = totalPoints;
     }
-
-//    public Long getUserId() {
-//        return this.user.getId();
-//    }
-//
-//    public Long getMatchId() {
-//        return this.match.getId();
-//    }
 }
