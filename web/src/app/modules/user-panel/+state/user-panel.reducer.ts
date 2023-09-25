@@ -1,5 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { fetchUserInformationSuccess } from './user-panel.actions';
+import {
+    fetchUserInformationSuccess,
+    updateUserInformationSuccess,
+} from './user-panel.actions';
 
 export interface UserPanelState {
     firstName: string;
@@ -19,8 +22,12 @@ export const initialUserPanelState: UserPanelState = {
 
 export const userPanelReducer = createReducer(
     initialUserPanelState,
-    on(fetchUserInformationSuccess, (state, { userInformation }) => ({
-        ...state,
-        ...userInformation,
-    })),
+    on(
+        fetchUserInformationSuccess,
+        updateUserInformationSuccess,
+        (state, { userInformation }) => ({
+            ...state,
+            ...userInformation,
+        }),
+    ),
 );

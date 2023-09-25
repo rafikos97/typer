@@ -3,10 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
     fetchUserInformation,
     fetchUserInformationSuccess,
+    updateUserInformation,
+    updateUserInformationFailure,
+    updateUserInformationSuccess,
 } from './user-panel.actions';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, delay, map, switchMap } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
 import { UserInformation } from '../models/user-information.model';
+import { of } from 'rxjs';
 
 @Injectable()
 export class UserPanelEffects {
@@ -20,6 +24,19 @@ export class UserPanelEffects {
             map((userInformation: UserInformation) =>
                 fetchUserInformationSuccess({ userInformation }),
             ),
+        ),
+    );
+
+    readonly update$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateUserInformation),
+            switchMap(({ userInformation }) =>
+                this.userPanelService.updateUserInformation(userInformation),
+            ),
+            map((userInformation: UserInformation) =>
+                updateUserInformationSuccess({ userInformation }),
+            ),
+            catchError((error) => of(updateUserInformationFailure({ error }))),
         ),
     );
 }

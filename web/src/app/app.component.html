@@ -1,29 +1,29 @@
 <header>
-    <nav>
+    <nav class="flex items-center justify-between flex-wrap p-6">
         <ul class="flex">
-            <li>
-                <a
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" 
                     [routerLink]="['/home']"
                     [routerLinkActive]="routerActiveClassName"
                     >Home 2</a
                 >
             </li>
-            <li>
-                <a
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" 
                     [routerLink]="['/home']"
                     [routerLinkActive]="routerActiveClassName"
                     >Item 2</a
                 >
             </li>
-            <li>
-                <a
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" 
                     [routerLink]="['/home']"
                     [routerLinkActive]="routerActiveClassName"
                     >Item 3</a
                 >
             </li>
-            <li>
-                <a
+            <li class="mr-6">
+                <a class="text-blue-500 hover:text-blue-800" 
                     [routerLink]="['/user-panel']"
                     [routerLinkActive]="routerActiveClassName"
                     >User</a
@@ -33,5 +33,7 @@
     </nav>
 </header>
 <main>
-    <router-outlet> </router-outlet>
+    <section class="w-80 mx-auto">
+        <router-outlet></router-outlet>
+    </section>
 </main>

@@ -12,10 +12,24 @@ export class UserPanelService {
         return of(<UserInformation>{
             firstName: 'a',
             lastName: 'b',
-            id: '1',
             username: 'my-user',
             email: 'a@b.com',
         });
         return this.httpClient.get<UserInformation>(userInformationApiUrl);
+    }
+
+    updateUserInformation(
+        userInformation: UserInformation,
+    ): Observable<UserInformation> {
+        return of(<UserInformation>{
+            firstName: 'a',
+            lastName: 'b',
+            username: 'my-user',
+            email: 'a@b.com',
+        });
+        return this.httpClient.put<UserInformation>(
+            userInformationApiUrl,
+            userInformation,
+        );
     }
 }
