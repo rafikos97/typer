@@ -2,11 +2,11 @@ import {
     ChangeDetectionStrategy,
     Component,
     OnInit,
-    Signal,
-    computed,
     inject,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import {
     fetchUserInformation,
     updateUserInformation,
@@ -20,7 +20,6 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { first } from 'rxjs/operators';
 
 @Component({
     templateUrl: './user-panel.component.html',
@@ -40,21 +39,22 @@ export class UserPanelComponent implements OnInit {
         email: new FormControl('', [Validators.required, Validators.email]),
     });
 
+    readonly storeToFormSubscription = this.store
+        .select(selectUserInformation)
+        .pipe(takeUntilDestroyed())
+        .subscribe(
+            ({ username, firstName, lastName, email }: UserInformation) => {
+                this.userForm.setValue({
+                    username,
+                    firstName,
+                    lastName,
+                    email,
+                });
+            },
+        );
+
     ngOnInit(): void {
         this.store.dispatch(fetchUserInformation());
-        this.store
-            .select(selectUserInformation)
-            .pipe(first())
-            .subscribe(
-                ({ username, firstName, lastName, email }: UserInformation) => {
-                    this.userForm.setValue({
-                        username,
-                        firstName,
-                        lastName,
-                        email,
-                    });
-                },
-            );
     }
 
     updateUserInformation(): void {
