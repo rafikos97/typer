@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  typer-db:
+    build: ./db
+    ports:
+      - '5432:5432'
+
+  typer-backend:
+    build: ./
+    ports:
+      - '8080:8080'
+    depends_on:
+      - typer-db
+    environment:
+      DB_ADDRESS: typer-db
+    env_file:
+      - ./env/db.env
