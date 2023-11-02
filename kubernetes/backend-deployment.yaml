@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typer-backend
+  template:
+    metadata:
+      labels:
+        app: typer-backend
+    spec:
+      containers:
+        - name: typer-backend
+          image: rafiki90/typer-backend:latest
+          env:
+            - name: DB_ADDRESS
+              value: "db-service.default"
+          envFrom:
+            - secretRef:
+                name: db-secret

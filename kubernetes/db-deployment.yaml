@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typer-db
+  template:
+    metadata:
+      labels:
+        app: typer-db
+    spec:
+      containers:
+        - name: typer-db
+          image: rafiki90/typer-db:latest
+          envFrom:
+            - secretRef:
+                name: db-secret
