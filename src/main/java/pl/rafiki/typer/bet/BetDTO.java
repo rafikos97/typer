@@ -12,11 +12,4 @@ public class BetDTO {
     private Integer firstTeamScore;
     private Integer secondTeamScore;
     private Long matchId;
-
-    public BetDTO(Bet bet) {
-        this.betId = bet.getId();
-        this.firstTeamScore = bet.getFirstTeamScore();
-        this.secondTeamScore = bet.getSecondTeamScore();
-        this.matchId = bet.getMatch().getId();
-    }
 }

@@ -16,7 +16,6 @@ import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -63,15 +62,9 @@ public class BetService {
 
     public List<BetDTO> getBets() {
         List<Bet> betList = betRepository.findAll();
-        List<BetDTO> betResponseList = new ArrayList<>();
 
-        for (Bet bet : betList) {
-            betResponseList.add(new BetDTO(bet));
-        }
-
-        return betResponseList;
+        return mapToDTO(betList);
     }
-
 
     public List<BetDTO> getBetsByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
@@ -79,13 +72,8 @@ public class BetService {
         }
 
         List<Bet> betList = betRepository.findAllByUserId(userId);
-        List<BetDTO> betResponseList = new ArrayList<>();
 
-        for (Bet bet : betList) {
-            betResponseList.add(new BetDTO(bet));
-        }
-
-        return betResponseList;
+        return mapToDTO(betList);
     }
 
     public List<BetDTO> getBetsByMatchId(Long matchId) {
@@ -94,13 +82,8 @@ public class BetService {
         }
 
         List<Bet> betList = betRepository.findAllByMatchId(matchId);
-        List<BetDTO> betResponseList = new ArrayList<>();
 
-        for (Bet bet : betList) {
-            betResponseList.add(new BetDTO(bet));
-        }
-
-        return betResponseList;
+        return mapToDTO(betList);
     }
 
     public void updateBet(Long betId, Bet bet) {
@@ -176,5 +159,12 @@ public class BetService {
                 scoreboardService.addScore(bet.getUser().getId(), match.getTournament().getId(), bet.getScore(), bet.getWinner());
             }
         }
+    }
+
+    private static List<BetDTO> mapToDTO(List<Bet> betList) {
+        return betList
+                .stream()
+                .map(BetMapper.INSTANCE::betToBetDto)
+                .toList();
     }
 }

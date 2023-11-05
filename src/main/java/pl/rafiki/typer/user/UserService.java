@@ -31,12 +31,11 @@ public class UserService implements UserDetailsService {
 
     public List<UserDTO> getUsers() {
         List<User> userList = userRepository.findAll();
-        List<UserDTO> userResponseList = new ArrayList<>();
-        for (User user : userList) {
-            UserDTO userResponse = new UserDTO(user);
-            userResponseList.add(userResponse);
-        }
-        return userResponseList;
+
+        return userList
+                .stream()
+                .map(UserMapper.INSTANCE::userToUserDto)
+                .toList();
     }
 
     public UserDTO getUser(Long userId) {
@@ -47,7 +46,7 @@ public class UserService implements UserDetailsService {
 
         User user = userOptional.get();
 
-        return new UserDTO(user);
+        return UserMapper.INSTANCE.userToUserDto(user);
     }
 
     public User registerUser(User user) {
