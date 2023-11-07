@@ -7,7 +7,7 @@ import {
     updateUserInformationFailure,
     updateUserInformationSuccess,
 } from './user-panel.actions';
-import { catchError, delay, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
 import { UserInformation } from '../models/user-information.model';
 import { of } from 'rxjs';

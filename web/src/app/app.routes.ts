@@ -1,13 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Routes } from '@angular/router';
-
-@Component({
-    selector: 'app-dashboard',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: 'hello',
-    styleUrls: [],
-})
-export class DashboardComponent {}
+import { DashboardComponent } from './modules/dashboard/dashboard.component';
 
 export const APP_ROUTES: Routes = [
     {

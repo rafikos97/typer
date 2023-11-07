@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 import {
     fetchUserInformation,
     updateUserInformation,
