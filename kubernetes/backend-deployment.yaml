@@ -21,3 +21,9 @@ spec:
           envFrom:
             - secretRef:
                 name: db-secret
+          volumeMounts:
+            - mountPath: /app/batchfiles
+              name: batchfiles-volume
+      volumes:
+        - name: batchfiles-volume
+          emptyDir: {}
