@@ -9,9 +9,13 @@ services:
     build: ./
     ports:
       - '8080:8080'
+    volumes:
+      - batchfiles:/app/batchfiles
     depends_on:
       - typer-db
     environment:
       DB_ADDRESS: typer-db
     env_file:
       - ./env/db.env
+volumes:
+  batchfiles:
