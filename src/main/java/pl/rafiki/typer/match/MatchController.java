@@ -2,6 +2,7 @@ package pl.rafiki.typer.match;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,32 +20,38 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    @GetMapping(path = "/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/all")
     public List<Match> getMatches() {
         return matchService.getMatches();
     }
 
-    @GetMapping(path = "/admin/{matchId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/{matchId}")
     public Match getMatch(@PathVariable(name = "matchId") Long matchId) {
         return matchService.getMatch(matchId);
     }
 
-    @PostMapping(path = "/admin/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/add")
     public void addNewMatch(@RequestBody @Valid Match match) {
         matchService.addNewMatch(match);
     }
 
-    @PutMapping(path = "/admin/{matchId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(path = "/{matchId}")
     public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
         matchService.putUpdateMatch(matchId, match);
     }
 
-    @PatchMapping(path = "/admin/{matchId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(path = "/{matchId}")
     public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO dto) {
         matchService.patchUpdateMatch(matchId, dto);
     }
 
-    @PostMapping(path = "/admin/{matchId}/finish")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/{matchId}/finish")
     public void finishMatch(@PathVariable(name = "matchId") Long matchId) {
         matchService.finishMatch(matchId);
     }

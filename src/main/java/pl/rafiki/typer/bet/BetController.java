@@ -2,6 +2,7 @@ package pl.rafiki.typer.bet;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,27 +20,32 @@ public class BetController {
         this.betService = betService;
     }
 
-    @PostMapping(path = "/user/{userId}/{matchId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping(path = "/{userId}/{matchId}")
     public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid Bet bet) {
         betService.addNewBet(userId, matchId, bet);
     }
 
-    @GetMapping(path = "/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/all")
     public List<BetDTO> getBets() {
         return betService.getBets();
     }
 
-    @GetMapping(path = "/user/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(path = "/{userId}")
     public List<BetDTO> getUserBets(@PathVariable(name = "userId") Long userId) {
         return betService.getBetsByUserId(userId);
     }
 
-    @GetMapping(path = "/admin/match/{matchId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/match/{matchId}")
     public List<BetDTO> getBetsByMatchId(@PathVariable(name = "matchId") Long matchId) {
         return betService.getBetsByMatchId(matchId);
     }
 
-    @PutMapping(path = "/user/{betId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PutMapping(path = "/{betId}")
     public void updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid Bet bet) {
         betService.updateBet(betId, bet);
     }

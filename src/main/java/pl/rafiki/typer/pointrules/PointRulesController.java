@@ -2,6 +2,7 @@ package pl.rafiki.typer.pointrules;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,26 @@ public class PointRulesController {
         this.pointRulesService = pointRulesService;
     }
 
-    @GetMapping(path = "/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/all")
     public List<PointRules> getAllPointRules() {
         return pointRulesService.getAllPointRules();
     }
 
-    @GetMapping(path = "/admin/{pointrulesId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/{pointrulesId}")
     public PointRules getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
         return pointRulesService.getPointRules(pointRulesId);
     }
 
-    @PostMapping(path = "/admin/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/add")
     public void addNewPointRules(@RequestBody @Valid PointRules pointRules) {
         pointRulesService.addNewPointRules(pointRules);
     }
 
-    @PutMapping(path = "/admin/{pointrulesId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(path = "/{pointrulesId}")
     public void updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRules pointRules) {
         pointRulesService.updatePointRules(pointrulesId, pointRules);
     }

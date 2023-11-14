@@ -2,6 +2,7 @@ package pl.rafiki.typer.user;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,32 +19,38 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/all")
     public List<UserDTO> getUsers() {
         return userService.getUsers();
     }
 
-    @GetMapping(path = "/user/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(path = "/{userId}")
     public UserDTO getUser(@PathVariable("userId") Long userId) {
         return userService.getUser(userId);
     }
 
-    @PostMapping(path = "/admin/register")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/register")
     public void registerUser(@RequestBody @Valid User user) {
         userService.registerUser(user);
     }
 
-    @PutMapping(path = "/user/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PutMapping(path = "/{userId}")
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
         userService.putUpdateUser(userId, user);
     }
 
-    @PatchMapping(path = "/user/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PatchMapping(path = "/{userId}")
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO dto) {
         userService.patchUpdateUser(userId, dto);
     }
 
-    @PatchMapping(path = "/user/{userId}/password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PatchMapping(path = "/{userId}/password")
     public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordDTO dto) {
         userService.updatePassword(userId, dto);
     }

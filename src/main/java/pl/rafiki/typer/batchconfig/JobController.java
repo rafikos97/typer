@@ -7,6 +7,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,8 @@ public class JobController {
     private final String TEMP_STORAGE = "/app/batchfiles";
 
 
-    @PostMapping("/admin/importData")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/importData")
     public void importCsvToDBJob(@RequestParam("file") MultipartFile multipartFile) {
 
         try {

@@ -13,7 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +33,8 @@ import pl.rafiki.typer.security.utils.RSAKeyProperties;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
     private final RSAKeyProperties keys;
     @Autowired
@@ -57,8 +61,6 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(antMatcher("/**/auth/**")).permitAll();
-                    auth.requestMatchers(antMatcher("/**/admin/**")).hasRole("ADMIN");
-                    auth.requestMatchers(antMatcher("/**/user/**")).hasAnyRole("ADMIN", "USER");
                     auth.anyRequest().authenticated();
                 });
 
