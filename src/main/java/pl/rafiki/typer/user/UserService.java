@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
+import pl.rafiki.typer.security.services.TokenService;
 import pl.rafiki.typer.user.exceptions.*;
 
 import java.util.*;
@@ -21,6 +22,8 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    @Autowired
+    private TokenService tokenService;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
@@ -45,6 +48,15 @@ public class UserService implements UserDetailsService {
         }
 
         User user = userOptional.get();
+
+        return UserMapper.INSTANCE.userToUserDto(user);
+    }
+
+    public UserDTO getUser(String token) {
+        String username = tokenService.getUsernameFromToken(token);
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(() -> new UserDoesNotExistException("User with username: " + username + " does not exist!"));
 
         return UserMapper.INSTANCE.userToUserDto(user);
     }
