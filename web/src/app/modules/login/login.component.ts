@@ -9,12 +9,11 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { loginSuccess } from '../main/modules/authentication/+state/authentication.actions';
-import { AnyFn } from '@ngrx/store/src/selector';
+import { LoginResponse } from './models/login-response.model';
 
 @Component({
     standalone: true,
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
     selector: 'app-login',
     providers: [LoginService],
     imports: [ReactiveFormsModule],
@@ -33,7 +32,7 @@ export class LoginComponent {
         const { username, password } = this.loginForm.value;
         this.loginService
             .login(username || '', password || '')
-            .subscribe((response: any) => {
+            .subscribe((response: LoginResponse) => {
                 this.router.navigateByUrl('/');
                 const token = response['access_token'];
                 const expires = response['expires_in'];
