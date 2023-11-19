@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LoginResponseDTO {
-    private String access_token;
-    private String expires_in;
-    private String token_type;
+    private String accessToken;
+    private String expiresIn;
+    private String tokenType;
+    private String scope;
 }
