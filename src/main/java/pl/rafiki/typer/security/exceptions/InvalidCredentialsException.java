@@ -10,7 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 @Setter
 public class InvalidCredentialsException extends AuthenticationException {
     private final String ERROR_CODE = "INVALID_CREDENTIALS";
-    private final HttpStatusCode STATUS_CODE = HttpStatus.INTERNAL_SERVER_ERROR;
+    private final HttpStatusCode STATUS_CODE = HttpStatus.UNAUTHORIZED;
 
     public InvalidCredentialsException(String message) {
         super(message);

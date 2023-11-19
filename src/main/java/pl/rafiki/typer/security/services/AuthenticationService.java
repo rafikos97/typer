@@ -2,8 +2,6 @@ package pl.rafiki.typer.security.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,8 +34,9 @@ public class AuthenticationService {
             String token = jwt.getTokenValue();
             Instant endOfTokenValidity = (Instant) jwt.getClaims().get("exp");
             long expirationTimeInSeconds = Duration.between(Instant.now(), endOfTokenValidity).getSeconds();
+            String scope = jwt.getClaims().get("roles").toString();
 
-            return ResponseEntity.ok(new LoginResponseDTO(token, String.valueOf(expirationTimeInSeconds), "bearer"));
+            return ResponseEntity.ok(new LoginResponseDTO(token, String.valueOf(expirationTimeInSeconds), "bearer", scope));
         } catch (AuthenticationException authenticationException) {
             throw new InvalidCredentialsException("Invalid credentials!");
         }

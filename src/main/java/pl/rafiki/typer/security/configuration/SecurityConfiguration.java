@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,10 +36,15 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private final RSAKeyProperties keys;
-    @Autowired
-    public SecurityConfiguration(RSAKeyProperties keys) {
+    private final CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler;
+    private final CustomeBearerTokenAuthenticationEntryPoint customeBearerTokenAuthenticationEntryPoint;
+
+    public SecurityConfiguration(RSAKeyProperties keys, CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler, CustomeBearerTokenAuthenticationEntryPoint customeBearerTokenAuthenticationEntryPoint) {
         this.keys = keys;
+        this.customBearerTokenAccessDeniedHandler = customBearerTokenAccessDeniedHandler;
+        this.customeBearerTokenAuthenticationEntryPoint = customeBearerTokenAuthenticationEntryPoint;
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -68,8 +72,13 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer((oauth2) -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .jwt(Customizer.withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .jwt(Customizer.withDefaults())
+                        .authenticationEntryPoint(this.customeBearerTokenAuthenticationEntryPoint)
+                        .accessDeniedHandler(this.customBearerTokenAccessDeniedHandler)
+                )
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
