@@ -53,15 +53,16 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO getUser(String token) {
-        String username = tokenService.getUsernameFromToken(token);
+        String tokenWithoutPrefix = token.substring(7);
+        Long userId = tokenService.getUserIdFromToken(tokenWithoutPrefix);
         User user = userRepository
-                .findUserByUsername(username)
-                .orElseThrow(() -> new UserDoesNotExistException("User with username: " + username + " does not exist!"));
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
         return UserMapper.INSTANCE.userToUserDto(user);
     }
 
-    public User registerUser(User user) {
+    public void registerUser(User user) {
         boolean existsByEmail = userRepository.existsByEmail(user.getEmail());
         if (existsByEmail) {
             throw new EmailAddressAlreadyTakenException("Email address already taken!");
@@ -85,7 +86,7 @@ public class UserService implements UserDetailsService {
         user.setAuthorities(authorities);
         user.setPassword(encodedPassword);
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public void putUpdateUser(Long userId, User user) {
@@ -96,13 +97,27 @@ public class UserService implements UserDetailsService {
 
         User existingUser = userOptional.get();
 
+        processPutUpdateUser(user, existingUser);
+    }
+
+    public void putUpdateUserByToken(String token, User user) {
+        String tokenWithoutPrefix = token.substring(7);
+        Long userId = tokenService.getUserIdFromToken(tokenWithoutPrefix);
+        User existingUser = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
+
+        processPutUpdateUser(user, existingUser);
+    }
+
+    private void processPutUpdateUser(User user, User existingUser) {
         String firstNameFromUpdate = user.getFirstName();
-        if (firstNameFromUpdate != null && firstNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
+        if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
             existingUser.setFirstName(firstNameFromUpdate);
         }
 
         String lastNameFromUpdate = user.getLastName();
-        if (lastNameFromUpdate != null && lastNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
+        if (lastNameFromUpdate != null && !lastNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
             existingUser.setLastName(lastNameFromUpdate);
         }
 
@@ -123,7 +138,7 @@ public class UserService implements UserDetailsService {
         boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
         if (existsByUsername) {
             throw new UsernameAlreadyTakenException("Username already taken!");
-        } else if (usernameFromUpdate != null && usernameFromUpdate.length() > 0 && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
+        } else if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
             existingUser.setUsername(usernameFromUpdate);
         }
 
@@ -139,12 +154,12 @@ public class UserService implements UserDetailsService {
         User existingUser = userOptional.get();
 
         String firstNameFromUpdate = dto.getFirstName();
-        if (firstNameFromUpdate != null && firstNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
+        if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
             existingUser.setFirstName(firstNameFromUpdate);
         }
 
         String lastNameFromUpdate = dto.getLastName();
-        if (lastNameFromUpdate != null && lastNameFromUpdate.length() > 0 && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
+        if (lastNameFromUpdate != null && !lastNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
             existingUser.setLastName(lastNameFromUpdate);
         }
 
@@ -168,7 +183,7 @@ public class UserService implements UserDetailsService {
             boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
             if (existsByUsername) {
                 throw new UsernameAlreadyTakenException("Username already taken!");
-            } else if (usernameFromUpdate.length() > 0 && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
+            } else if (!usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
                 existingUser.setUsername(usernameFromUpdate);
             }
         }

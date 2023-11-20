@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+import pl.rafiki.typer.user.User;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -24,10 +25,13 @@ public class TokenService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
+        Object principal = auth.getPrincipal();
+        Long userId = ((User) principal).getId();
+
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .subject(auth.getName())
+                .subject(userId.toString())
                 .claim("roles", scope)
                 .expiresAt(Instant.now().plusSeconds(10800))
                 .build();
@@ -35,7 +39,7 @@ public class TokenService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims));
     }
 
-    public String getUsernameFromToken(String jwtToken) {
-        return jwtDecoder.decode(jwtToken).getSubject();
+    public Long getUserIdFromToken(String jwtToken) {
+        return Long.parseLong(jwtDecoder.decode(jwtToken).getSubject());
     }
 }
