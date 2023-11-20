@@ -1,4 +1,4 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { UserPanelComponent } from './user-panel.component';
 import { UserPanelEffects } from './+state/user-panel.effects';
@@ -8,7 +8,7 @@ import { StoreModule } from '@ngrx/store';
 import { userPanelFeatureKey } from './+state/user-panel.feature-key';
 import { UserPanelService } from './services/user-panel/user-panel.service';
 
-export const USER_PANEL_ROUTES: Route[] = [
+export default [
     {
         path: '',
         children: [{ path: '', component: UserPanelComponent }],
@@ -20,4 +20,4 @@ export const USER_PANEL_ROUTES: Route[] = [
             importProvidersFrom(EffectsModule.forFeature([UserPanelEffects])),
         ],
     },
-];
+] as Routes;
