@@ -59,19 +59,5 @@ public class ExceptionHandlerAdvice {
 
         return new ResponseEntity<>(errorResponse, FORBIDDEN);
     }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ResponseEntity<ErrorResponse> handleOtherException() {
-        ErrorResponse errorResponse = ErrorResponse
-                .builder()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
-                .errorCode("OTHER_ERROR")
-                .message("A server internal error occurs!")
-                .timestamp(LocalDateTime.now())
-                .build();
-
-        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
-    }
 }
 

@@ -1,7 +1,5 @@
 package pl.rafiki.typer.user;
 
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.nimbusds.jose.shaded.gson.JsonObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,11 +32,9 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @GetMapping(path = "/token")
-    public UserDTO getUser(@RequestBody String token) {
-        JsonObject data = new Gson().fromJson(token, JsonObject.class);
-        String parsedToken = data.get("token").getAsString();
-        return userService.getUser(parsedToken);
+    @GetMapping()
+    public UserDTO getUser(@RequestHeader("Authorization") String bearerToken) {
+        return userService.getUser(bearerToken);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -51,6 +47,12 @@ public class UserController {
     @PutMapping(path = "/{userId}")
     public void updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
         userService.putUpdateUser(userId, user);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PutMapping()
+    public void updateUser(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid User user) {
+        userService.putUpdateUserByToken(bearerToken, user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
