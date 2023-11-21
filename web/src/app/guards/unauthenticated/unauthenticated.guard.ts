@@ -1,12 +1,18 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs/operators';
-import { selectUserAuthenticated } from 'src/app/modules/main/modules/authentication/+state/authentication.selectors';
+import { map, tap } from 'rxjs/operators';
+import { selectUserAuthenticated } from '../../modules/main/modules/authentication/+state/authentication.selectors';
 
 export const unauthenticatedGuard: CanActivateFn = () => {
     const store = inject(Store);
-    return store
-        .select(selectUserAuthenticated)
-        .pipe(map((authenticated) => !authenticated));
+    const router = inject(Router);
+    return store.select(selectUserAuthenticated).pipe(
+        tap((authenticated) => {
+            if (authenticated) {
+                router.navigateByUrl('/main/home');
+            }
+        }),
+        map((authenticated) => !authenticated),
+    );
 };

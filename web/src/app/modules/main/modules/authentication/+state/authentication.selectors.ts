@@ -10,5 +10,5 @@ export const selectAuthentication = createFeatureSelector<AuthenticationState>(
 
 export const selectUserAuthenticated = createSelector(
     selectAuthentication,
-    (authentication) => !!authentication.token,
+    (authentication) => !!authentication?.token,
 );

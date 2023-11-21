@@ -8,6 +8,9 @@ import {
     authenticationFeatureKey,
     authenticationReducer,
 } from './modules/main/modules/authentication/+state/authentication.reducer';
+import { AuthenticationService } from './modules/main/modules/authentication/services/authentication/authentication.service';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthenticationEffects } from './modules/main/modules/authentication/+state/authentication.effects';
 
 export const APP_ROUTES: Routes = [
     {
@@ -20,6 +23,10 @@ export const APP_ROUTES: Routes = [
                     authenticationReducer,
                 ),
             ),
+            importProvidersFrom(
+                EffectsModule.forFeature(AuthenticationEffects),
+            ),
+            AuthenticationService,
         ],
         children: [
             {
@@ -27,6 +34,7 @@ export const APP_ROUTES: Routes = [
                 component: LoginComponent,
                 title: 'Login',
                 canActivate: [unauthenticatedGuard],
+                canDeactivate: [authenticatedGuard],
             },
             {
                 path: 'main',
@@ -38,6 +46,6 @@ export const APP_ROUTES: Routes = [
     {
         path: '**',
         pathMatch: 'full',
-        redirectTo: '',
+        redirectTo: '/login',
     },
 ];

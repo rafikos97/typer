@@ -1,10 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
 import {
     fetchUserInformationSuccess,
-    updateUserInformationFailure,
     updateUserInformationSuccess,
 } from './user-panel.actions';
-import { HttpErrorResponse } from '@angular/common/http';
 
 export interface UserPanelState {
     firstName: string;
@@ -12,7 +10,6 @@ export interface UserPanelState {
     email: string;
     id: string;
     username: string;
-    error?: HttpErrorResponse;
 }
 
 export const initialUserPanelState: UserPanelState = {
@@ -21,7 +18,6 @@ export const initialUserPanelState: UserPanelState = {
     email: '',
     id: '',
     username: '',
-    error: undefined,
 };
 
 export const userPanelReducer = createReducer(
@@ -34,8 +30,4 @@ export const userPanelReducer = createReducer(
             ...userInformation,
         }),
     ),
-    on(updateUserInformationFailure, (state, { error }) => ({
-        ...state,
-        error,
-    })),
 );

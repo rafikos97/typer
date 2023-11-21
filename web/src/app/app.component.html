@@ -1,59 +1,53 @@
-<header>
-    <nav class="flex items-center justify-between flex-wrap p-6">
-        <ul class="flex">
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/login']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >Login</a
-                >
-            </li>
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/main/home']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >Dashboard</a
-                >
-            </li>
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/main/home']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >Item 2</a
-                >
-            </li>
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/main/home']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >Item 3</a
-                >
-            </li>
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/main/user-panel']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >User</a
-                >
-            </li>
-            <li class="mr-6">
-                <a
-                    class="text-blue-500 hover:text-blue-800"
-                    [routerLink]="['/admin']"
-                    [routerLinkActive]="routerActiveClassName"
-                    >Admin</a
-                >
-            </li>
-        </ul>
-    </nav>
-</header>
+<div *ngIf="authenticated$ | async">
+    <header>
+        <nav class="flex items-center justify-between flex-wrap p-6">
+            <ul class="flex">
+                <li class="mr-6">
+                    <a
+                        class="text-blue-500 hover:text-blue-800"
+                        [routerLink]="['/main/home']"
+                        [routerLinkActive]="routerActiveClassName"
+                        >Dashboard</a
+                    >
+                </li>
+                <li class="mr-6">
+                    <a
+                        class="text-blue-500 hover:text-blue-800"
+                        [routerLink]="['/main/123']"
+                        [routerLinkActive]="routerActiveClassName"
+                        >Item 2</a
+                    >
+                </li>
+                <li class="mr-6">
+                    <a
+                        class="text-blue-500 hover:text-blue-800"
+                        [routerLink]="['/main/456']"
+                        [routerLinkActive]="routerActiveClassName"
+                        >Item 3</a
+                    >
+                </li>
+                <li class="mr-6">
+                    <a
+                        class="text-blue-500 hover:text-blue-800"
+                        [routerLink]="['/main/user-panel']"
+                        [routerLinkActive]="routerActiveClassName"
+                        >User</a
+                    >
+                </li>
+                <li class="mr-6">
+                    <a
+                        class="text-blue-500 hover:text-blue-800"
+                        [routerLink]="['/main/admin']"
+                        [routerLinkActive]="routerActiveClassName"
+                        >Admin</a
+                    >
+                </li>
+            </ul>
+        </nav>
+    </header>
+</div>
 <main>
-    <section class="w-80 mx-auto">
+    <section class="mx-auto">
         <router-outlet></router-outlet>
     </section>
 </main>

@@ -15,5 +15,8 @@ export const initialAuthenticationState: AuthenticationState = {
 
 export const authenticationReducer = createReducer(
     initialAuthenticationState,
-    on(loginSuccess, (state, { expires, token }) => ({ expires, token })),
+    on(loginSuccess, (_, { expires, token }) => {
+        console.log(expires, token);
+        return { expires, token };
+    }),
 );
