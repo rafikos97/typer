@@ -31,8 +31,8 @@ public class ScoreboardService {
     }
 
     public void addScore(Long userId, Long tournamentId, int score, int winner) {
-        Optional<Scoreboard> scoreOptional = scoreboardRepository.findByUserIdAndTournamentId(userId, tournamentId);
-        if (scoreOptional.isEmpty()) {
+        Optional<Scoreboard> scoreboardOptional = scoreboardRepository.findByUserIdAndTournamentId(userId, tournamentId);
+        if (scoreboardOptional.isEmpty()) {
             Optional<User> userOptional = userRepository.findById(userId);
             if (userOptional.isEmpty()) {
                 throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
@@ -47,10 +47,10 @@ public class ScoreboardService {
 
             int totalPoints = score + winner;
 
-            Scoreboard scoreboardToSave = new Scoreboard(user, tournament, score, winner, totalPoints);
+            Scoreboard scoreboardToSave = new Scoreboard(user, tournament, winner, score, totalPoints);
             scoreboardRepository.save(scoreboardToSave);
         } else {
-            Scoreboard existingScoreboard = scoreOptional.get();
+            Scoreboard existingScoreboard = scoreboardOptional.get();
             existingScoreboard.setScores(existingScoreboard.getScores() == null ? score : existingScoreboard.getScores() + score);
             existingScoreboard.setWinners(existingScoreboard.getWinners() == null ? winner : existingScoreboard.getWinners() + winner);
             existingScoreboard.setTotalPoints(existingScoreboard.getTotalPoints() == null ? score + winner : existingScoreboard.getTotalPoints() + score + winner);
