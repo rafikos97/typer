@@ -42,6 +42,7 @@ export class UserPanelComponent implements OnInit {
         .pipe(takeUntilDestroyed())
         .subscribe(
             ({ username, firstName, lastName, email }: UserInformation) => {
+                console.log(username);
                 this.userForm.setValue({
                     username,
                     firstName,
