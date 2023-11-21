@@ -45,7 +45,6 @@ public class SecurityConfiguration {
         this.customeBearerTokenAuthenticationEntryPoint = customeBearerTokenAuthenticationEntryPoint;
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -63,6 +62,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(antMatcher("/**/auth/**")).permitAll();
                     auth.anyRequest().authenticated();
