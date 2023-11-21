@@ -21,11 +21,15 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     ): Observable<HttpEvent<any>> {
         return this.store.select(selectAuthentication).pipe(
             first(),
-            switchMap((auth: AuthenticationState) => {
+            switchMap(({ accessToken }: AuthenticationState) => {
+                if (!accessToken) {
+                    return next.handle(req);
+                }
+
                 return next.handle(
                     req.clone({
                         setHeaders: {
-                            Authorization: auth.token,
+                            Authorization: accessToken!,
                         },
                     }),
                 );

@@ -17,11 +17,9 @@ export class AuthenticationEffects {
             switchMap(({ username, password }) =>
                 this.authenticationService.login(username, password),
             ),
-            switchMap((loginResponse) => {
-                const token = loginResponse['access_token'];
-                const expires = loginResponse['expires_in'];
-                return [loginSuccess({ token, expires })];
-            }),
+            switchMap(({ accessToken, scope, expiresIn, tokenType }) => [
+                loginSuccess({ accessToken, expiresIn, tokenType, scope }),
+            ]),
         ),
     );
 

@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { Scope } from '../models/scope.model';
 
 export const login = createAction(
     '[Login]',
@@ -7,5 +8,10 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
     '[Login] Success',
-    props<{ token: string; expires: number }>(),
+    props<{
+        accessToken: string;
+        expiresIn: number;
+        scope: Scope;
+        tokenType: string;
+    }>(),
 );
