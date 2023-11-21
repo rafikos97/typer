@@ -50,20 +50,17 @@ public class Scoreboard {
     private Tournament tournament;
 
     @Column(
-            name = "winners",
-            updatable = false
+            name = "winners"
     )
     private Integer winners;
 
     @Column(
-            name = "scores",
-            updatable = false
+            name = "scores"
     )
     private Integer scores;
 
     @Column(
-            name = "totalPoints",
-            updatable = false
+            name = "totalPoints"
     )
     private Integer totalPoints;
 

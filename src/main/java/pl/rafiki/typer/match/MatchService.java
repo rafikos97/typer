@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.BetService;
+import pl.rafiki.typer.match.exceptions.MatchCannotBeFinishedDueToNullScoreException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
 import pl.rafiki.typer.tournament.Tournament;
@@ -21,7 +22,6 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final TournamentRepository tournamentRepository;
     private final BetService betService;
-
 
     @Autowired
     public MatchService(MatchRepository matchRepository, TournamentRepository tournamentRepository, BetService betService) {
@@ -71,12 +71,12 @@ public class MatchService {
         }
 
         String firstTeamNameFromUpdate = match.getFirstTeamName();
-        if (firstTeamNameFromUpdate != null && firstTeamNameFromUpdate.length() > 0 && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
+        if (firstTeamNameFromUpdate != null && !firstTeamNameFromUpdate.isEmpty() && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
             existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
         }
 
         String secondTeamNameFromUpdate = match.getSecondTeamName();
-        if (secondTeamNameFromUpdate != null && secondTeamNameFromUpdate.length() > 0 && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
+        if (secondTeamNameFromUpdate != null && !secondTeamNameFromUpdate.isEmpty() && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
             existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
         }
 
@@ -121,12 +121,12 @@ public class MatchService {
         }
 
         String firstTeamNameFromUpdate = dto.getFirstTeamName();
-        if (firstTeamNameFromUpdate != null && firstTeamNameFromUpdate.length() > 0 && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
+        if (firstTeamNameFromUpdate != null && !firstTeamNameFromUpdate.isEmpty() && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
             existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
         }
 
         String secondTeamNameFromUpdate = dto.getSecondTeamName();
-        if (secondTeamNameFromUpdate != null && secondTeamNameFromUpdate.length() > 0 && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
+        if (secondTeamNameFromUpdate != null && !secondTeamNameFromUpdate.isEmpty() && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
             existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
         }
 
@@ -156,6 +156,10 @@ public class MatchService {
         }
 
         Match existingMatch = matchOptional.get();
+
+        if (existingMatch.getFirstTeamScore() == null || existingMatch.getSecondTeamScore() == null) {
+            throw new MatchCannotBeFinishedDueToNullScoreException("Match cannot be finished, because the score is incomplete!");
+        }
 
         if (existingMatch.isFinished()) {
             throw new MatchIsAlreadyFinishedException("Match is already finished!");
