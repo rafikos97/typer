@@ -14,10 +14,10 @@ export class UserPanelService {
 
     updateUserInformation(
         userInformation: UserInformation,
-        userId: string,
+        userId: number,
     ): Observable<UserInformation> {
         return this.httpClient.put<UserInformation>(
-            `${userInformationApiUrl}/${userId}`,
+            `${userInformationApiUrl}${userId}`,
             userInformation,
         );
     }

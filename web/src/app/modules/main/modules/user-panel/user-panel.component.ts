@@ -11,7 +11,7 @@ import {
     updateUserInformation,
 } from './+state/user-panel.actions';
 import { selectUserInformation } from './+state/user-panel.selectors';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { UserInformation } from './models/user-information.model';
 import {
     FormControl,
@@ -25,7 +25,7 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-user-panel',
     standalone: true,
-    imports: [AsyncPipe, JsonPipe, ReactiveFormsModule],
+    imports: [AsyncPipe, ReactiveFormsModule],
 })
 export class UserPanelComponent implements OnInit {
     private readonly store = inject(Store);

@@ -8,7 +8,7 @@ export interface UserPanelState {
     firstName: string;
     lastName: string;
     email: string;
-    id: string;
+    id: number;
     username: string;
 }
 
@@ -16,7 +16,7 @@ export const initialUserPanelState: UserPanelState = {
     firstName: '',
     lastName: '',
     email: '',
-    id: '',
+    id: 0,
     username: '',
 };
 

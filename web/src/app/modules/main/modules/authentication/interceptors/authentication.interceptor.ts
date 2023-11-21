@@ -1,6 +1,7 @@
 import {
     HttpEvent,
     HttpHandler,
+    HttpHeaders,
     HttpInterceptor,
     HttpRequest,
 } from '@angular/common/http';
@@ -29,7 +30,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
                 return next.handle(
                     req.clone({
                         setHeaders: {
-                            Authorization: accessToken!,
+                            Authorization: `Bearer ${accessToken}`,
                         },
                     }),
                 );

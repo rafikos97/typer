@@ -6,7 +6,7 @@ import {
     updateUserInformation,
     updateUserInformationSuccess,
 } from './user-panel.actions';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { first, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
 import { UserInformation } from '../models/user-information.model';
 import { Store } from '@ngrx/store';
