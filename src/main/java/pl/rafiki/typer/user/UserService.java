@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.security.services.TokenService;
@@ -89,28 +88,25 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void putUpdateUser(Long userId, User user) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
-        }
+    public UserDTO putUpdateUser(Long userId, User user) {
+        User existingUser = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
-        User existingUser = userOptional.get();
-
-        processPutUpdateUser(user, existingUser);
+        return processPutUpdateUser(user, existingUser);
     }
 
-    public void putUpdateUserByToken(String token, User user) {
+    public UserDTO putUpdateUserByToken(String token, User user) {
         String tokenWithoutPrefix = token.substring(7);
         Long userId = tokenService.getUserIdFromToken(tokenWithoutPrefix);
         User existingUser = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
-        processPutUpdateUser(user, existingUser);
+        return processPutUpdateUser(user, existingUser);
     }
 
-    private void processPutUpdateUser(User user, User existingUser) {
+    private UserDTO processPutUpdateUser(User user, User existingUser) {
         String firstNameFromUpdate = user.getFirstName();
         if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
             existingUser.setFirstName(firstNameFromUpdate);
@@ -126,32 +122,35 @@ public class UserService implements UserDetailsService {
 
         if (!isEmailValid(emailFromUpdate)) {
             throw new InvalidEmailException("Provided email is invalid!");
-        } else if (existsByEmail) {
-            throw new EmailAddressAlreadyTakenException("Email address already taken!");
         }
 
         if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
-            existingUser.setEmail(emailFromUpdate);
+            if (existsByEmail) {
+                throw new EmailAddressAlreadyTakenException("Email address already taken!");
+            } else {
+                existingUser.setEmail(emailFromUpdate);
+            }
         }
 
         String usernameFromUpdate = user.getUsername();
         boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
-        if (existsByUsername) {
-            throw new UsernameAlreadyTakenException("Username already taken!");
-        } else if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
-            existingUser.setUsername(usernameFromUpdate);
+
+        if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
+            if (existsByUsername) {
+                throw new UsernameAlreadyTakenException("Username already taken!");
+            } else {
+                existingUser.setUsername(usernameFromUpdate);
+            }
         }
 
         userRepository.save(existingUser);
+        return UserMapper.INSTANCE.userToUserDto(existingUser);
     }
 
-    public void patchUpdateUser(Long userId, UserDTO dto) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
-        }
-
-        User existingUser = userOptional.get();
+    public UserDTO patchUpdateUser(Long userId, UserDTO dto) {
+        User existingUser = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
         String firstNameFromUpdate = dto.getFirstName();
         if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
@@ -164,41 +163,40 @@ public class UserService implements UserDetailsService {
         }
 
         String emailFromUpdate = dto.getEmail();
-        if (emailFromUpdate != null) {
-            boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
+        boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
 
-            if (!isEmailValid(emailFromUpdate)) {
-                throw new InvalidEmailException("Provided email is invalid!");
-            } else if (existsByEmail) {
+        if (!isEmailValid(emailFromUpdate)) {
+            throw new InvalidEmailException("Provided email is invalid!");
+        }
+
+        if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
+            if (existsByEmail) {
                 throw new EmailAddressAlreadyTakenException("Email address already taken!");
-            }
-
-            if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
+            } else {
                 existingUser.setEmail(emailFromUpdate);
             }
         }
 
         String usernameFromUpdate = dto.getUsername();
-        if (usernameFromUpdate != null) {
-            boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
+        boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
+
+        if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
             if (existsByUsername) {
                 throw new UsernameAlreadyTakenException("Username already taken!");
-            } else if (!usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
+            } else {
                 existingUser.setUsername(usernameFromUpdate);
             }
         }
 
         userRepository.save(existingUser);
+        return UserMapper.INSTANCE.userToUserDto(existingUser);
     }
 
     @Transactional
     public void updatePassword(Long userId, PasswordDTO dto) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
-        }
-
-        User user = userOptional.get();
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new IncorrectPasswordException("Old password is incorrect!");
@@ -210,10 +208,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("In the user details service");
-
-        Optional<User> userOptional = userRepository.findUserByUsername(username);
-
-        return userOptional.orElseThrow(() -> new InvalidCredentialsException("Invalid credentials!"));
+        return userRepository
+                .findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
     }
 }

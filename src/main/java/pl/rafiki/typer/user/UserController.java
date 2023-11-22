@@ -45,20 +45,20 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{userId}")
-    public void updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
-        userService.putUpdateUser(userId, user);
+    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
+        return userService.putUpdateUser(userId, user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping()
-    public void updateUser(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid User user) {
-        userService.putUpdateUserByToken(bearerToken, user);
+    public UserDTO updateUser(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid User user) {
+        return userService.putUpdateUserByToken(bearerToken, user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(path = "/{userId}")
-    public void updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO dto) {
-        userService.patchUpdateUser(userId, dto);
+    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO dto) {
+        return userService.patchUpdateUser(userId, dto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
