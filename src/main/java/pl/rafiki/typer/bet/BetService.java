@@ -86,13 +86,10 @@ public class BetService {
         return mapToDTO(betList);
     }
 
-    public void updateBet(Long betId, Bet bet) {
-        Optional<Bet> betOptional = betRepository.findById(betId);
-        if (betOptional.isEmpty()) {
-            throw new BetDoesNotExistException("Bet with id: " + betId + " does not exist!");
-        }
-
-        Bet existingBet = betOptional.get();
+    public BetDTO updateBet(Long betId, Bet bet) {
+        Bet existingBet = betRepository
+                .findById(betId)
+                .orElseThrow(() -> new BetDoesNotExistException("Bet with id: " + betId + " does not exist!"));
 
         if (LocalDateTime.now().isAfter(existingBet.getMatch().getStartDateAndTime())) {
             throw new CannotUpdateBetBecauseMatchAlreadyStartedException("You cannot update bet, because match already started!");
@@ -109,17 +106,16 @@ public class BetService {
         }
 
         betRepository.save(existingBet);
+        return BetMapper.INSTANCE.betToBetDto(existingBet);
     }
 
     @Transactional
     public void closeBets(Long matchId) {
         List<Bet> bets = betRepository.findAllByMatchId(matchId);
 
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-        Match match = matchOptional.get();
+        Match match = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
         Integer pointsForScore = match.getTournament().getPointRules().getScore();
         Integer pointsForWinner = match.getTournament().getPointRules().getWinner();

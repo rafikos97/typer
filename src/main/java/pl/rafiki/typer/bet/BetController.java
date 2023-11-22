@@ -12,7 +12,6 @@ import java.util.List;
 @RequestMapping(path = "/typer/bet")
 @Validated
 public class BetController {
-
     private final BetService betService;
 
     @Autowired
@@ -46,7 +45,7 @@ public class BetController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{betId}")
-    public void updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid Bet bet) {
-        betService.updateBet(betId, bet);
+    public BetDTO updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid Bet bet) {
+        return betService.updateBet(betId, bet);
     }
 }
