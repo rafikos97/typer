@@ -1,10 +1,8 @@
-package pl.rafiki.typer.match.exceptions;
+package pl.rafiki.typer.match;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
-import pl.rafiki.typer.match.Match;
-import pl.rafiki.typer.match.MatchDTO;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MatchMapper {

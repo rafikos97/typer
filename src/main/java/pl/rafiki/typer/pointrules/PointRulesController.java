@@ -21,13 +21,13 @@ public class PointRulesController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<PointRules> getAllPointRules() {
+    public List<PointRulesDTO> getAllPointRules() {
         return pointRulesService.getAllPointRules();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{pointrulesId}")
-    public PointRules getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
+    public PointRulesDTO getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
         return pointRulesService.getPointRules(pointRulesId);
     }
 
@@ -39,7 +39,7 @@ public class PointRulesController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{pointrulesId}")
-    public void updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRules pointRules) {
-        pointRulesService.updatePointRules(pointrulesId, pointRules);
+    public PointRulesDTO updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRules pointRules) {
+        return pointRulesService.updatePointRules(pointrulesId, pointRules);
     }
 }

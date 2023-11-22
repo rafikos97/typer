@@ -7,11 +7,9 @@ import pl.rafiki.typer.pointrules.exceptions.PointRulesDoesNotExistException;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class PointRulesService {
-
     private final PointRulesRepository pointRulesRepository;
 
     @Autowired
@@ -19,16 +17,21 @@ public class PointRulesService {
         this.pointRulesRepository = pointRulesRepository;
     }
 
-    public List<PointRules> getAllPointRules() {
-        return pointRulesRepository.findAll();
+    public List<PointRulesDTO> getAllPointRules() {
+        List<PointRules> pointRulesList = pointRulesRepository.findAll();
+
+        return pointRulesList
+                .stream()
+                .map(PointRulesMapper.INSTANCE::mapPointRulesToPointRulesDto)
+                .toList();
     }
 
-    public PointRules getPointRules(Long pointRulesId) {
-        Optional<PointRules> pointRulesOptional = pointRulesRepository.findById(pointRulesId);
-        if (pointRulesOptional.isEmpty()) {
-            throw new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!");
-        }
-        return pointRulesOptional.get();
+    public PointRulesDTO getPointRules(Long pointRulesId) {
+        PointRules pointRules = pointRulesRepository
+                .findById(pointRulesId)
+                .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!"));
+
+        return PointRulesMapper.INSTANCE.mapPointRulesToPointRulesDto(pointRules);
     }
 
     public void addNewPointRules(PointRules pointRules) {
@@ -36,22 +39,23 @@ public class PointRulesService {
         if (existsByCode) {
             throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
         }
+
         pointRulesRepository.save(pointRules);
     }
 
-    public void updatePointRules(Long pointRulesId, PointRules pointRules) {
-        Optional<PointRules> pointRulesOptional = pointRulesRepository.findById(pointRulesId);
-        if (pointRulesOptional.isEmpty()) {
-            throw new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!");
-        }
-
-        PointRules existingPointRules = pointRulesOptional.get();
+    public PointRulesDTO updatePointRules(Long pointRulesId, PointRules pointRules) {
+        PointRules existingPointRules = pointRulesRepository
+                .findById(pointRulesId)
+                .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!"));
 
         String pointRulesCodeFromUpdate = pointRules.getPointRulesCode();
-        if (pointRulesRepository.existsByPointRulesCode(pointRulesCodeFromUpdate)) {
-            throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
-        } else if (pointRulesCodeFromUpdate != null && pointRulesCodeFromUpdate.length() > 0 && !Objects.equals(existingPointRules.getPointRulesCode(), pointRulesCodeFromUpdate)) {
-            existingPointRules.setPointRulesCode(pointRulesCodeFromUpdate);
+
+        if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingPointRules.getPointRulesCode(), pointRulesCodeFromUpdate)) {
+            if (pointRulesRepository.existsByPointRulesCode(pointRulesCodeFromUpdate)) {
+                throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
+            } else {
+                existingPointRules.setPointRulesCode(pointRulesCodeFromUpdate);
+            }
         }
 
         Integer scoreFromUpdate = pointRules.getScore();
@@ -65,5 +69,6 @@ public class PointRulesService {
         }
 
         pointRulesRepository.save(existingPointRules);
+        return PointRulesMapper.INSTANCE.mapPointRulesToPointRulesDto(existingPointRules);
     }
 }

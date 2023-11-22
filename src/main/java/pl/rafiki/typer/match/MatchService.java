@@ -7,7 +7,6 @@ import pl.rafiki.typer.bet.BetService;
 import pl.rafiki.typer.match.exceptions.MatchCannotBeFinishedDueToNullScoreException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
-import pl.rafiki.typer.match.exceptions.MatchMapper;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
