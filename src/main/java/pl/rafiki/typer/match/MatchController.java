@@ -22,13 +22,13 @@ public class MatchController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<Match> getMatches() {
+    public List<MatchDTO> getMatches() {
         return matchService.getMatches();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{matchId}")
-    public Match getMatch(@PathVariable(name = "matchId") Long matchId) {
+    public MatchDTO getMatch(@PathVariable(name = "matchId") Long matchId) {
         return matchService.getMatch(matchId);
     }
 
@@ -40,14 +40,14 @@ public class MatchController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{matchId}")
-    public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
-        matchService.putUpdateMatch(matchId, match);
+    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
+        return matchService.putUpdateMatch(matchId, match);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{matchId}")
-    public void updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO dto) {
-        matchService.patchUpdateMatch(matchId, dto);
+    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO dto) {
+        return matchService.patchUpdateMatch(matchId, dto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -7,6 +7,7 @@ import pl.rafiki.typer.bet.BetService;
 import pl.rafiki.typer.match.exceptions.MatchCannotBeFinishedDueToNullScoreException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
+import pl.rafiki.typer.match.exceptions.MatchMapper;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
@@ -14,7 +15,6 @@ import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class MatchService {
@@ -30,43 +30,48 @@ public class MatchService {
         this.betService = betService;
     }
 
-    public List<Match> getMatches() {
-        return matchRepository.findAll();
+    public List<MatchDTO> getMatches() {
+        List<Match> matchList = matchRepository.findAll();
+
+        return matchList
+                .stream()
+                .map(MatchMapper.INSTANCE::matchToMatchDto)
+                .toList();
     }
 
-    public Match getMatch(Long matchId) {
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-        return matchOptional.get();
+    public MatchDTO getMatch(Long matchId) {
+        Match match = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
+
+        return MatchMapper.INSTANCE.matchToMatchDto(match);
     }
 
     public void addNewMatch(Match match) {
         String tournamentCode = match.getTournamentCode();
-        Optional<Tournament> tournamentOptional = tournamentRepository.findByTournamentCode(tournamentCode);
-        if (tournamentOptional.isEmpty()) {
-            throw new TournamentDoesNotExistException("Tournament with code: " + tournamentCode + " does not exist!");
-        }
 
-        match.setTournament(tournamentOptional.get());
+        Tournament tournament = tournamentRepository
+                .findByTournamentCode(tournamentCode)
+                .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCode + " does not exist!"));
+
+        match.setTournament(tournament);
         matchRepository.save(match);
     }
 
-    public void putUpdateMatch(Long matchId, Match match) {
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-        Match existingMatch = matchOptional.get();
+    public MatchDTO putUpdateMatch(Long matchId, Match match) {
+        Match existingMatch = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
         String tournamentCodeFromUpdate = match.getTournamentCode();
+
         if (tournamentCodeFromUpdate != null) {
-            Optional<Tournament> tournamentOptional = tournamentRepository.findByTournamentCode(tournamentCodeFromUpdate);
-            if (tournamentOptional.isEmpty()) {
-                throw new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!");
-            } else if (!Objects.equals(tournamentOptional.get(), existingMatch.getTournament())) {
-                existingMatch.setTournament(tournamentOptional.get());
+            Tournament tournament = tournamentRepository
+                    .findByTournamentCode(tournamentCodeFromUpdate)
+                    .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!"));
+
+            if (!Objects.equals(tournament, existingMatch.getTournament())) {
+                existingMatch.setTournament(tournament);
             }
         }
 
@@ -100,23 +105,23 @@ public class MatchService {
         }
 
         matchRepository.save(existingMatch);
+        return MatchMapper.INSTANCE.matchToMatchDto(existingMatch);
     }
 
-    public void patchUpdateMatch(Long matchId, MatchDTO dto) {
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-        Match existingMatch = matchOptional.get();
+    public MatchDTO patchUpdateMatch(Long matchId, MatchDTO dto) {
+        Match existingMatch = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
         String tournamentCodeFromUpdate = dto.getTournamentCode();
 
         if (tournamentCodeFromUpdate != null) {
-            Optional<Tournament> tournamentOptional = tournamentRepository.findByTournamentCode(tournamentCodeFromUpdate);
-            if (tournamentOptional.isEmpty()) {
-                throw new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!");
-            } else if (!Objects.equals(tournamentOptional.get(), existingMatch.getTournament())) {
-                existingMatch.setTournament(tournamentOptional.get());
+            Tournament tournament = tournamentRepository
+                    .findByTournamentCode(tournamentCodeFromUpdate)
+                    .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!"));
+
+            if (!Objects.equals(tournament, existingMatch.getTournament())) {
+                existingMatch.setTournament(tournament);
             }
         }
 
@@ -146,16 +151,14 @@ public class MatchService {
         }
 
         matchRepository.save(existingMatch);
+        return MatchMapper.INSTANCE.matchToMatchDto(existingMatch);
     }
 
     @Transactional
     public void finishMatch(Long matchId) {
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-
-        Match existingMatch = matchOptional.get();
+        Match existingMatch = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
         if (existingMatch.getFirstTeamScore() == null || existingMatch.getSecondTeamScore() == null) {
             throw new MatchCannotBeFinishedDueToNullScoreException("Match cannot be finished, because the score is incomplete!");
