@@ -11,7 +11,6 @@ import pl.rafiki.typer.match.Match;
 public interface BetMapper {
     BetMapper INSTANCE = Mappers.getMapper(BetMapper.class);
 
-    @Mapping(source = "id", target = "betId")
     @Mapping(source = "match", target = "matchId", qualifiedByName = "matchToMatchId")
     BetDTO betToBetDto(Bet bet);
 
