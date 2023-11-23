@@ -1,6 +1,5 @@
 package pl.rafiki.typer.scoreboard;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +29,6 @@ public class Scoreboard {
     )
     private Long id;
 
-    @JsonProperty(value = "userId")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "user_id",
@@ -40,7 +38,6 @@ public class Scoreboard {
     )
     private User user;
 
-    @JsonProperty(value = "tournamentId")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "tournament_id",
@@ -70,13 +67,5 @@ public class Scoreboard {
         this.winners = winners;
         this.scores = scores;
         this.totalPoints = totalPoints;
-    }
-
-    public Long getUser() {
-        return user.getId();
-    }
-
-    public Long getTournament() {
-        return tournament.getId();
     }
 }

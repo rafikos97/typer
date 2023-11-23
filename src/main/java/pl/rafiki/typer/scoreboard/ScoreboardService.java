@@ -26,24 +26,25 @@ public class ScoreboardService {
         this.tournamentRepository = tournamentRepository;
     }
 
-    public List<Scoreboard> getScoreboard(Long tournamentId) {
-        return scoreboardRepository.findAllByTournamentId(tournamentId);
+    public List<ScoreboardDTO> getScoreboard(Long tournamentId) {
+        List<Scoreboard> scoreboardList = scoreboardRepository.findAllByTournamentId(tournamentId);
+
+        return scoreboardList
+                .stream()
+                .map(ScoreboardMapper.INSTANCE::scoreboardToScoreboardDto)
+                .toList();
     }
 
     public void addScore(Long userId, Long tournamentId, int score, int winner) {
         Optional<Scoreboard> scoreboardOptional = scoreboardRepository.findByUserIdAndTournamentId(userId, tournamentId);
         if (scoreboardOptional.isEmpty()) {
-            Optional<User> userOptional = userRepository.findById(userId);
-            if (userOptional.isEmpty()) {
-                throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
-            }
-            User user = userOptional.get();
+            User user = userRepository
+                    .findById(userId)
+                    .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
-            Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
-            if (tournamentOptional.isEmpty()) {
-                throw new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!");
-            }
-            Tournament tournament = tournamentOptional.get();
+            Tournament tournament = tournamentRepository
+                    .findById(tournamentId)
+                    .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!"));
 
             int totalPoints = score + winner;
 

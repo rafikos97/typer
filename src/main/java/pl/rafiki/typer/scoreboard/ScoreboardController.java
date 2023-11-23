@@ -22,7 +22,7 @@ public class ScoreboardController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{tournamentId}")
-    public List<Scoreboard> getScoreboard(@PathVariable(name = "tournamentId") Long tournamentId) {
+    public List<ScoreboardDTO> getScoreboard(@PathVariable(name = "tournamentId") Long tournamentId) {
         return scoreboardService.getScoreboard(tournamentId);
     }
 }
