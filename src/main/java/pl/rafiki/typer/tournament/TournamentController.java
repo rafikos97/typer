@@ -22,13 +22,13 @@ public class TournamentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<Tournament> getTournaments() {
+    public List<TournamentDTO> getTournaments() {
         return tournamentService.getTournaments();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{tournamentId}")
-    public Tournament getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
+    public TournamentDTO getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
         return tournamentService.getTournament(tournamentId);
     }
 
@@ -40,13 +40,13 @@ public class TournamentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{tournamentId}")
-    public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid Tournament tournament) {
-        tournamentService.putUpdateTournament(tournamentId, tournament);
+    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid Tournament tournament) {
+        return tournamentService.putUpdateTournament(tournamentId, tournament);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{tournamentId}")
-    public void updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO dto) {
-        tournamentService.patchUpdateTournament(tournamentId, dto);
+    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO dto) {
+        return tournamentService.patchUpdateTournament(tournamentId, dto);
     }
 }

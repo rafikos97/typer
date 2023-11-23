@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BetDTO {
-    private Long betId;
+    private Long id;
     private Integer firstTeamScore;
     private Integer secondTeamScore;
     private Long matchId;

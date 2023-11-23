@@ -28,7 +28,7 @@ public class Scoreboard {
             name = "scoreboard_id",
             updatable = false
     )
-    Long id;
+    private Long id;
 
     @JsonProperty(value = "userId")
     @ManyToOne(cascade = CascadeType.ALL)
