@@ -17,7 +17,7 @@ export class UserPanelService {
         userId: number,
     ): Observable<UserInformation> {
         return this.httpClient.put<UserInformation>(
-            `${userInformationApiUrl}${userId}`,
+            `${userInformationApiUrl}/${userId}`,
             userInformation,
         );
     }

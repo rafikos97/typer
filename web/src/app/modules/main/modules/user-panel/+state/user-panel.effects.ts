@@ -6,7 +6,7 @@ import {
     updateUserInformation,
     updateUserInformationSuccess,
 } from './user-panel.actions';
-import { first, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
 import { UserInformation } from '../models/user-information.model';
 import { Store } from '@ngrx/store';
@@ -22,6 +22,7 @@ export class UserPanelEffects {
         this.actions$.pipe(
             ofType(fetchUserInformation),
             switchMap(() => this.userPanelService.fetchUserInformation()),
+            delay(1000),
             map((userInformation: UserInformation) =>
                 fetchUserInformationSuccess({ userInformation }),
             ),
