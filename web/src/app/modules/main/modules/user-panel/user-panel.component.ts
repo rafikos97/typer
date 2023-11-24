@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     OnInit,
     inject,
@@ -11,7 +12,7 @@ import {
     updateUserInformation,
 } from './+state/user-panel.actions';
 import { selectUserInformation } from './+state/user-panel.selectors';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { UserInformation } from './models/user-information.model';
 import {
     FormControl,
@@ -22,14 +23,14 @@ import {
 
 @Component({
     templateUrl: './user-panel.component.html',
-    styleUrls: ['./user-panel.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-user-panel',
     standalone: true,
-    imports: [AsyncPipe, JsonPipe, ReactiveFormsModule],
+    imports: [AsyncPipe, ReactiveFormsModule, NgIf],
 })
 export class UserPanelComponent implements OnInit {
     private readonly store = inject(Store);
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
     readonly userForm = new FormGroup({
         username: new FormControl('', Validators.required),
@@ -49,11 +50,17 @@ export class UserPanelComponent implements OnInit {
                     lastName,
                     email,
                 });
+
+                this.changeDetectorRef.markForCheck();
             },
         );
 
     ngOnInit(): void {
         this.store.dispatch(fetchUserInformation());
+    }
+
+    get dataIsFetched(): boolean {
+        return !!this.userForm.value!.username;
     }
 
     updateUserInformation(): void {

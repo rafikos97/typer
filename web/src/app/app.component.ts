@@ -1,14 +1,30 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import {
+    Router,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+} from '@angular/router';
+import { Store } from '@ngrx/store';
+import { selectUserAuthenticated } from './modules/main/modules/authentication/+state/authentication.selectors';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [RouterLink, RouterLinkActive, RouterOutlet],
+    imports: [RouterLink, RouterLinkActive, RouterOutlet, NgIf, AsyncPipe],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+    private readonly router = inject(Router);
+    private readonly store = inject(Store);
+    readonly authenticated$ = this.store.select(selectUserAuthenticated);
+
+    ngOnInit() {
+        this.router.navigateByUrl('/login');
+    }
+
     get routerActiveClassName() {
         return 'typer-link-active';
     }

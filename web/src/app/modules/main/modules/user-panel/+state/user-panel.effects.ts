@@ -4,23 +4,25 @@ import {
     fetchUserInformation,
     fetchUserInformationSuccess,
     updateUserInformation,
-    updateUserInformationFailure,
     updateUserInformationSuccess,
 } from './user-panel.actions';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
 import { UserInformation } from '../models/user-information.model';
-import { of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectUserInformation } from './user-panel.selectors';
 
 @Injectable()
 export class UserPanelEffects {
     private readonly userPanelService = inject(UserPanelService);
     private readonly actions$ = inject(Actions);
+    private readonly store = inject(Store);
 
     readonly fetch$ = createEffect(() =>
         this.actions$.pipe(
             ofType(fetchUserInformation),
             switchMap(() => this.userPanelService.fetchUserInformation()),
+            delay(1000),
             map((userInformation: UserInformation) =>
                 fetchUserInformationSuccess({ userInformation }),
             ),
@@ -30,13 +32,16 @@ export class UserPanelEffects {
     readonly update$ = createEffect(() =>
         this.actions$.pipe(
             ofType(updateUserInformation),
-            switchMap(({ userInformation }) =>
-                this.userPanelService.updateUserInformation(userInformation),
+            withLatestFrom(this.store.select(selectUserInformation)),
+            switchMap(([{ userInformation }, storeUserInfo]) =>
+                this.userPanelService.updateUserInformation(
+                    userInformation,
+                    storeUserInfo.id,
+                ),
             ),
             map((userInformation: UserInformation) =>
                 updateUserInformationSuccess({ userInformation }),
             ),
-            catchError((error) => of(updateUserInformationFailure({ error }))),
         ),
     );
 }

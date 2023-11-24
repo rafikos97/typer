@@ -1,3 +1,17 @@
 .typer-link-active {
     text-decoration: underline;
 }
+
+:host {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+main {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}

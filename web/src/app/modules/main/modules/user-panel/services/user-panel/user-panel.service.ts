@@ -2,33 +2,22 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { UserInformation } from '../../models/user-information.model';
 import { userInformationApiUrl } from './user-panel.service.constants';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class UserPanelService {
     private readonly httpClient = inject(HttpClient);
 
     fetchUserInformation(): Observable<UserInformation> {
-        return of(<UserInformation>{
-            firstName: 'a',
-            lastName: 'b',
-            username: 'my-user',
-            email: 'a@b.com',
-        });
         return this.httpClient.get<UserInformation>(userInformationApiUrl);
     }
 
     updateUserInformation(
         userInformation: UserInformation,
+        userId: number,
     ): Observable<UserInformation> {
-        return of(<UserInformation>{
-            firstName: 'a',
-            lastName: 'b',
-            username: 'my-user',
-            email: 'a@b.com',
-        });
         return this.httpClient.put<UserInformation>(
-            userInformationApiUrl,
+            `${userInformationApiUrl}/${userId}`,
             userInformation,
         );
     }
