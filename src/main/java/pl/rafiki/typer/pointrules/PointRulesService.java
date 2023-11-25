@@ -34,7 +34,8 @@ public class PointRulesService {
         return PointRulesMapper.INSTANCE.mapPointRulesToPointRulesDto(pointRules);
     }
 
-    public void addNewPointRules(PointRules pointRules) {
+    public void addNewPointRules(PointRulesDTO pointRulesDTO) {
+        PointRules pointRules = PointRulesMapper.INSTANCE.mapPointRulesDtoToPointRules(pointRulesDTO);
         boolean existsByCode = pointRulesRepository.existsByPointRulesCode(pointRules.getPointRulesCode());
         if (existsByCode) {
             throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
@@ -43,7 +44,8 @@ public class PointRulesService {
         pointRulesRepository.save(pointRules);
     }
 
-    public PointRulesDTO updatePointRules(Long pointRulesId, PointRules pointRules) {
+    public PointRulesDTO updatePointRules(Long pointRulesId, PointRulesDTO pointRulesDTO) {
+        PointRules pointRules = PointRulesMapper.INSTANCE.mapPointRulesDtoToPointRules(pointRulesDTO);
         PointRules existingPointRules = pointRulesRepository
                 .findById(pointRulesId)
                 .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!"));

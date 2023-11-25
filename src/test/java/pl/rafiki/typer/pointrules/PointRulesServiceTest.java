@@ -73,7 +73,7 @@ class PointRulesServiceTest {
     void addNewPointRules() {
         // given
         String pointrulesCode = "testPointRules";
-        PointRules pointRules = new PointRules(
+        PointRulesDTO pointRules = new PointRulesDTO (
                 pointrulesCode,
                 1,
                 1
@@ -95,7 +95,7 @@ class PointRulesServiceTest {
     void willThrowWhenPointRulesCodeAlreadyExists() {
         // given
         String pointrulesCode = "testPointRules";
-        PointRules pointRules = new PointRules(
+        PointRulesDTO pointRules = new PointRulesDTO (
                 pointrulesCode,
                 1,
                 1
@@ -115,7 +115,7 @@ class PointRulesServiceTest {
         // given
         Long pointRulesId = 1L;
         String pointrulesCode = "testPointRules";
-        PointRules updatedPointRules = new PointRules(
+        PointRulesDTO updatedPointRules = new PointRulesDTO(
                 pointrulesCode,
                 1,
                 1
@@ -139,7 +139,7 @@ class PointRulesServiceTest {
         // given
         Long pointRulesId = 1L;
         String pointrulesCode = "testPointRules";
-        PointRules updatedPointRules = new PointRules(
+        PointRulesDTO updatedPointRules = new PointRulesDTO (
                 pointrulesCode,
                 1,
                 1
@@ -162,7 +162,7 @@ class PointRulesServiceTest {
         // given
         Long pointRulesId = 1L;
         String pointrulesCode = "testPointRules";
-        PointRules updatedPointRules = new PointRules(
+        PointRulesDTO updatedPointRules = new PointRulesDTO (
                 pointrulesCode,
                 1,
                 1

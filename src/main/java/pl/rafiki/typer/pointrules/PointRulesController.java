@@ -33,13 +33,13 @@ public class PointRulesController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewPointRules(@RequestBody @Valid PointRules pointRules) {
-        pointRulesService.addNewPointRules(pointRules);
+    public void addNewPointRules(@RequestBody @Valid PointRulesDTO pointRulesDTO) {
+        pointRulesService.addNewPointRules(pointRulesDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{pointrulesId}")
-    public PointRulesDTO updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRules pointRules) {
-        return pointRulesService.updatePointRules(pointrulesId, pointRules);
+    public PointRulesDTO updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRulesDTO pointRulesDTO) {
+        return pointRulesService.updatePointRules(pointrulesId, pointRulesDTO);
     }
 }
