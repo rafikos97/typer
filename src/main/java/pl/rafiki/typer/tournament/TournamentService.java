@@ -38,7 +38,8 @@ public class TournamentService {
     }
 
 
-    public void addNewTournament(Tournament tournament) {
+    public void addNewTournament(TournamentDTO tournamentDTO) {
+        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO);
         boolean existsByCode = tournamentRepository.existsByTournamentCode(tournament.getTournamentCode());
         if (existsByCode) {
             throw new TournamentCodeAlreadyTakenException("Tournament code already taken!");
@@ -55,7 +56,8 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    public TournamentDTO putUpdateTournament(Long tournamentId, Tournament tournament) {
+    public TournamentDTO putUpdateTournament(Long tournamentId, TournamentDTO tournamentDTO) {
+        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO);
         Tournament existingTournament = tournamentRepository
                 .findById(tournamentId)
                 .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!"));

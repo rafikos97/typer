@@ -34,19 +34,19 @@ public class TournamentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewTournament(@RequestBody @Valid Tournament tournament) {
-        tournamentService.addNewTournament(tournament);
+    public void addNewTournament(@RequestBody @Valid TournamentDTO tournamentDTO) {
+        tournamentService.addNewTournament(tournamentDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{tournamentId}")
-    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid Tournament tournament) {
-        return tournamentService.putUpdateTournament(tournamentId, tournament);
+    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid TournamentDTO tournamentDTO) {
+        return tournamentService.putUpdateTournament(tournamentId, tournamentDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{tournamentId}")
-    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO dto) {
-        return tournamentService.patchUpdateTournament(tournamentId, dto);
+    public TournamentDTO patchUpdateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO tournamentDTO) {
+        return tournamentService.patchUpdateTournament(tournamentId, tournamentDTO);
     }
 }

@@ -1,8 +1,6 @@
 package pl.rafiki.typer.tournament;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,28 +33,24 @@ public class Tournament {
     )
     private Long id;
 
-    @NotNull(message = "Tournament name cannot be null")
     @Column(
             name = "tournament_name",
             nullable = false
     )
     private String tournamentName;
 
-    @NotNull(message = "Tournament code cannot be null")
     @Column(
             name = "tournament_code",
             nullable = false
     )
     private String tournamentCode;
 
-    @NotNull(message = "Point rules code cannot be null")
     @Column(
             name = "point_rules_code",
             nullable = false
     )
     private String pointRulesCode;
 
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "pointrules_id",

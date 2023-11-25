@@ -9,4 +9,5 @@ public interface TournamentMapper {
     TournamentMapper INSTANCE = Mappers.getMapper(TournamentMapper.class);
 
     TournamentDTO tournamentToTournamentDto(Tournament tournament);
+    Tournament tournamentDtoToTournament(TournamentDTO tournamentDTO);
 }

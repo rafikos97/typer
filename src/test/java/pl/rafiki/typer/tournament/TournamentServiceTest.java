@@ -77,7 +77,7 @@ class TournamentServiceTest {
     void addNewTournament() {
         // given
         String pointRulesCode = "testPointRulesCode";
-        Tournament tournament = new Tournament(
+        TournamentDTO tournament = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
@@ -99,7 +99,7 @@ class TournamentServiceTest {
     void willThrowWhenTournamentCodeIsAlreadyTaken() {
         // given
         String tournamentCode = "MS2022";
-        Tournament tournament = new Tournament(
+        TournamentDTO tournament = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
                 "testPointRulesCode"
@@ -118,7 +118,7 @@ class TournamentServiceTest {
     void willThrowWhenPointRulesCodeDoesNotExist() {
         // given
         String pointRulesCode = "testPointRulesCode";
-        Tournament tournament = new Tournament(
+        TournamentDTO tournament = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
@@ -145,7 +145,7 @@ class TournamentServiceTest {
                 2
         );
 
-        Tournament updatedTournament = new Tournament(
+        TournamentDTO updatedTournament = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
@@ -173,7 +173,7 @@ class TournamentServiceTest {
         // given
         Long tournamentId = 1L;
         String pointRulesCode = "testPointRulesCode";
-        Tournament updatedTournament = new Tournament(
+        TournamentDTO updatedTournament = new TournamentDTO (
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
@@ -195,7 +195,7 @@ class TournamentServiceTest {
         // given
         Long tournamentId = 1L;
         String tournamentCode = "MS2022";
-        Tournament updatedTournament = new Tournament(
+        TournamentDTO updatedTournament = new TournamentDTO (
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
                 "testPointRulesCode"
@@ -218,7 +218,7 @@ class TournamentServiceTest {
         // given
         Long tournamentId = 1L;
         String pointRulesCode = "testPointRulesCode";
-        Tournament updatedTournament = new Tournament(
+        TournamentDTO updatedTournament = new TournamentDTO (
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
