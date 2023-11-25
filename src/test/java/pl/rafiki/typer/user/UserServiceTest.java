@@ -80,13 +80,12 @@ class UserServiceTest {
     @Test
     void canAddNewUser() {
         // given
-        User user = new User(
+        RegisterUserDTO user = new RegisterUserDTO(
                 "Andrew",
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password",
-                null
+                "password"
         );
 
         given(roleRepository.findByAuthority(any())).willReturn(Optional.of(new Role()));
@@ -105,13 +104,12 @@ class UserServiceTest {
     @Test
     void willThrowWhenEmailIsTaken() {
         // given
-        User user = new User(
+        RegisterUserDTO user = new RegisterUserDTO(
                 "Andrew",
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password",
-                null
+                "password"
         );
 
         given(userRepository.existsByEmail(user.getEmail())).willReturn(true);
@@ -128,13 +126,12 @@ class UserServiceTest {
     @Test
     void willThrowWhenUsernameIsTaken() {
         // given
-        User user = new User(
+        RegisterUserDTO user = new RegisterUserDTO(
                 "Andrew",
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password",
-                null
+                "password"
         );
 
         given(userRepository.existsByUsername(user.getUsername())).willReturn(true);
@@ -152,13 +149,11 @@ class UserServiceTest {
     void canUpdateUser() {
         // given
         Long userId = 1L;
-        User updatedUser = new User(
+        UserDTO updatedUser = new UserDTO (
                 "Andrew",
                 "Tester",
                 "username",
-                "a.tester@mail.com",
-                null,
-                null
+                "a.tester@mail.com"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
@@ -177,13 +172,11 @@ class UserServiceTest {
     void willThrowWhenUserDoesNotExistDuringUpdate() {
         // given
         Long userId = 1L;
-        User updatedUser = new User(
+        UserDTO updatedUser = new UserDTO (
                 "Andrew",
                 "Tester",
                 "username",
-                "a.tester@mail.com",
-                null,
-                null
+                "a.tester@mail.com"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -202,13 +195,11 @@ class UserServiceTest {
         // given
         Long userId = 1L;
         String email = "a.nowak@mail.com";
-        User updatedUser = new User(
+        UserDTO updatedUser = new UserDTO (
                 "Andrew",
                 "Tester",
                 "username",
-                email,
-                null,
-                null
+                email
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
@@ -228,13 +219,11 @@ class UserServiceTest {
         // given
         Long userId = 1L;
         String username = "updatedUsername";
-        User updatedUser = new User(
+        UserDTO updatedUser = new UserDTO (
                 "Andrew",
                 "Tester",
                 username,
-                "a.tester@mail.com",
-                null,
-                null
+                "a.tester@mail.com"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));

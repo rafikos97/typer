@@ -10,5 +10,6 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     UserDTO userToUserDto(User user);
-
+    User userDtoToUser(UserDTO userDTO);
+    User registerUserDtoToUser(RegisterUserDTO registerUserDTO);
 }
