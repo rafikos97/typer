@@ -9,4 +9,5 @@ public interface PointRulesMapper {
     PointRulesMapper INSTANCE = Mappers.getMapper(PointRulesMapper.class);
 
     PointRulesDTO mapPointRulesToPointRulesDto(PointRules pointRules);
+    PointRules mapPointRulesDtoToPointRules(PointRulesDTO pointRulesDTO);
 }
