@@ -9,4 +9,5 @@ public interface MatchMapper {
     MatchMapper INSTANCE = Mappers.getMapper(MatchMapper.class);
 
     MatchDTO matchToMatchDto(Match match);
+    Match matchDtoToMatch(MatchDTO matchDTO);
 }

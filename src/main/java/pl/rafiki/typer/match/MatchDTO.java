@@ -1,5 +1,6 @@
 package pl.rafiki.typer.match;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +14,16 @@ import java.time.LocalDateTime;
 @Builder
 public class MatchDTO {
     private Long id;
+    @NotNull(message = "First team name cannot be null")
     private String firstTeamName;
+    @NotNull(message = "Second team name cannot be null")
     private String secondTeamName;
+    @NotNull(message = "Start date cannot be null")
     private LocalDateTime startDateAndTime;
     private Integer firstTeamScore;
     private Integer secondTeamScore;
     private boolean finished;
+    @NotNull(message = "Tournament code cannot be null!")
     private String tournamentCode;
 
     public MatchDTO(String firstTeamName, String secondTeamName, LocalDateTime startDateAndTime, Integer firstTeamScore, Integer secondTeamScore, boolean finished, String tournamentCode) {

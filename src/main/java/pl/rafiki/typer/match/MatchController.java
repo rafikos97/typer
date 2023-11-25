@@ -34,20 +34,20 @@ public class MatchController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewMatch(@RequestBody @Valid Match match) {
-        matchService.addNewMatch(match);
+    public void addNewMatch(@RequestBody @Valid MatchDTO matchDTO) {
+        matchService.addNewMatch(matchDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{matchId}")
-    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid Match match) {
-        return matchService.putUpdateMatch(matchId, match);
+    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid MatchDTO matchDTO) {
+        return matchService.putUpdateMatch(matchId, matchDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{matchId}")
-    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO dto) {
-        return matchService.patchUpdateMatch(matchId, dto);
+    public MatchDTO patchUpdateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO matchDTO) {
+        return matchService.patchUpdateMatch(matchId, matchDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
