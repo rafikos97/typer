@@ -39,26 +39,26 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/register")
-    public void registerUser(@RequestBody @Valid User user) {
-        userService.registerUser(user);
+    public void registerUser(@RequestBody @Valid RegisterUserDTO registerUserDTO) {
+        userService.registerUser(registerUserDTO);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{userId}")
-    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid User user) {
-        return userService.putUpdateUser(userId, user);
+    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserDTO userDTO) {
+        return userService.putUpdateUser(userId, userDTO);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping()
-    public UserDTO updateUser(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid User user) {
-        return userService.putUpdateUserByToken(bearerToken, user);
+    public UserDTO updateUserByToken(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid UserDTO userDTO) {
+        return userService.putUpdateUserByToken(bearerToken, userDTO);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(path = "/{userId}")
-    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO dto) {
-        return userService.patchUpdateUser(userId, dto);
+    public UserDTO patchUpdateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO userDTO) {
+        return userService.patchUpdateUser(userId, userDTO);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")

@@ -61,7 +61,9 @@ public class UserService implements UserDetailsService {
         return UserMapper.INSTANCE.userToUserDto(user);
     }
 
-    public void registerUser(User user) {
+    public void registerUser(RegisterUserDTO registerUserDTO) {
+        User user = UserMapper.INSTANCE.registerUserDtoToUser(registerUserDTO);
+
         boolean existsByEmail = userRepository.existsByEmail(user.getEmail());
         if (existsByEmail) {
             throw new EmailAddressAlreadyTakenException("Email address already taken!");
@@ -88,7 +90,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public UserDTO putUpdateUser(Long userId, User user) {
+    public UserDTO putUpdateUser(Long userId, UserDTO userDTO) {
+        User user = UserMapper.INSTANCE.userDtoToUser(userDTO);
         User existingUser = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
@@ -96,7 +99,8 @@ public class UserService implements UserDetailsService {
         return processPutUpdateUser(user, existingUser);
     }
 
-    public UserDTO putUpdateUserByToken(String token, User user) {
+    public UserDTO putUpdateUserByToken(String token, UserDTO userDTO) {
+        User user = UserMapper.INSTANCE.userDtoToUser(userDTO);
         String tokenWithoutPrefix = token.substring(7);
         Long userId = tokenService.getUserIdFromToken(tokenWithoutPrefix);
         User existingUser = userRepository
