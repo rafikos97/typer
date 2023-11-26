@@ -133,8 +133,7 @@ class MatchServiceTest {
 
         Tournament tournament = new Tournament(
                 "testTournament",
-                "testTournament",
-                "prCode"
+                "testTournament"
         );
 
         Match match = new Match(
@@ -226,8 +225,7 @@ class MatchServiceTest {
 
         Tournament tournament = new Tournament(
                 "testTournament",
-                "testTournament",
-                "prCode"
+                "testTournament"
         );
 
         Match match = new Match(
