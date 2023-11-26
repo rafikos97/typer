@@ -348,8 +348,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -401,8 +400,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -454,8 +452,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -507,8 +504,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -560,8 +556,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);

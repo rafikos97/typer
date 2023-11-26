@@ -45,12 +45,6 @@ public class Tournament {
     )
     private String tournamentCode;
 
-    @Column(
-            name = "point_rules_code",
-            nullable = false
-    )
-    private String pointRulesCode;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "pointrules_id",
@@ -59,16 +53,8 @@ public class Tournament {
     )
     private PointRules pointRules;
 
-    public Tournament(String tournamentName, String tournamentCode, String pointRulesCode) {
+    public Tournament(String tournamentName, String tournamentCode) {
         this.tournamentName = tournamentName;
         this.tournamentCode = tournamentCode;
-        this.pointRulesCode = pointRulesCode;
-    }
-
-    public String getPointRulesCode() {
-        if (pointRulesCode != null && pointRules != null && !pointRulesCode.equals(pointRules.getPointRulesCode())) {
-            setPointRulesCode(pointRules.getPointRulesCode());
-        }
-        return pointRulesCode;
     }
 }

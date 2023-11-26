@@ -32,8 +32,7 @@ class ScoreboardRepositoryTest {
     void setUp() {
         tournament = new Tournament(
                 "testTournament",
-                "tst2023",
-                "tstPointRules"
+                "tst2023"
         );
 
         Set<Role> roles = new HashSet<>();

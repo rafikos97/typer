@@ -39,13 +39,13 @@ public class TournamentService {
 
 
     public void addNewTournament(TournamentDTO tournamentDTO) {
-        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO);
+        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO, pointRulesRepository);
         boolean existsByCode = tournamentRepository.existsByTournamentCode(tournament.getTournamentCode());
         if (existsByCode) {
             throw new TournamentCodeAlreadyTakenException("Tournament code already taken!");
         }
 
-        String pointRulesCode = tournament.getPointRulesCode();
+        String pointRulesCode = tournament.getPointRules().getPointRulesCode();
 
         PointRules pointRules = pointRulesRepository
                 .findPointRulesByPointRulesCode(pointRulesCode)
@@ -57,7 +57,7 @@ public class TournamentService {
     }
 
     public TournamentDTO putUpdateTournament(Long tournamentId, TournamentDTO tournamentDTO) {
-        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO);
+        Tournament tournament = TournamentMapper.INSTANCE.tournamentDtoToTournament(tournamentDTO, pointRulesRepository);
         Tournament existingTournament = tournamentRepository
                 .findById(tournamentId)
                 .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!"));
@@ -77,14 +77,13 @@ public class TournamentService {
             }
         }
 
-        String pointRulesCodeFromUpdate = tournament.getPointRulesCode();
+        String pointRulesCodeFromUpdate = tournament.getPointRules().getPointRulesCode();
 
-        if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingTournament.getPointRulesCode(), pointRulesCodeFromUpdate)) {
+        if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingTournament.getPointRules().getPointRulesCode(), pointRulesCodeFromUpdate)) {
             PointRules pointRules = pointRulesRepository
                     .findPointRulesByPointRulesCode(pointRulesCodeFromUpdate)
                     .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with code: " + pointRulesCodeFromUpdate + " does not exist!"));
             existingTournament.setPointRules(pointRules);
-            existingTournament.setPointRulesCode(pointRulesCodeFromUpdate);
         }
 
         tournamentRepository.save(existingTournament);
@@ -113,12 +112,11 @@ public class TournamentService {
 
         String pointRulesCodeFromUpdate = dto.getPointRulesCode();
 
-        if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingTournament.getPointRulesCode(), pointRulesCodeFromUpdate)) {
+        if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingTournament.getPointRules().getPointRulesCode(), pointRulesCodeFromUpdate)) {
             PointRules pointRules = pointRulesRepository
                     .findPointRulesByPointRulesCode(pointRulesCodeFromUpdate)
                     .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with code: " + pointRulesCodeFromUpdate + " does not exist!"));
             existingTournament.setPointRules(pointRules);
-            existingTournament.setPointRulesCode(pointRulesCodeFromUpdate);
         }
 
         tournamentRepository.save(existingTournament);

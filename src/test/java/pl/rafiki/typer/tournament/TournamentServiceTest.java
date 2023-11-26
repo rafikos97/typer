@@ -164,7 +164,7 @@ class TournamentServiceTest {
 
         assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
         assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
-        assertThat(capturedTournament.getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
+        assertThat(capturedTournament.getPointRules().getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
         assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
     }
 
@@ -267,7 +267,7 @@ class TournamentServiceTest {
 
         assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
         assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
-        assertThat(capturedTournament.getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
+        assertThat(capturedTournament.getPointRules().getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
         assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
     }
 

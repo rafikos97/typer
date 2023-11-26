@@ -20,8 +20,7 @@ class TournamentRepositoryTest {
         String tournamentCode = "MS2022";
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                tournamentCode,
-                "pointRulesCode"
+                tournamentCode
         );
 
         underTest.save(tournament);
@@ -39,8 +38,7 @@ class TournamentRepositoryTest {
         String tournamentCode = "MS2022";
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                tournamentCode,
-                "pointRulesCode"
+                tournamentCode
         );
 
         underTest.save(tournament);
