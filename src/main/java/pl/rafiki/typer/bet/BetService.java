@@ -39,12 +39,24 @@ public class BetService {
                 .findById(userId)
                 .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
         bet.setUser(user);
+    public void addNewBet(Long userId, Long matchId, BetDTO betDTO) {
+        Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
+
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
+        bet.setUser(user);
 
         Match match = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
         bet.setMatch(match);
+        Match match = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
+        bet.setMatch(match);
 
+        if (LocalDateTime.now().isAfter(match.getStartDateAndTime())) {
         if (LocalDateTime.now().isAfter(match.getStartDateAndTime())) {
             throw new CannotAddBetBecauseMatchAlreadyStartedException("You cannot place bet, because match already started!");
         }

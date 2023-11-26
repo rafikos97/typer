@@ -33,6 +33,8 @@ public class BetController {
     @PostMapping(path = "/{userId}/{matchId}")
     public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid BetDTO betDTO) {
         betService.addNewBet(userId, matchId, betDTO);
+    public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid BetDTO betDTO) {
+        betService.addNewBet(userId, matchId, betDTO);
     }
 
     @Operation(
