@@ -21,8 +21,8 @@ public class BetController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(path = "/{userId}/{matchId}")
-    public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid Bet bet) {
-        betService.addNewBet(userId, matchId, bet);
+    public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid BetDTO betDTO) {
+        betService.addNewBet(userId, matchId, betDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,7 +45,7 @@ public class BetController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{betId}")
-    public BetDTO updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid Bet bet) {
-        return betService.updateBet(betId, bet);
+    public BetDTO updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid BetDTO betDTO) {
+        return betService.updateBet(betId, betDTO);
     }
 }
