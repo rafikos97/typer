@@ -57,12 +57,6 @@ public class Match {
     @Column(name = "finished")
     private boolean finished;
 
-    @Column(
-            name = "tournament_code",
-            nullable = false
-    )
-    private String tournamentCode;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "tournament_id",
@@ -71,20 +65,12 @@ public class Match {
     )
     private Tournament tournament;
 
-    public Match(String firstTeamName, String secondTeamName, LocalDateTime startDateAndTime, int firstTeamScore, int secondTeamScore, boolean finished, String tournamentCode) {
+    public Match(String firstTeamName, String secondTeamName, LocalDateTime startDateAndTime, int firstTeamScore, int secondTeamScore, boolean finished) {
         this.firstTeamName = firstTeamName;
         this.secondTeamName = secondTeamName;
         this.startDateAndTime = startDateAndTime;
         this.firstTeamScore = firstTeamScore;
         this.secondTeamScore = secondTeamScore;
         this.finished = finished;
-        this.tournamentCode = tournamentCode;
-    }
-
-    public String getTournamentCode() {
-        if (tournamentCode != null && tournament != null && !tournamentCode.equals(tournament.getTournamentCode())) {
-            setTournamentCode(tournament.getTournamentCode());
-        }
-        return tournamentCode;
     }
 }
