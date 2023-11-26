@@ -142,8 +142,7 @@ class MatchServiceTest {
                 LocalDateTime.now().minusDays(1),
                 2,
                 3,
-                false,
-                "tournamentCode"
+                false
         );
 
         MatchDTO updatedMatch = new MatchDTO(
@@ -234,8 +233,7 @@ class MatchServiceTest {
                 LocalDateTime.now().minusDays(1),
                 2,
                 3,
-                false,
-                "tournamentCode"
+                false
         );
 
         MatchDTO updatedMatch = new MatchDTO(
@@ -263,7 +261,7 @@ class MatchServiceTest {
         assertThat(capturedMatch.getStartDateAndTime()).isEqualTo(updatedMatch.getStartDateAndTime());
         assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(updatedMatch.getFirstTeamScore());
         assertThat(capturedMatch.isFinished()).isEqualTo(updatedMatch.isFinished());
-        assertThat(capturedMatch.getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
+        assertThat(capturedMatch.getTournament().getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
     }
 
     @Test

@@ -359,8 +359,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -411,8 +410,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -463,8 +461,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -515,8 +512,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -567,8 +563,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);

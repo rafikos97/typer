@@ -47,8 +47,8 @@ public class MatchService {
     }
 
     public void addNewMatch(MatchDTO matchDTO) {
-        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO);
-        String tournamentCode = match.getTournamentCode();
+        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
+        String tournamentCode = match.getTournament().getTournamentCode();
 
         Tournament tournament = tournamentRepository
                 .findByTournamentCode(tournamentCode)
@@ -59,12 +59,12 @@ public class MatchService {
     }
 
     public MatchDTO putUpdateMatch(Long matchId, MatchDTO matchDTO) {
-        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO);
+        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
         Match existingMatch = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
-        String tournamentCodeFromUpdate = match.getTournamentCode();
+        String tournamentCodeFromUpdate = match.getTournament().getTournamentCode();
 
         if (tournamentCodeFromUpdate != null) {
             Tournament tournament = tournamentRepository
