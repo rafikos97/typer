@@ -11,6 +11,7 @@ import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.security.services.TokenService;
 import pl.rafiki.typer.user.exceptions.*;
+import pl.rafiki.typer.user.validators.PasswordValidator;
 
 import java.util.*;
 
@@ -76,6 +77,10 @@ public class UserService implements UserDetailsService {
 
         if (!isEmailValid(user.getEmail())) {
             throw new InvalidEmailException("Provided email is invalid!");
+        }
+
+        if (!PasswordValidator.isPasswordValid(registerUserDTO.getPassword())) {
+            throw new PasswordDoesNotMatchPatternException("Provided password does not meet password policy!");
         }
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -204,6 +209,10 @@ public class UserService implements UserDetailsService {
 
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new IncorrectPasswordException("Old password is incorrect!");
+        }
+
+        if (!PasswordValidator.isPasswordValid(dto.getNewPassword())) {
+            throw new PasswordDoesNotMatchPatternException("Provided password does not meet password policy!");
         }
 
         String encodedUpdatedPassword = passwordEncoder.encode(dto.getNewPassword());
