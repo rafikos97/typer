@@ -22,7 +22,6 @@ export class UserPanelEffects {
         this.actions$.pipe(
             ofType(fetchUserInformation),
             switchMap(() => this.userPanelService.fetchUserInformation()),
-            delay(1000),
             map((userInformation: UserInformation) =>
                 fetchUserInformationSuccess({ userInformation }),
             ),
