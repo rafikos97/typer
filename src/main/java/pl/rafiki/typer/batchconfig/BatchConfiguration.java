@@ -26,6 +26,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import pl.rafiki.typer.match.Match;
+import pl.rafiki.typer.match.MatchDTO;
 import pl.rafiki.typer.match.MatchRepository;
 import pl.rafiki.typer.tournament.TournamentRepository;
 
@@ -46,9 +47,9 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<Match> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile) {
+    public FlatFileItemReader<MatchDTO> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile) {
 
-        return new FlatFileItemReaderBuilder<Match>()
+        return new FlatFileItemReaderBuilder<MatchDTO>()
                 .name("matchItemReader")
                 .resource(new FileSystemResource(new File(pathToFile)))
                 .linesToSkip(1)
@@ -56,17 +57,17 @@ public class BatchConfiguration {
                 .build();
     }
 
-    private LineMapper<Match> lineMapper() {
-        DefaultLineMapper<Match> lineMapper = new DefaultLineMapper<>();
+    private LineMapper<MatchDTO> lineMapper() {
+        DefaultLineMapper<MatchDTO> lineMapper = new DefaultLineMapper<>();
 
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter(",");
         lineTokenizer.setStrict(false);
         lineTokenizer.setNames("firstTeamName", "secondTeamName", "startDateAndTime", "tournamentCode");
 
-        BeanWrapperFieldSetMapper<Match> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        BeanWrapperFieldSetMapper<MatchDTO> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
         fieldSetMapper.setConversionService(myConversionService());
-        fieldSetMapper.setTargetType(Match.class);
+        fieldSetMapper.setTargetType(MatchDTO.class);
 
         lineMapper.setLineTokenizer(lineTokenizer);
         lineMapper.setFieldSetMapper(fieldSetMapper);
@@ -99,9 +100,9 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<Match> itemReader) {
+    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<MatchDTO> itemReader) {
         return new StepBuilder("step 1", jobRepository)
-                .<Match, Match> chunk(3, transactionManager)
+                .<MatchDTO, Match> chunk(3, transactionManager)
                 .reader(itemReader)
                 .processor(processor())
                 .writer(writer())
@@ -113,7 +114,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<Match> itemReader) {
+    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<MatchDTO> itemReader) {
         return new JobBuilder("importMatches", jobRepository)
                 .flow(step1(jobRepository, transactionManager, itemReader))
                 .end()

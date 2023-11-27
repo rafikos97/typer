@@ -4,9 +4,9 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.SkipListener;
-import pl.rafiki.typer.match.Match;
+import pl.rafiki.typer.match.MatchDTO;
 
-public class StepSkipListener implements SkipListener<Match, Number> {
+public class StepSkipListener implements SkipListener<MatchDTO, Number> {
 
     Logger logger = LoggerFactory.getLogger(StepSkipListener.class);
 
@@ -22,10 +22,10 @@ public class StepSkipListener implements SkipListener<Match, Number> {
 
     @SneakyThrows
     @Override
-    public void onSkipInProcess(Match match, Throwable throwable) {
-//        logger.info("Item {} was skipped due to the exception: {}", new ObjectMapper().findAndRegisterModules().writeValueAsString(match),
+    public void onSkipInProcess(MatchDTO matchDTO, Throwable throwable) {
+//        logger.info("Item {} was skipped due to the exception: {}", new ObjectMapper().findAndRegisterModules().writeValueAsString(matchDTO),
 //                throwable.getMessage());
-        logger.info("Item {} was skipped due to the exception: {}", match.toString(),
+        logger.info("Item {} was skipped due to the exception: {}", matchDTO.toString(),
                 throwable.getMessage());
     }
 }

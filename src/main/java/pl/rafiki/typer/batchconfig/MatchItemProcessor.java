@@ -4,13 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import pl.rafiki.typer.match.Match;
+import pl.rafiki.typer.match.MatchDTO;
+import pl.rafiki.typer.match.MatchMapper;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
 
-import java.util.Optional;
-
-public class MatchItemProcessor implements ItemProcessor<Match, Match> {
+public class MatchItemProcessor implements ItemProcessor<MatchDTO, Match> {
     private final TournamentRepository tournamentRepository;
     private static final Logger log = LoggerFactory.getLogger(MatchItemProcessor.class);
 
@@ -19,16 +19,17 @@ public class MatchItemProcessor implements ItemProcessor<Match, Match> {
     }
 
     @Override
-    public Match process(final Match match) {
-        log.info("Processing match: " + match);
+    public Match process(final MatchDTO matchDTO) {
+        log.info("Processing match: " + matchDTO);
 
-        String tournamentCode = match.getTournament().getTournamentCode();
-        Optional<Tournament> tournamentOptional = tournamentRepository.findByTournamentCode(tournamentCode);
-        if (tournamentOptional.isEmpty()) {
-            throw new TournamentDoesNotExistException("Tournament with code: " + tournamentCode + " does not exist!");
-        }
+        String tournamentCode = matchDTO.getTournamentCode();
+        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
 
-        match.setTournament(tournamentOptional.get());
+        Tournament tournament = tournamentRepository
+                .findByTournamentCode(tournamentCode)
+                .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCode + " does not exist!"));
+
+        match.setTournament(tournament);
 
         return match;
     }
