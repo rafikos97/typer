@@ -1,4 +1,3 @@
-
 <div class="container">
     <div class="column">
         <h1>Point Rules</h1>
@@ -9,11 +8,20 @@
                 trackBy: trackPointRuleCodesByFn
             "
         >
-            <p><strong>Score:</strong><span [textContent]="pointRule.score"></span></p>
-            <p><strong>Winner:</strong><span [textContent]="pointRule.winner"></span></p>
-            <p><strong>Point Rule Code:</strong><span [textContent]="pointRule.pointRulesCode"></span></p>
+            <p>
+                <strong>Score:</strong
+                ><span [textContent]="pointRule.score"></span>
+            </p>
+            <p>
+                <strong>Winner:</strong
+                ><span [textContent]="pointRule.winner"></span>
+            </p>
+            <p>
+                <strong>Point Rule Code:</strong
+                ><span [textContent]="pointRule.pointRulesCode"></span>
+            </p>
         </div>
-        
+
         <form (submit)="createPointRule()" [formGroup]="pointRuleForm">
             <input
                 formControlName="winner"
@@ -47,9 +55,18 @@
                 trackBy: trackTournamentsByFn
             "
         >
-        <p><strong>Name:</strong><span [textContent]="tournament.tournamentName"></span></p>
-        <p><strong>Code:</strong><span [textContent]="tournament.tournamentCode"></span></p>
-        <p><strong>Point Rule Code:</strong><span [textContent]="tournament.pointRulesCode"></span></p>
+            <p>
+                <strong>Name:</strong
+                ><span [textContent]="tournament.tournamentName"></span>
+            </p>
+            <p>
+                <strong>Code:</strong
+                ><span [textContent]="tournament.tournamentCode"></span>
+            </p>
+            <p>
+                <strong>Point Rule Code:</strong
+                ><span [textContent]="tournament.pointRulesCode"></span>
+            </p>
         </div>
 
         <form (submit)="createTournament()" [formGroup]="tournamentForm">
@@ -73,10 +90,17 @@
                     *ngFor="
                         let pointRule of pointRules$ | async;
                         trackBy: trackPointRuleCodesByFn;
-                        let i = index;
+                        let i = index
                     "
                     [value]="pointRule.pointRulesCode"
-                    [textContent]="pointRule.winner + ' ' + pointRule.score + ' ('  + pointRule.pointRulesCode + ')'"
+                    [textContent]="
+                        pointRule.winner +
+                        ' ' +
+                        pointRule.score +
+                        ' (' +
+                        pointRule.pointRulesCode +
+                        ')'
+                    "
                     [selected]="i === 0"
                 ></option>
             </select>
@@ -86,6 +110,6 @@
             >
                 Create tournament
             </button>
-        </form>        
+        </form>
     </div>
 </div>
