@@ -155,7 +155,7 @@ class TournamentServiceTest {
         given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
 
         // when
-        underTest.putUpdateTournament(tournamentId, updatedTournament);
+        underTest.updateTournament(tournamentId, updatedTournament);
 
         // then
         ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
@@ -183,7 +183,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.putUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(TournamentDoesNotExistException.class)
                 .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
 
@@ -206,7 +206,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.putUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(TournamentCodeAlreadyTakenException.class)
                 .hasMessageContaining("Tournament code: " + tournamentCode + " already taken!");
 
@@ -229,7 +229,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.putUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(PointRulesDoesNotExistException.class)
                 .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
 
@@ -258,7 +258,7 @@ class TournamentServiceTest {
         given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
 
         // when
-        underTest.patchUpdateTournament(tournamentId, updatedTournament);
+        underTest.updateTournament(tournamentId, updatedTournament);
 
         // then
         ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
@@ -286,7 +286,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(TournamentDoesNotExistException.class)
                 .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
 
@@ -309,7 +309,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(TournamentCodeAlreadyTakenException.class)
                 .hasMessageContaining("Tournament code: " + tournamentCode + " already taken!");
 
@@ -332,7 +332,7 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.patchUpdateTournament(tournamentId, updatedTournament))
+        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
                 .isInstanceOf(PointRulesDoesNotExistException.class)
                 .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
 

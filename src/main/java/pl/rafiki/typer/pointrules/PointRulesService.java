@@ -36,7 +36,7 @@ public class PointRulesService {
 
     public void addNewPointRules(PointRulesDTO pointRulesDTO) {
         PointRules pointRules = PointRulesMapper.INSTANCE.mapPointRulesDtoToPointRules(pointRulesDTO);
-        boolean existsByCode = pointRulesRepository.existsByPointRulesCode(pointRules.getPointRulesCode());
+        boolean existsByCode = pointRulesRepository.existsByPointRulesCode(pointRulesDTO.getPointRulesCode());
         if (existsByCode) {
             throw new PointRulesCodeAlreadyTakenException("Point rules code already taken!");
         }
@@ -45,12 +45,11 @@ public class PointRulesService {
     }
 
     public PointRulesDTO updatePointRules(Long pointRulesId, PointRulesDTO pointRulesDTO) {
-        PointRules pointRules = PointRulesMapper.INSTANCE.mapPointRulesDtoToPointRules(pointRulesDTO);
         PointRules existingPointRules = pointRulesRepository
                 .findById(pointRulesId)
                 .orElseThrow(() -> new PointRulesDoesNotExistException("Point rules with id: " + pointRulesId + " does not exist!"));
 
-        String pointRulesCodeFromUpdate = pointRules.getPointRulesCode();
+        String pointRulesCodeFromUpdate = pointRulesDTO.getPointRulesCode();
 
         if (pointRulesCodeFromUpdate != null && !pointRulesCodeFromUpdate.isEmpty() && !Objects.equals(existingPointRules.getPointRulesCode(), pointRulesCodeFromUpdate)) {
             if (pointRulesRepository.existsByPointRulesCode(pointRulesCodeFromUpdate)) {
@@ -60,12 +59,12 @@ public class PointRulesService {
             }
         }
 
-        Integer scoreFromUpdate = pointRules.getScore();
+        Integer scoreFromUpdate = pointRulesDTO.getScore();
         if (scoreFromUpdate != null && !Objects.equals(existingPointRules.getScore(), scoreFromUpdate)) {
             existingPointRules.setScore(scoreFromUpdate);
         }
 
-        Integer winnerFromUpdate = pointRules.getWinner();
+        Integer winnerFromUpdate = pointRulesDTO.getWinner();
         if (winnerFromUpdate != null && !Objects.equals(existingPointRules.getWinner(), winnerFromUpdate)) {
             existingPointRules.setWinner(winnerFromUpdate);
         }
