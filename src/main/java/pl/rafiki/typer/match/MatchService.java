@@ -48,7 +48,7 @@ public class MatchService {
 
     public void addNewMatch(MatchDTO matchDTO) {
         Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
-        String tournamentCode = match.getTournament().getTournamentCode();
+        String tournamentCode = matchDTO.getTournamentCode();
 
         Tournament tournament = tournamentRepository
                 .findByTournamentCode(tournamentCode)
@@ -59,12 +59,23 @@ public class MatchService {
     }
 
     public MatchDTO putUpdateMatch(Long matchId, MatchDTO matchDTO) {
-        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
+        return performMatchUpdate(matchId, matchDTO, true);
+    }
+
+    public MatchDTO patchUpdateMatch(Long matchId, MatchDTO matchDTO) {
+        return performMatchUpdate(matchId, matchDTO, false);
+    }
+
+    private MatchDTO performMatchUpdate(Long matchId, MatchDTO matchDTO, boolean putUpdate) {
         Match existingMatch = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
-        String tournamentCodeFromUpdate = match.getTournament().getTournamentCode();
+        if (existingMatch.isFinished()) {
+            throw new MatchIsAlreadyFinishedException("You cannot update match as it's already finished!");
+        }
+
+        String tournamentCodeFromUpdate = matchDTO.getTournamentCode();
 
         if (tournamentCodeFromUpdate != null) {
             Tournament tournament = tournamentRepository
@@ -76,77 +87,31 @@ public class MatchService {
             }
         }
 
-        String firstTeamNameFromUpdate = match.getFirstTeamName();
+        String firstTeamNameFromUpdate = matchDTO.getFirstTeamName();
         if (firstTeamNameFromUpdate != null && !firstTeamNameFromUpdate.isEmpty() && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
             existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
         }
 
-        String secondTeamNameFromUpdate = match.getSecondTeamName();
+        String secondTeamNameFromUpdate = matchDTO.getSecondTeamName();
         if (secondTeamNameFromUpdate != null && !secondTeamNameFromUpdate.isEmpty() && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
             existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
         }
 
-        Integer firstTeamScoreFromUpdate = match.getFirstTeamScore();
-        if (firstTeamScoreFromUpdate == null) {
+        Integer firstTeamScoreFromUpdate = matchDTO.getFirstTeamScore();
+        if (firstTeamScoreFromUpdate == null && putUpdate) {
             existingMatch.setFirstTeamScore(null);
         } else if (!Objects.equals(firstTeamScoreFromUpdate, existingMatch.getFirstTeamScore())) {
             existingMatch.setFirstTeamScore(firstTeamScoreFromUpdate);
         }
 
-        Integer secondTeamScoreFromUpdate = match.getSecondTeamScore();
-        if (secondTeamScoreFromUpdate == null) {
+        Integer secondTeamScoreFromUpdate = matchDTO.getSecondTeamScore();
+        if (secondTeamScoreFromUpdate == null && putUpdate) {
             existingMatch.setSecondTeamScore(null);
         } else if (!Objects.equals(secondTeamScoreFromUpdate, existingMatch.getSecondTeamScore())) {
             existingMatch.setSecondTeamScore(secondTeamScoreFromUpdate);
         }
 
-        LocalDateTime startDateTimeFromUpdate = match.getStartDateAndTime();
-        if (!Objects.equals(startDateTimeFromUpdate, existingMatch.getStartDateAndTime())) {
-            existingMatch.setStartDateAndTime(startDateTimeFromUpdate);
-        }
-
-        matchRepository.save(existingMatch);
-        return MatchMapper.INSTANCE.matchToMatchDto(existingMatch);
-    }
-
-    public MatchDTO patchUpdateMatch(Long matchId, MatchDTO dto) {
-        Match existingMatch = matchRepository
-                .findById(matchId)
-                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
-
-        String tournamentCodeFromUpdate = dto.getTournamentCode();
-
-        if (tournamentCodeFromUpdate != null) {
-            Tournament tournament = tournamentRepository
-                    .findByTournamentCode(tournamentCodeFromUpdate)
-                    .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!"));
-
-            if (!Objects.equals(tournament, existingMatch.getTournament())) {
-                existingMatch.setTournament(tournament);
-            }
-        }
-
-        String firstTeamNameFromUpdate = dto.getFirstTeamName();
-        if (firstTeamNameFromUpdate != null && !firstTeamNameFromUpdate.isEmpty() && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
-            existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
-        }
-
-        String secondTeamNameFromUpdate = dto.getSecondTeamName();
-        if (secondTeamNameFromUpdate != null && !secondTeamNameFromUpdate.isEmpty() && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
-            existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
-        }
-
-        Integer firstTeamScoreFromUpdate = dto.getFirstTeamScore();
-        if (!Objects.equals(firstTeamScoreFromUpdate, existingMatch.getFirstTeamScore())) {
-            existingMatch.setFirstTeamScore(firstTeamScoreFromUpdate);
-        }
-
-        Integer secondTeamScoreFromUpdate = dto.getSecondTeamScore();
-        if (!Objects.equals(secondTeamScoreFromUpdate, existingMatch.getSecondTeamScore())) {
-            existingMatch.setSecondTeamScore(secondTeamScoreFromUpdate);
-        }
-
-        LocalDateTime startDateTimeFromUpdate = dto.getStartDateAndTime();
+        LocalDateTime startDateTimeFromUpdate = matchDTO.getStartDateAndTime();
         if (startDateTimeFromUpdate != null && !Objects.equals(startDateTimeFromUpdate, existingMatch.getStartDateAndTime())) {
             existingMatch.setStartDateAndTime(startDateTimeFromUpdate);
         }

@@ -85,7 +85,6 @@ public class BetService {
     }
 
     public BetDTO updateBet(Long betId, BetDTO betDTO) {
-        Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
         Bet existingBet = betRepository
                 .findById(betId)
                 .orElseThrow(() -> new BetDoesNotExistException("Bet with id: " + betId + " does not exist!"));
@@ -94,12 +93,12 @@ public class BetService {
             throw new CannotUpdateBetBecauseMatchAlreadyStartedException("You cannot update bet, because match already started!");
         }
 
-        int firstTeamScoreFromUpdate = bet.getFirstTeamScore();
+        int firstTeamScoreFromUpdate = betDTO.getFirstTeamScore();
         if (!Objects.equals(firstTeamScoreFromUpdate, existingBet.getFirstTeamScore())) {
             existingBet.setFirstTeamScore(firstTeamScoreFromUpdate);
         }
 
-        int secondTeamScoreFromUpdate = bet.getSecondTeamScore();
+        int secondTeamScoreFromUpdate = betDTO.getSecondTeamScore();
         if (!Objects.equals(secondTeamScoreFromUpdate, existingBet.getSecondTeamScore())) {
             existingBet.setSecondTeamScore(secondTeamScoreFromUpdate);
         }
