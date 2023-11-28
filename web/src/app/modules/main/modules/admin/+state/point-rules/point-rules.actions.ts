@@ -8,6 +8,15 @@ export const fetchPointRulesSuccess = createAction(
     props<{ pointRules: PointRules }>(),
 );
 
+export const refetchPointRules = createAction(
+    '[Point Rules] Refetch Point Rules',
+);
+
+export const refetchPointRulesSuccess = createAction(
+    '[Point Rules] Refetch Point Rules Success',
+    props<{ pointRules: PointRules }>(),
+);
+
 export const createPointRule = createAction(
     '[Point Rules] Create Point Rule',
     props<{ pointRule: PointRule }>(),

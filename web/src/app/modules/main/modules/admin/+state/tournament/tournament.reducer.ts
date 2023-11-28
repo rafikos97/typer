@@ -1,5 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { fetchTournamentsSuccess } from './tournament.actions';
+import {
+    fetchTournamentsSuccess,
+    refetchTournamentsSuccess,
+} from './tournament.actions';
 import { Tournaments } from '../../models/tournament.model';
 
 export type TournamentsFetchingStatus = 'INITIAL' | 'FETCHING' | 'READY';
@@ -16,8 +19,12 @@ export const initialTournamentsState: TournamentsState = {
 
 export const tournamentsReducer = createReducer(
     initialTournamentsState,
-    on(fetchTournamentsSuccess, (state, { tournaments }) => ({
-        ...state,
-        tournaments,
-    })),
+    on(
+        fetchTournamentsSuccess,
+        refetchTournamentsSuccess,
+        (state, { tournaments }) => ({
+            ...state,
+            tournaments,
+        }),
+    ),
 );

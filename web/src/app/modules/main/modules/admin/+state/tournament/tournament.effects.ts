@@ -9,10 +9,13 @@ import {
     deleteTournamentSuccess,
     fetchTournaments,
     fetchTournamentsSuccess,
+    refetchTournaments,
+    refetchTournamentsSuccess,
     updateTournament,
     updateTournamentSuccess,
 } from './tournament.actions';
 import { TournamentsService } from '../../services/tournaments/tournaments.service';
+import { createPointRuleSuccess } from '../point-rules/point-rules.actions';
 
 @Injectable()
 export class TournamentsEffects {
@@ -25,6 +28,16 @@ export class TournamentsEffects {
             switchMap(() => this.tournamentsService.getTournaments()),
             map((tournaments: Tournaments) =>
                 fetchTournamentsSuccess({ tournaments }),
+            ),
+        ),
+    );
+
+    readonly refetch$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(refetchTournaments, createPointRuleSuccess),
+            switchMap(() => this.tournamentsService.getTournaments()),
+            map((tournaments: Tournaments) =>
+                refetchTournamentsSuccess({ tournaments }),
             ),
         ),
     );
@@ -47,9 +60,10 @@ export class TournamentsEffects {
             switchMap(({ tournament }) =>
                 this.tournamentsService.createTournament(tournament),
             ),
-            map((tournament: Tournament) =>
+            switchMap((tournament: Tournament) => [
                 createTournamentSuccess({ tournament }),
-            ),
+                refetchTournaments(),
+            ]),
         ),
     );
 

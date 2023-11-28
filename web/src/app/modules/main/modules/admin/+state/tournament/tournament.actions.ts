@@ -8,6 +8,15 @@ export const fetchTournamentsSuccess = createAction(
     props<{ tournaments: Tournaments }>(),
 );
 
+export const refetchTournaments = createAction(
+    '[Tournament] Refetch Tournaments',
+);
+
+export const refetchTournamentsSuccess = createAction(
+    '[Tournament] Refetch Tournaments Success',
+    props<{ tournaments: Tournaments }>(),
+);
+
 export const createTournament = createAction(
     '[Tournament] Create Tournament',
     props<{ tournament: Tournament }>(),

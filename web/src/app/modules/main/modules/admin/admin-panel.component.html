@@ -1,66 +1,91 @@
-<h1>Tournaments</h1>
-<div
-    class="dark:bg-gray-200 mb-2"
-    *ngFor="
-        let tournament of tournaments$ | async;
-        trackBy: trackTournamentsByFn
-    "
->
-    <p [textContent]="tournament.tournamentName"></p>
-    <p [textContent]="tournament.tournamentCode"></p>
-    <p [textContent]="tournament.pointRulesCode"></p>
-</div>
 
-<form (submit)="createPointRule()" [formGroup]="pointRuleForm">
-    <input
-        formControlName="winner"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    />
-    <input
-        formControlName="score"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    />
-    <input
-        formControlName="pointRulesCode"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    />
-    <button
-        type="submit"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    >
-        Create point rule
-    </button>
-</form>
-
-<form (submit)="createTournament()" [formGroup]="tournamentForm">
-    <input
-        formControlName="tournamentName"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    />
-    <input
-        formControlName="tournamentCode"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    />
-    <select
-        formControlName="pointRulesCode"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    >
-        <option value="">None</option>
-        <option
+<div class="container">
+    <div class="column">
+        <h1>Point Rules</h1>
+        <div
+            class="dark:bg-gray-200 mb-2"
             *ngFor="
                 let pointRule of pointRules$ | async;
-                trackBy: trackPointRuleCodesByFn;
-                let i = index;
+                trackBy: trackPointRuleCodesByFn
             "
-            [value]="pointRule.pointRulesCode"
-            [textContent]="pointRule.winner + ' ' + pointRule.score"
-            [selected]="i === 0"
-        ></option>
-    </select>
-    <button
-        type="submit"
-        class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    >
-        Create tournament
-    </button>
-</form>
+        >
+            <p><strong>Score:</strong><span [textContent]="pointRule.score"></span></p>
+            <p><strong>Winner:</strong><span [textContent]="pointRule.winner"></span></p>
+            <p><strong>Point Rule Code:</strong><span [textContent]="pointRule.pointRulesCode"></span></p>
+        </div>
+        
+        <form (submit)="createPointRule()" [formGroup]="pointRuleForm">
+            <input
+                formControlName="winner"
+                placeholder="Winner"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="score"
+                placeholder="Score"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="pointRulesCode"
+                placeholder="Point Rules Code"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <button
+                type="submit"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                Create point rule
+            </button>
+        </form>
+    </div>
+    <div class="column">
+        <h1>Tournaments</h1>
+        <div
+            class="dark:bg-gray-200 mb-2"
+            *ngFor="
+                let tournament of tournaments$ | async;
+                trackBy: trackTournamentsByFn
+            "
+        >
+        <p><strong>Name:</strong><span [textContent]="tournament.tournamentName"></span></p>
+        <p><strong>Code:</strong><span [textContent]="tournament.tournamentCode"></span></p>
+        <p><strong>Point Rule Code:</strong><span [textContent]="tournament.pointRulesCode"></span></p>
+        </div>
+
+        <form (submit)="createTournament()" [formGroup]="tournamentForm">
+            <input
+                formControlName="tournamentName"
+                placeholder="Tournament Name"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="tournamentCode"
+                placeholder="Tournament Code"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <select
+                formControlName="pointRulesCode"
+                placeholder="Point Rules Code"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                <option value="">None</option>
+                <option
+                    *ngFor="
+                        let pointRule of pointRules$ | async;
+                        trackBy: trackPointRuleCodesByFn;
+                        let i = index;
+                    "
+                    [value]="pointRule.pointRulesCode"
+                    [textContent]="pointRule.winner + ' ' + pointRule.score + ' ('  + pointRule.pointRulesCode + ')'"
+                    [selected]="i === 0"
+                ></option>
+            </select>
+            <button
+                type="submit"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                Create tournament
+            </button>
+        </form>        
+    </div>
+</div>

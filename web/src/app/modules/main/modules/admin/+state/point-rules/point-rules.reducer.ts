@@ -1,6 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 import { PointRules } from '../../models/point-rules.model';
-import { fetchPointRulesSuccess } from './point-rules.actions';
+import {
+    fetchPointRulesSuccess,
+    refetchPointRulesSuccess,
+} from './point-rules.actions';
 
 export type PointRulesFetchingStatus = 'INITIAL' | 'FETCHING' | 'READY';
 
@@ -16,8 +19,12 @@ export const initialPointRulesState: PointRulesState = {
 
 export const pointRulesReducer = createReducer(
     initialPointRulesState,
-    on(fetchPointRulesSuccess, (state, { pointRules }) => ({
-        ...state,
-        pointRules,
-    })),
+    on(
+        fetchPointRulesSuccess,
+        refetchPointRulesSuccess,
+        (state, { pointRules }) => ({
+            ...state,
+            pointRules,
+        }),
+    ),
 );

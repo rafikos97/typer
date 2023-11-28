@@ -9,6 +9,8 @@ import {
     deletePointRuleSuccess,
     fetchPointRules,
     fetchPointRulesSuccess,
+    refetchPointRules,
+    refetchPointRulesSuccess,
     updatePointRuleSuccess,
 } from './point-rules.actions';
 import { PointRule, PointRules } from '../../models/point-rules.model';
@@ -24,6 +26,16 @@ export class PointRulesEffects {
             switchMap(() => this.pointRulesService.getPointRules()),
             map((pointRules: PointRules) =>
                 fetchPointRulesSuccess({ pointRules }),
+            ),
+        ),
+    );
+
+    readonly refetch$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(refetchPointRules),
+            switchMap(() => this.pointRulesService.getPointRules()),
+            map((pointRules: PointRules) =>
+                refetchPointRulesSuccess({ pointRules }),
             ),
         ),
     );
@@ -46,9 +58,10 @@ export class PointRulesEffects {
             switchMap(({ pointRule }) =>
                 this.pointRulesService.createPointRule(pointRule),
             ),
-            map((pointRule: PointRule) =>
+            switchMap((pointRule: PointRule) => [
                 createPointRuleSuccess({ pointRule }),
-            ),
+                refetchPointRules(),
+            ]),
         ),
     );
 
