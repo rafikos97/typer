@@ -81,7 +81,7 @@ class MatchServiceTest {
     void canAddNewMatch() {
         // given
         String tournamentCode = "testTournament";
-        Match match = new Match(
+        MatchDTO match = new MatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
@@ -107,7 +107,7 @@ class MatchServiceTest {
     void willThrowWhenTournamentDoesNotExist() {
         // given
         String tournamentCode = "testTournament";
-        Match match = new Match(
+        MatchDTO match = new MatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
@@ -133,8 +133,7 @@ class MatchServiceTest {
 
         Tournament tournament = new Tournament(
                 "testTournament",
-                "testTournament",
-                "prCode"
+                "testTournament"
         );
 
         Match match = new Match(
@@ -143,11 +142,10 @@ class MatchServiceTest {
                 LocalDateTime.now().minusDays(1),
                 2,
                 3,
-                false,
-                "tournamentCode"
+                false
         );
 
-        Match updatedMatch = new Match(
+        MatchDTO updatedMatch = new MatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
@@ -156,8 +154,6 @@ class MatchServiceTest {
                 false,
                 tournament.getTournamentCode()
         );
-
-        updatedMatch.setTournament(tournament);
 
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
         given(tournamentRepository.findByTournamentCode(tournament.getTournamentCode())).willReturn(Optional.of(tournament));
@@ -177,7 +173,7 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        Match updatedMatch = new Match(
+        MatchDTO updatedMatch = new MatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
@@ -201,7 +197,7 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        Match updatedMatch = new Match(
+        MatchDTO updatedMatch = new MatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
@@ -228,8 +224,7 @@ class MatchServiceTest {
 
         Tournament tournament = new Tournament(
                 "testTournament",
-                "testTournament",
-                "prCode"
+                "testTournament"
         );
 
         Match match = new Match(
@@ -238,8 +233,7 @@ class MatchServiceTest {
                 LocalDateTime.now().minusDays(1),
                 2,
                 3,
-                false,
-                "tournamentCode"
+                false
         );
 
         MatchDTO updatedMatch = new MatchDTO(
@@ -267,7 +261,7 @@ class MatchServiceTest {
         assertThat(capturedMatch.getStartDateAndTime()).isEqualTo(updatedMatch.getStartDateAndTime());
         assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(updatedMatch.getFirstTeamScore());
         assertThat(capturedMatch.isFinished()).isEqualTo(updatedMatch.isFinished());
-        assertThat(capturedMatch.getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
+        assertThat(capturedMatch.getTournament().getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
     }
 
     @Test

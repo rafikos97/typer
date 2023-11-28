@@ -39,8 +39,7 @@ class BetRepositoryTest {
                 LocalDateTime.now(),
                 0,
                 0,
-                false,
-                "testTournament"
+                false
         );
     }
 

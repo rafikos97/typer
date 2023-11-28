@@ -11,6 +11,7 @@ import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.security.services.TokenService;
 import pl.rafiki.typer.user.exceptions.*;
+import pl.rafiki.typer.user.validators.PasswordValidator;
 
 import java.util.*;
 
@@ -61,22 +62,28 @@ public class UserService implements UserDetailsService {
         return UserMapper.INSTANCE.userToUserDto(user);
     }
 
-    public void registerUser(User user) {
-        boolean existsByEmail = userRepository.existsByEmail(user.getEmail());
+    public void registerUser(RegisterUserDTO registerUserDTO) {
+        User user = UserMapper.INSTANCE.registerUserDtoToUser(registerUserDTO);
+
+        boolean existsByEmail = userRepository.existsByEmail(registerUserDTO.getEmail());
         if (existsByEmail) {
             throw new EmailAddressAlreadyTakenException("Email address already taken!");
         }
 
-        boolean existsByLogin = userRepository.existsByUsername(user.getUsername());
+        boolean existsByLogin = userRepository.existsByUsername(registerUserDTO.getUsername());
         if (existsByLogin) {
             throw new UsernameAlreadyTakenException("Login already taken!");
         }
 
-        if (!isEmailValid(user.getEmail())) {
+        if (!isEmailValid(registerUserDTO.getEmail())) {
             throw new InvalidEmailException("Provided email is invalid!");
         }
 
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        if (!PasswordValidator.isPasswordValid(registerUserDTO.getPassword())) {
+            throw new PasswordDoesNotMatchPatternException("Provided password does not meet password policy!");
+        }
+
+        String encodedPassword = passwordEncoder.encode(registerUserDTO.getPassword());
         Role userRole = roleRepository.findByAuthority("USER").get();
 
         Set<Role> authorities = new HashSet<>();
@@ -88,36 +95,37 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public UserDTO putUpdateUser(Long userId, User user) {
-        User existingUser = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
-
-        return processPutUpdateUser(user, existingUser);
+    public UserDTO putUpdateUser(Long userId, UserDTO userDTO) {
+        return performUserUpdate(userId, userDTO);
     }
 
-    public UserDTO putUpdateUserByToken(String token, User user) {
+    public UserDTO putUpdateUserByToken(String token, UserDTO userDTO) {
         String tokenWithoutPrefix = token.substring(7);
         Long userId = tokenService.getUserIdFromToken(tokenWithoutPrefix);
+
+        return performUserUpdate(userId, userDTO);
+    }
+
+    public UserDTO patchUpdateUser(Long userId, UserDTO userDTO) {
+        return performUserUpdate(userId, userDTO);
+    }
+
+    private UserDTO performUserUpdate(Long userId, UserDTO userDTO) {
         User existingUser = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
 
-        return processPutUpdateUser(user, existingUser);
-    }
-
-    private UserDTO processPutUpdateUser(User user, User existingUser) {
-        String firstNameFromUpdate = user.getFirstName();
+        String firstNameFromUpdate = userDTO.getFirstName();
         if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
             existingUser.setFirstName(firstNameFromUpdate);
         }
 
-        String lastNameFromUpdate = user.getLastName();
+        String lastNameFromUpdate = userDTO.getLastName();
         if (lastNameFromUpdate != null && !lastNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
             existingUser.setLastName(lastNameFromUpdate);
         }
 
-        String emailFromUpdate = user.getEmail();
+        String emailFromUpdate = userDTO.getEmail();
         boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
 
         if (!isEmailValid(emailFromUpdate)) {
@@ -132,52 +140,7 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        String usernameFromUpdate = user.getUsername();
-        boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
-
-        if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
-            if (existsByUsername) {
-                throw new UsernameAlreadyTakenException("Username already taken!");
-            } else {
-                existingUser.setUsername(usernameFromUpdate);
-            }
-        }
-
-        userRepository.save(existingUser);
-        return UserMapper.INSTANCE.userToUserDto(existingUser);
-    }
-
-    public UserDTO patchUpdateUser(Long userId, UserDTO dto) {
-        User existingUser = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
-
-        String firstNameFromUpdate = dto.getFirstName();
-        if (firstNameFromUpdate != null && !firstNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getFirstName(), firstNameFromUpdate)) {
-            existingUser.setFirstName(firstNameFromUpdate);
-        }
-
-        String lastNameFromUpdate = dto.getLastName();
-        if (lastNameFromUpdate != null && !lastNameFromUpdate.isEmpty() && !Objects.equals(existingUser.getLastName(), lastNameFromUpdate)) {
-            existingUser.setLastName(lastNameFromUpdate);
-        }
-
-        String emailFromUpdate = dto.getEmail();
-        boolean existsByEmail = userRepository.existsByEmail(emailFromUpdate);
-
-        if (!isEmailValid(emailFromUpdate)) {
-            throw new InvalidEmailException("Provided email is invalid!");
-        }
-
-        if (!Objects.equals(existingUser.getEmail(), emailFromUpdate)) {
-            if (existsByEmail) {
-                throw new EmailAddressAlreadyTakenException("Email address already taken!");
-            } else {
-                existingUser.setEmail(emailFromUpdate);
-            }
-        }
-
-        String usernameFromUpdate = dto.getUsername();
+        String usernameFromUpdate = userDTO.getUsername();
         boolean existsByUsername = userRepository.existsByUsername(usernameFromUpdate);
 
         if (usernameFromUpdate != null && !usernameFromUpdate.isEmpty() && !Objects.equals(existingUser.getUsername(), usernameFromUpdate)) {
@@ -200,6 +163,10 @@ public class UserService implements UserDetailsService {
 
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new IncorrectPasswordException("Old password is incorrect!");
+        }
+
+        if (!PasswordValidator.isPasswordValid(dto.getNewPassword())) {
+            throw new PasswordDoesNotMatchPatternException("Provided password does not meet password policy!");
         }
 
         String encodedUpdatedPassword = passwordEncoder.encode(dto.getNewPassword());

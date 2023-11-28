@@ -60,15 +60,11 @@ class BetServiceTest {
         Long userId = 1L;
         Long matchId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                userId,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                userId
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -83,7 +79,7 @@ class BetServiceTest {
         ArgumentCaptor<Bet> betArgumentCaptor = ArgumentCaptor.forClass(Bet.class);
         verify(betRepository).save(betArgumentCaptor.capture());
         Bet capturedBet = betArgumentCaptor.getValue();
-        assertThat(capturedBet).isEqualTo(bet);
+        assertThat(capturedBet).isEqualTo(BetMapper.INSTANCE.betDtoToBet(bet, matchRepository, userRepository));
     }
 
     @Test
@@ -92,18 +88,16 @@ class BetServiceTest {
         Long userId = 1L;
         Long matchId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                userId,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                userId
         );
 
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
         given(userRepository.findById(userId)).willReturn(Optional.empty());
+
 
         // when
         // then
@@ -118,18 +112,13 @@ class BetServiceTest {
         Long userId = 1L;
         Long matchId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                userId,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                userId
         );
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
         given(matchRepository.findById(matchId)).willReturn(Optional.empty());
 
         // when
@@ -145,15 +134,11 @@ class BetServiceTest {
         Long userId = 1L;
         Long matchId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                userId,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                userId
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -173,15 +158,11 @@ class BetServiceTest {
         Long userId = 1L;
         Long matchId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                userId,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                userId
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -277,19 +258,17 @@ class BetServiceTest {
                 0
         );
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                user.getId(),
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                match.getId()
         );
 
         given(betRepository.findById(betId)).willReturn(Optional.of(existingBet));
         given(match.getStartDateAndTime()).willReturn(LocalDateTime.now().plusDays(1));
+        given(matchRepository.findById(match.getId())).willReturn(Optional.of(match));
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
         underTest.updateBet(betId, bet);
@@ -299,7 +278,7 @@ class BetServiceTest {
         verify(betRepository).save(betArgumentCaptor.capture());
         Bet capturedBet = betArgumentCaptor.getValue();
 
-        assertThat(capturedBet).isEqualTo(bet);
+        assertThat(capturedBet).isEqualTo(BetMapper.INSTANCE.betDtoToBet(bet, matchRepository, userRepository));
     }
 
     @Test
@@ -307,15 +286,11 @@ class BetServiceTest {
         //given
         Long betId = 1L;
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                null,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                null
         );
 
         given(betRepository.findById(betId)).willReturn(Optional.empty());
@@ -343,15 +318,11 @@ class BetServiceTest {
                 0
         );
 
-        Bet bet = new Bet(
+        BetDTO bet = new BetDTO(
+                null,
                 1,
                 1,
-                match,
-                user,
-                false,
-                0,
-                0,
-                0
+                null
         );
 
         given(betRepository.findById(betId)).willReturn(Optional.of(existingBet));
@@ -377,8 +348,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -389,8 +359,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -430,8 +399,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -442,8 +410,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -483,8 +450,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -495,8 +461,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -536,8 +501,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -548,8 +512,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);
@@ -589,8 +552,7 @@ class BetServiceTest {
 
         Tournament tournament = new Tournament(
                 "Mistrzostwa Świata 2022",
-                "MS2022",
-                "pointRulesCode"
+                "MS2022"
         );
 
         tournament.setPointRules(pointRules);
@@ -601,8 +563,7 @@ class BetServiceTest {
                 LocalDateTime.now(),
                 2,
                 1,
-                false,
-                "tournamentCode"
+                false
         );
 
         match.setTournament(tournament);

@@ -18,11 +18,9 @@ import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class BetService {
-
     private final BetRepository betRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
@@ -36,20 +34,20 @@ public class BetService {
         this.scoreboardService = scoreboardService;
     }
 
-    public void addNewBet(Long userId, Long matchId, Bet bet) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
-        }
-        bet.setUser(userOptional.get());
+    public void addNewBet(Long userId, Long matchId, BetDTO betDTO) {
+        Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
 
-        Optional<Match> matchOptional = matchRepository.findById(matchId);
-        if (matchOptional.isEmpty()) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
-        }
-        bet.setMatch(matchOptional.get());
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " does not exist!"));
+        bet.setUser(user);
 
-        if (LocalDateTime.now().isAfter(matchOptional.get().getStartDateAndTime())) {
+        Match match = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
+        bet.setMatch(match);
+
+        if (LocalDateTime.now().isAfter(match.getStartDateAndTime())) {
             throw new CannotAddBetBecauseMatchAlreadyStartedException("You cannot place bet, because match already started!");
         }
 
@@ -86,7 +84,7 @@ public class BetService {
         return mapToDTO(betList);
     }
 
-    public BetDTO updateBet(Long betId, Bet bet) {
+    public BetDTO updateBet(Long betId, BetDTO betDTO) {
         Bet existingBet = betRepository
                 .findById(betId)
                 .orElseThrow(() -> new BetDoesNotExistException("Bet with id: " + betId + " does not exist!"));
@@ -95,12 +93,12 @@ public class BetService {
             throw new CannotUpdateBetBecauseMatchAlreadyStartedException("You cannot update bet, because match already started!");
         }
 
-        int firstTeamScoreFromUpdate = bet.getFirstTeamScore();
+        int firstTeamScoreFromUpdate = betDTO.getFirstTeamScore();
         if (!Objects.equals(firstTeamScoreFromUpdate, existingBet.getFirstTeamScore())) {
             existingBet.setFirstTeamScore(firstTeamScoreFromUpdate);
         }
 
-        int secondTeamScoreFromUpdate = bet.getSecondTeamScore();
+        int secondTeamScoreFromUpdate = betDTO.getSecondTeamScore();
         if (!Objects.equals(secondTeamScoreFromUpdate, existingBet.getSecondTeamScore())) {
             existingBet.setSecondTeamScore(secondTeamScoreFromUpdate);
         }

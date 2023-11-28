@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class RegisterUserDTO{
     private Long id;
     @NotNull(message = "First name cannot be null")
     private String firstName;
@@ -18,11 +18,14 @@ public class UserDTO {
     private String username;
     @NotNull(message = "Email address cannot be null")
     private String email;
+    @NotNull(message = "Password cannot be null")
+    private String password;
 
-    public UserDTO(String firstName, String lastName, String username, String email) {
+    public RegisterUserDTO(String firstName, String lastName, String username, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
+        this.password = password;
     }
 }
