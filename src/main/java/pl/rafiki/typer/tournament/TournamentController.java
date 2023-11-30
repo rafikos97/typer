@@ -20,13 +20,13 @@ public class TournamentController {
         this.tournamentService = tournamentService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/all")
     public List<TournamentDTO> getTournaments() {
         return tournamentService.getTournaments();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{tournamentId}")
     public TournamentDTO getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
         return tournamentService.getTournament(tournamentId);

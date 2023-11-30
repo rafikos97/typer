@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponseDTO {
+public class JwtResponse {
     private String accessToken;
     private String expiresIn;
     private String tokenType;
     private String scope;
+    private String refreshToken;
 }

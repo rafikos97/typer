@@ -20,13 +20,13 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/all")
     public List<MatchDTO> getMatches() {
         return matchService.getMatches();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{matchId}")
     public MatchDTO getMatch(@PathVariable(name = "matchId") Long matchId) {
         return matchService.getMatch(matchId);
