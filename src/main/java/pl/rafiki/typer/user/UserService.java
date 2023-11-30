@@ -179,4 +179,10 @@ public class UserService implements UserDetailsService {
                 .findUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
     }
+
+    public UserDetails loadUserByUserId(Long userId) throws UserDoesNotExistException {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " not found!"));
+    }
 }

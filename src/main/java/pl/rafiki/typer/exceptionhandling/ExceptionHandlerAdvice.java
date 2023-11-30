@@ -1,6 +1,5 @@
 package pl.rafiki.typer.exceptionhandling;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,11 +8,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.rafiki.typer.security.exceptions.InvalidCredentialsException;
+import pl.rafiki.typer.security.exceptions.RefreshTokenException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
@@ -23,7 +24,7 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<ErrorResponse> handleException(InvalidCredentialsException invalidCredentialsException) {
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
-                .statusCode(invalidCredentialsException.getSTATUS_CODE().value())
+                .statusCode(UNAUTHORIZED.value())
                 .errorCode(invalidCredentialsException.getERROR_CODE())
                 .message(invalidCredentialsException.getMessage())
                 .timestamp(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
@@ -33,7 +34,7 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(InvalidBearerTokenException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(UNAUTHORIZED)
     ResponseEntity<ErrorResponse> handleInvalidBearerTokenException() {
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
@@ -47,13 +48,27 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(FORBIDDEN)
     ResponseEntity<ErrorResponse> handleAccessDeniedException() {
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
                 .statusCode(FORBIDDEN.value())
                 .errorCode("NO_PERMISSION")
                 .message("User has no permission to access this resource!")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
+    @ExceptionHandler(RefreshTokenException.class)
+    @ResponseStatus(FORBIDDEN)
+    ResponseEntity<ErrorResponse> handleRefreshTokenException(RefreshTokenException refreshTokenException) {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .statusCode(FORBIDDEN.value())
+                .errorCode(refreshTokenException.getErrorCode())
+                .message(refreshTokenException.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
 
