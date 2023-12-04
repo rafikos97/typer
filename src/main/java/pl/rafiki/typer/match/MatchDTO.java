@@ -1,5 +1,6 @@
 package pl.rafiki.typer.match;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class MatchDTO {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     @NotNull(message = "First team name cannot be null")
     private String firstTeamName;
@@ -22,6 +24,7 @@ public class MatchDTO {
     private LocalDateTime startDateAndTime;
     private Integer firstTeamScore;
     private Integer secondTeamScore;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private boolean finished;
     @NotNull(message = "Tournament code cannot be null!")
     private String tournamentCode;

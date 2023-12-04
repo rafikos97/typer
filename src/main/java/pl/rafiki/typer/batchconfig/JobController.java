@@ -1,5 +1,7 @@
 package pl.rafiki.typer.batchconfig;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -22,6 +24,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/jobs")
+@Tag(name = "Batch Job for Match", description = "Batch job management for Match API")
 public class JobController {
 
     @Autowired
@@ -38,6 +41,10 @@ public class JobController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/importData")
+    @Operation(
+            summary = "Import matches using batch file.",
+            description = "Method for adding matches using batch file."
+    )
     public void importCsvToDBJob(@RequestParam("file") MultipartFile multipartFile) {
 
         try {
