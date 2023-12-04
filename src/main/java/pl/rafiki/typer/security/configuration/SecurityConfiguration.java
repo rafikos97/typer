@@ -64,7 +64,12 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(antMatcher("/**/auth/**")).permitAll();
+                    auth.requestMatchers(
+                            antMatcher("/**/auth/**"),
+                            antMatcher("/v3/**"),
+                            antMatcher("/swagger-ui/**"),
+                            antMatcher("/typer-documentation")
+                    ).permitAll();
                     auth.anyRequest().authenticated();
                 });
 

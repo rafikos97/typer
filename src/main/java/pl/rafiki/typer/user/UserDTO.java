@@ -1,5 +1,6 @@
 package pl.rafiki.typer.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     @NotNull(message = "First name cannot be null")
     private String firstName;

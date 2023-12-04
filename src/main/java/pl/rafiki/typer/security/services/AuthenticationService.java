@@ -2,7 +2,6 @@ package pl.rafiki.typer.security.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,7 +34,7 @@ public class AuthenticationService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public ResponseEntity<?> loginUser(String username, String password) {
+    public JwtResponse loginUser(String username, String password) {
 
         try {
             Authentication auth = authenticationManager.authenticate(
@@ -56,13 +55,13 @@ public class AuthenticationService {
 
             String refreshToken = refreshTokenService.generateRefreshToken(userId).getToken();
 
-            return ResponseEntity.ok(new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshToken));
+            return new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshToken);
         } catch (AuthenticationException authenticationException) {
             throw new InvalidCredentialsException("Invalid credentials!");
         }
     }
 
-    public ResponseEntity<?> refreshToken(RefreshTokenRequest refreshTokenRequest) {
+    public JwtResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshTokenFromRequest = refreshTokenRequest.getRefreshToken();
 
         return refreshTokenService.findByToken(refreshTokenFromRequest)
@@ -75,7 +74,7 @@ public class AuthenticationService {
                     long expirationTimeInSeconds = Duration.between(Instant.now(), endOfTokenValidity).getSeconds();
                     String scope = jwt.getClaims().get("roles").toString();
 
-                    return ResponseEntity.ok(new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshTokenFromRequest));
+                    return new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshTokenFromRequest);
                 })
                 .orElseThrow(() -> new RefreshTokenException("Invalid refresh token!", "INVALID_REFRESH_TOKEN"));
     }
