@@ -9,6 +9,7 @@ export const selectPointRules = createSelector(
     selectPointRulesState,
     (pointRulesState) => pointRulesState.pointRules,
 );
+
 export const selectPointRulesFetchStatus = createSelector(
     selectPointRulesState,
     (pointRulesState) => pointRulesState.status,

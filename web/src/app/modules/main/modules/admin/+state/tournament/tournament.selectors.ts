@@ -10,6 +10,7 @@ export const selectTournaments = createSelector(
     selectTournamentsState,
     (tournamentState) => tournamentState.tournaments,
 );
+
 export const selectTournamentsFetchStatus = createSelector(
     selectTournamentsState,
     (tournamentState) => tournamentState.status,
