@@ -85,7 +85,7 @@
                 placeholder="Point Rules Code"
                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-            <option>None</option>
+                <option>None</option>
                 <option
                     *ngFor="
                         let pointRule of pointRules$ | async;
@@ -116,10 +116,7 @@
         <h1>Matches</h1>
         <div
             class="dark:bg-gray-200 mb-2"
-            *ngFor="
-                let match of matches$ | async;
-                trackBy: trackMatchByFn
-            "
+            *ngFor="let match of matches$ | async; trackBy: trackMatchByFn"
         >
             <p>
                 <strong>First team name:</strong
@@ -193,7 +190,7 @@
                 placeholder="Tournament code"
                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-            <option>None</option>
+                <option>None</option>
                 <option
                     *ngFor="
                         let tournament of tournaments$ | async;
