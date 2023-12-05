@@ -25,6 +25,9 @@ import {
     createPointRule,
     fetchPointRules,
 } from './+state/point-rules/point-rules.actions';
+import { Match } from './models/match.model';
+import { createMatch, fetchMatches } from './+state/match/match.actions';
+import { selectMatches } from './+state/match/match.selectors';
 
 @Component({
     templateUrl: './admin-panel.component.html',
@@ -37,33 +40,56 @@ import {
 export class AdminPanelComponent implements OnInit {
     private readonly store = inject(Store);
 
-    readonly trackTournamentsByFn: TrackByFunction<Tournament> = (
-        _: number,
-        tournament: Tournament,
-    ) => tournament.tournamentCode;
     readonly trackPointRuleCodesByFn: TrackByFunction<PointRule> = (
         _: number,
         pointRule: PointRule,
     ) => pointRule.pointRulesCode;
+    readonly trackTournamentsByFn: TrackByFunction<Tournament> = (
+        _: number,
+        tournament: Tournament,
+    ) => tournament.tournamentCode;
+    readonly trackMatchByFn: TrackByFunction<Match> = (
+        _: number,
+        match: Match,
+    ) => match.firstTeamName + match.startDateAndTime;
 
-    readonly tournaments$ = this.store.select(selectTournaments);
     readonly pointRules$ = this.store.select(selectPointRules);
-
-    readonly tournamentForm = new FormGroup({
-        tournamentName: new FormControl('', Validators.required),
-        tournamentCode: new FormControl('', Validators.required),
-        pointRulesCode: new FormControl('', Validators.required),
-    });
+    readonly tournaments$ = this.store.select(selectTournaments);
+    readonly matches$ = this.store.select(selectMatches);
 
     readonly pointRuleForm = new FormGroup({
         score: new FormControl('', Validators.required),
         winner: new FormControl('', Validators.required),
         pointRulesCode: new FormControl('', Validators.required),
     });
+    readonly tournamentForm = new FormGroup({
+        tournamentName: new FormControl('', Validators.required),
+        tournamentCode: new FormControl('', Validators.required),
+        pointRulesCode: new FormControl('', Validators.required),
+    });
+    readonly matchForm = new FormGroup({
+        firstTeamName: new FormControl('', Validators.required),
+        secondTeamName: new FormControl('', Validators.required),
+        startDateAndTime: new FormControl('', Validators.required),
+        firstTeamScore: new FormControl('', Validators.required),
+        secondTeamScore: new FormControl('', Validators.required),
+        finished: new FormControl('', Validators.required),
+        tournamentCode: new FormControl('', Validators.required),
+    });
 
     ngOnInit() {
-        this.store.dispatch(fetchTournaments());
         this.store.dispatch(fetchPointRules());
+        this.store.dispatch(fetchTournaments());
+        this.store.dispatch(fetchMatches());
+    }
+
+    createPointRule() {
+        const pointRuleToCreate: PointRule = {
+            winner: Number(this.pointRuleForm.value.winner!),
+            score: Number(this.pointRuleForm.value.score),
+            pointRulesCode: this.pointRuleForm.value.pointRulesCode!,
+        };
+        this.store.dispatch(createPointRule({ pointRule: pointRuleToCreate }));
     }
 
     createTournament() {
@@ -79,12 +105,26 @@ export class AdminPanelComponent implements OnInit {
         );
     }
 
-    createPointRule() {
-        const pointRuleToCreate: PointRule = {
-            winner: Number(this.pointRuleForm.value.winner!),
-            score: Number(this.pointRuleForm.value.score),
-            pointRulesCode: this.pointRuleForm.value.pointRulesCode!,
+    createMatch() {
+        const {
+            firstTeamName,
+            secondTeamName,
+            startDateAndTime,
+            firstTeamScore,
+            secondTeamScore,
+            finished,
+            tournamentCode,
+        } = this.matchForm.value;
+
+        const matchToCreate: Match = {
+            firstTeamName: firstTeamName!,
+            secondTeamName: secondTeamName!,
+            startDateAndTime: new Date(startDateAndTime!).toISOString(),
+            firstTeamScore: Number(firstTeamScore),
+            secondTeamScore: Number(secondTeamScore),
+            finished: !!finished!,
+            tournamentCode: tournamentCode!,
         };
-        this.store.dispatch(createPointRule({ pointRule: pointRuleToCreate }));
+        this.store.dispatch(createMatch({ match: matchToCreate }));
     }
 }

@@ -85,7 +85,7 @@
                 placeholder="Point Rules Code"
                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-                <option value="">None</option>
+            <option>None</option>
                 <option
                     *ngFor="
                         let pointRule of pointRules$ | async;
@@ -109,6 +109,107 @@
                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
                 Create tournament
+            </button>
+        </form>
+    </div>
+    <div class="column">
+        <h1>Matches</h1>
+        <div
+            class="dark:bg-gray-200 mb-2"
+            *ngFor="
+                let match of matches$ | async;
+                trackBy: trackMatchByFn
+            "
+        >
+            <p>
+                <strong>First team name:</strong
+                ><span [textContent]="match.firstTeamName"></span>
+            </p>
+            <p>
+                <strong>Second team name:</strong
+                ><span [textContent]="match.secondTeamName"></span>
+            </p>
+            <p>
+                <strong>First team score:</strong
+                ><span [textContent]="match.firstTeamScore"></span>
+            </p>
+            <p>
+                <strong>Second team score:</strong
+                ><span [textContent]="match.secondTeamScore"></span>
+            </p>
+            <p>
+                <strong>Start date:</strong
+                ><span [textContent]="match.startDateAndTime"></span>
+            </p>
+            <p>
+                <strong>Finished:</strong
+                ><span [textContent]="match.finished ? 'Yes' : 'No'"></span>
+            </p>
+            <p>
+                <strong>Tournament Code:</strong
+                ><span [textContent]="match.tournamentCode"></span>
+            </p>
+        </div>
+
+        <form (submit)="createMatch()" [formGroup]="matchForm">
+            <input
+                formControlName="firstTeamName"
+                placeholder="First team name"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="secondTeamName"
+                placeholder="Second team name"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="firstTeamScore"
+                placeholder="First team score"
+                type="number"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="secondTeamScore"
+                placeholder="Second team score"
+                type="number"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <input
+                formControlName="startDateAndTime"
+                placeholder="Start date and time"
+                type="datetime-local"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <label for="finished">Finished?</label>
+            <input
+                formControlName="finished"
+                placeholder="Finished"
+                id="finished"
+                type="checkbox"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <select
+                formControlName="tournamentCode"
+                placeholder="Tournament code"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+            <option>None</option>
+                <option
+                    *ngFor="
+                        let tournament of tournaments$ | async;
+                        trackBy: trackTournamentsByFn;
+                        let i = index
+                    "
+                    [value]="tournament.tournamentCode"
+                    [textContent]="tournament.tournamentName"
+                    [selected]="i === 0"
+                ></option>
+            </select>
+            <button
+                type="submit"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                Create match
             </button>
         </form>
     </div>

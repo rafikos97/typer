@@ -1,9 +1,11 @@
 export interface Match {
     firstTeamName: string;
     secondTeamName: string;
-    startDateAndTime: Date;
+    startDateAndTime: string;
     firstTeamScore: number;
     secondTeamScore: number;
     finished: boolean;
     tournamentCode: string;
 }
+
+export type Matches = Match[];

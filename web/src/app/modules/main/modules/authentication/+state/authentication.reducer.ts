@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { loginSuccess } from './authentication.actions';
+import { loginSuccess, refreshTokenSuccess } from './authentication.actions';
 import { Scope } from '../models/scope.model';
 
 export interface AuthenticationState {
@@ -7,6 +7,7 @@ export interface AuthenticationState {
     expiresIn: number | null;
     tokenType: string | null;
     scope: Scope | null;
+    refreshToken: string | null;
 }
 
 export const authenticationFeatureKey = 'authentication';
@@ -16,14 +17,20 @@ export const initialAuthenticationState: AuthenticationState = {
     expiresIn: null,
     tokenType: null,
     scope: null,
+    refreshToken: null,
 };
 
 export const authenticationReducer = createReducer(
     initialAuthenticationState,
-    on(loginSuccess, (_, { expiresIn, accessToken, tokenType, scope }) => ({
-        expiresIn,
-        accessToken,
-        tokenType,
-        scope,
-    })),
+    on(
+        loginSuccess,
+        refreshTokenSuccess,
+        (_, { expiresIn, accessToken, tokenType, scope, refreshToken }) => ({
+            expiresIn,
+            accessToken,
+            tokenType,
+            scope,
+            refreshToken,
+        }),
+    ),
 );

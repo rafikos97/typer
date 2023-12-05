@@ -11,24 +11,31 @@ import { PointRulesEffects } from './+state/point-rules/point-rules.effects';
 import { pointRulesFeatureKey } from './+state/point-rules/point-rules.feature-key';
 import { pointRulesReducer } from './+state/point-rules/point-rules.reducer';
 import { PointRulesService } from './services/point-rules/point-rules.service';
+import { MatchesService } from './services/matches/matches.service';
+import { matchesFeatureKey } from './+state/match/match.feature-key';
+import { matchesReducer } from './+state/match/match.reducer';
+import { MatchesEffects } from './+state/match/match.effects';
 
 export default [
     {
         path: '',
         providers: [
-            TournamentsService,
             PointRulesService,
+            TournamentsService,
+            MatchesService,
             importProvidersFrom(
+                StoreModule.forFeature(pointRulesFeatureKey, pointRulesReducer),
                 StoreModule.forFeature(
                     tournamentsFeatureKey,
                     tournamentsReducer,
                 ),
-                StoreModule.forFeature(pointRulesFeatureKey, pointRulesReducer),
+                StoreModule.forFeature(matchesFeatureKey, matchesReducer),
             ),
             importProvidersFrom(
                 EffectsModule.forFeature([
                     TournamentsEffects,
                     PointRulesEffects,
+                    MatchesEffects,
                 ]),
             ),
         ],
