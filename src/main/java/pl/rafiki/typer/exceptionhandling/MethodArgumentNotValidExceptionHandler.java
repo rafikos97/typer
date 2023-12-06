@@ -33,7 +33,7 @@ public class MethodArgumentNotValidExceptionHandler {
     }
 
     private Error processFieldErrors(List<FieldError> fieldErrors) {
-        Error error = new Error(BAD_REQUEST.value(), "Validation error", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        Error error = new Error(BAD_REQUEST.value(), "ARGUMENT_NOT_VALID", "Validation error", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         for (FieldError fieldError: fieldErrors) {
             error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
         }
@@ -41,16 +41,11 @@ public class MethodArgumentNotValidExceptionHandler {
     }
 
     @Getter
-    static class Error {
-        private final int status;
-        private final String message;
-        private final LocalDateTime timestamp;
+    static class Error extends ErrorResponse {
         private final List<FieldError> fieldErrors = new ArrayList<>();
 
-        Error(int status, String message, LocalDateTime timestamp) {
-            this.status = status;
-            this.message = message;
-            this.timestamp = timestamp;
+        public Error(int statusCode, String errorCode, String message, LocalDateTime timestamp) {
+            super(statusCode, errorCode, message, timestamp);
         }
 
         public void addFieldError(String objectName, String path, String message) {
