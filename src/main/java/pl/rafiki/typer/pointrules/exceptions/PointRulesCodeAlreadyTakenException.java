@@ -1,8 +1,22 @@
 package pl.rafiki.typer.pointrules.exceptions;
 
-public class PointRulesCodeAlreadyTakenException extends RuntimeException {
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.TyperException;
+
+@Getter
+@Setter
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public class PointRulesCodeAlreadyTakenException extends TyperException {
 
     public PointRulesCodeAlreadyTakenException(String message) {
         super(message);
+    }
+
+    @Override
+    protected String getErrorCode() {
+        return "POINT_RULES_CODE_ALREADY_TAKEN";
     }
 }

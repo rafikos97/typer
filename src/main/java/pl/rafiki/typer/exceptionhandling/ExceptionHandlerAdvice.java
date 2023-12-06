@@ -13,8 +13,7 @@ import pl.rafiki.typer.security.exceptions.RefreshTokenException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
@@ -73,6 +72,34 @@ public class ExceptionHandlerAdvice {
                 .build();
 
         return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
+    @ExceptionHandler(TyperException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    ResponseEntity<ErrorResponse> handleTyperException(TyperException typerException) {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .errorCode(typerException.getErrorCode())
+                .message(typerException.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    ResponseEntity<ErrorResponse> handleOtherException() {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .errorCode("OTHER_ERROR")
+                .message("A server internal error occurs.")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
     }
 }
 
