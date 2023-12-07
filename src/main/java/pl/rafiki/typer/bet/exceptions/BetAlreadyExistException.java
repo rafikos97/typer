@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.BET_ALREADY_EXISTS;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class BetAlreadyExistException extends TyperException {
     }
 
     @Override
-    protected String getErrorCode() {
-        return "BET_ALREADY_EXISTS";
+    protected ErrorCode getErrorCode() {
+        return BET_ALREADY_EXISTS;
     }
 }

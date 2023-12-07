@@ -1,12 +1,12 @@
 package pl.rafiki.typer.exceptionhandling;
 
 public abstract class TyperException extends RuntimeException {
-    public final String ERROR_CODE;
+    public final ErrorCode errorCode;
 
     public TyperException(String message) {
         super(message);
-        this.ERROR_CODE = getErrorCode();
+        this.errorCode = getErrorCode();
     }
 
-    protected abstract String getErrorCode();
+    protected abstract ErrorCode getErrorCode();
 }

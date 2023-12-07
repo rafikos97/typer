@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.USERNAME_ALREADY_TAKEN;
 
 @Getter
 @Setter
@@ -15,7 +18,7 @@ public class UsernameAlreadyTakenException extends TyperException {
     }
 
     @Override
-    protected String getErrorCode() {
-        return "USERNAME_ALREADY_TAKEN";
+    protected ErrorCode getErrorCode() {
+        return USERNAME_ALREADY_TAKEN;
     }
 }

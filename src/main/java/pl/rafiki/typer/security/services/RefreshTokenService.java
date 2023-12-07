@@ -11,6 +11,8 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.EXPIRED_REFRESH_TOKEN;
+
 @Service
 public class RefreshTokenService {
     @Value("${typer.app.jwtRefreshExpirationSec}")
@@ -41,7 +43,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken refreshToken) {
         if (refreshToken.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(refreshToken);
-            throw new RefreshTokenException("Refresh token is expired. Please log in again!", "EXPIRED_REFRESH_TOKEN");
+            throw new RefreshTokenException("Refresh token is expired. Please log in again!", EXPIRED_REFRESH_TOKEN);
         }
         return refreshToken;
     }

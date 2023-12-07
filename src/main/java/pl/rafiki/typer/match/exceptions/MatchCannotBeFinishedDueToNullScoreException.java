@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.CANNOT_FINISH_MATCH_DUE_TO_NULL_SCORE;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class MatchCannotBeFinishedDueToNullScoreException extends TyperException
     }
 
     @Override
-    protected String getErrorCode() {
-        return "CANNOT_FINISH_MATCH_DUE_TO_NULL_SCORE";
+    protected ErrorCode getErrorCode() {
+        return CANNOT_FINISH_MATCH_DUE_TO_NULL_SCORE;
     }
 }

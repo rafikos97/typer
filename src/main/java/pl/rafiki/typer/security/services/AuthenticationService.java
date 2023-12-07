@@ -20,6 +20,9 @@ import pl.rafiki.typer.user.UserService;
 import java.time.Duration;
 import java.time.Instant;
 
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.INVALID_CREDENTIALS;
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.INVALID_REFRESH_TOKEN;
+
 @Service
 @Transactional
 public class AuthenticationService {
@@ -57,7 +60,7 @@ public class AuthenticationService {
 
             return new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshToken);
         } catch (AuthenticationException authenticationException) {
-            throw new InvalidCredentialsException("Invalid credentials!");
+            throw new InvalidCredentialsException("Invalid credentials!", INVALID_CREDENTIALS);
         }
     }
 
@@ -76,6 +79,6 @@ public class AuthenticationService {
 
                     return new JwtResponse(token, String.valueOf(expirationTimeInSeconds), "bearer", scope, refreshTokenFromRequest);
                 })
-                .orElseThrow(() -> new RefreshTokenException("Invalid refresh token!", "INVALID_REFRESH_TOKEN"));
+                .orElseThrow(() -> new RefreshTokenException("Invalid refresh token!", INVALID_REFRESH_TOKEN));
     }
 }
