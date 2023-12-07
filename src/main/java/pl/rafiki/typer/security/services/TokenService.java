@@ -56,7 +56,7 @@ public class TokenService {
                 .issuedAt(now)
                 .subject(userId.toString())
                 .claim("roles", scope)
-                .expiresAt(Instant.now().plusSeconds(10800))
+                .expiresAt(Instant.now().plusSeconds(jwtTokenValidityTime))
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims));
