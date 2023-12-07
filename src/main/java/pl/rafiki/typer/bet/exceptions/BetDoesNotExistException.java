@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.BET_DOES_NOT_EXIST;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class BetDoesNotExistException extends TyperException {
     }
 
     @Override
-    protected String getErrorCode() {
-        return "BET_DOES_NOT_EXIST";
+    protected ErrorCode getErrorCode() {
+        return BET_DOES_NOT_EXIST;
     }
 }

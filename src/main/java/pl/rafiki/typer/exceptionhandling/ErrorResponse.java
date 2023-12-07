@@ -11,9 +11,10 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 public class ErrorResponse {
     private int statusCode;
-    private String errorCode;
+    private ErrorCode errorCode;
     private String message;
     private LocalDateTime timestamp;
+    private String path;
 
     public LocalDateTime getTimestamp() {
         return timestamp.truncatedTo(ChronoUnit.SECONDS);

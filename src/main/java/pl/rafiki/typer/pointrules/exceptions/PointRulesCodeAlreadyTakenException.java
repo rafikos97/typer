@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.POINT_RULES_CODE_ALREADY_TAKEN;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class PointRulesCodeAlreadyTakenException extends TyperException {
     }
 
     @Override
-    protected String getErrorCode() {
-        return "POINT_RULES_CODE_ALREADY_TAKEN";
+    protected ErrorCode getErrorCode() {
+        return POINT_RULES_CODE_ALREADY_TAKEN;
     }
 }

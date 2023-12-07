@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.CANNOT_UPDATE_BECAUSE_MATCH_ALREADY_STARTED;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class CannotUpdateBetBecauseMatchAlreadyStartedException extends TyperExc
     }
 
     @Override
-    protected String getErrorCode() {
-        return "CANNOT_UPDATE_BECAUSE_MATCH_ALREADY_STARTED";
+    protected ErrorCode getErrorCode() {
+        return CANNOT_UPDATE_BECAUSE_MATCH_ALREADY_STARTED;
     }
 }

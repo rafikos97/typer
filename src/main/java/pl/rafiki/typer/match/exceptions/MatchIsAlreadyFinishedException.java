@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import pl.rafiki.typer.exceptionhandling.ErrorCode;
 import pl.rafiki.typer.exceptionhandling.TyperException;
+
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.MATCH_IS_ALREADY_FINISHED;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ public class MatchIsAlreadyFinishedException extends TyperException {
     }
 
     @Override
-    protected String getErrorCode() {
-        return "MATCH_IS_ALREADY_FINISHED";
+    protected ErrorCode getErrorCode() {
+        return MATCH_IS_ALREADY_FINISHED;
     }
 }

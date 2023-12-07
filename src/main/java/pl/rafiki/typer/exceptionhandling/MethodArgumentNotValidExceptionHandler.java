@@ -1,5 +1,6 @@
 package pl.rafiki.typer.exceptionhandling;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static pl.rafiki.typer.exceptionhandling.ErrorCode.ARGUMENT_NOT_VALID;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -26,14 +28,14 @@ public class MethodArgumentNotValidExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    Error methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    Error methodArgumentNotValidException(HttpServletRequest request, MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
-        return processFieldErrors(fieldErrors);
+        return processFieldErrors(request, fieldErrors);
     }
 
-    private Error processFieldErrors(List<FieldError> fieldErrors) {
-        Error error = new Error(BAD_REQUEST.value(), "ARGUMENT_NOT_VALID", "Validation error", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+    private Error processFieldErrors(HttpServletRequest request, List<FieldError> fieldErrors) {
+        Error error = new Error(BAD_REQUEST.value(), ARGUMENT_NOT_VALID, "Validation error", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), request.getRequestURI());
         for (FieldError fieldError: fieldErrors) {
             error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
         }
@@ -44,8 +46,8 @@ public class MethodArgumentNotValidExceptionHandler {
     static class Error extends ErrorResponse {
         private final List<FieldError> fieldErrors = new ArrayList<>();
 
-        public Error(int statusCode, String errorCode, String message, LocalDateTime timestamp) {
-            super(statusCode, errorCode, message, timestamp);
+        public Error(int statusCode, ErrorCode errorCode, String message, LocalDateTime timestamp, String path) {
+            super(statusCode, errorCode, message, timestamp, path);
         }
 
         public void addFieldError(String objectName, String path, String message) {
