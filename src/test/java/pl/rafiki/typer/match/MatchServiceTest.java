@@ -81,13 +81,10 @@ class MatchServiceTest {
     void canAddNewMatch() {
         // given
         String tournamentCode = "testTournament";
-        MatchDTO match = new MatchDTO(
+        AddMatchDTO match = new AddMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
-                0,
-                0,
-                false,
                 tournamentCode
         );
 
@@ -107,13 +104,10 @@ class MatchServiceTest {
     void willThrowWhenTournamentDoesNotExist() {
         // given
         String tournamentCode = "testTournament";
-        MatchDTO match = new MatchDTO(
+        AddMatchDTO match = new AddMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
-                0,
-                0,
-                false,
                 tournamentCode
         );
 
@@ -317,11 +311,12 @@ class MatchServiceTest {
     void canFinishMatch() {
         // given
         Long matchId = 1L;
+        FinishMatchDTO finishMatchDTO = new FinishMatchDTO();
 
         given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
 
         // when
-        underTest.finishMatch(matchId);
+        underTest.finishMatch(matchId, finishMatchDTO);
 
         // then
         verify(betService, times(1)).closeBets(matchId);
@@ -331,12 +326,13 @@ class MatchServiceTest {
     void willThrowWhenMatchDoesNotExistWhenFinishingMatch() {
         // given
         Long matchId = 1L;
+        FinishMatchDTO finishMatchDTO = new FinishMatchDTO();
 
         given(matchRepository.findById(matchId)).willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.finishMatch(matchId))
+        assertThatThrownBy(() -> underTest.finishMatch(matchId, finishMatchDTO))
                 .isInstanceOf(MatchDoesNotExistException.class)
                 .hasMessageContaining("Match with id: " + matchId + " does not exist!");
 
@@ -347,13 +343,14 @@ class MatchServiceTest {
     void willThrowWhenMatchIsAlreadyFinished() {
         // given
         Long matchId = 1L;
+        FinishMatchDTO finishMatchDTO = new FinishMatchDTO();
 
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
         given(match.isFinished()).willReturn(true);
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.finishMatch(matchId))
+        assertThatThrownBy(() -> underTest.finishMatch(matchId, finishMatchDTO))
                 .isInstanceOf(MatchIsAlreadyFinishedException.class)
                 .hasMessageContaining("Match is already finished!");
 

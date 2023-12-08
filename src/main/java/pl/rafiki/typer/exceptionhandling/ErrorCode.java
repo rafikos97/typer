@@ -3,7 +3,6 @@ package pl.rafiki.typer.exceptionhandling;
 public enum ErrorCode {
     OTHER_ERROR,
     ARGUMENT_NOT_VALID,
-    CANNOT_FINISH_MATCH_DUE_TO_NULL_SCORE,
     MATCH_DOES_NOT_EXIST,
     MATCH_IS_ALREADY_FINISHED,
     POINT_RULES_CODE_ALREADY_TAKEN,
