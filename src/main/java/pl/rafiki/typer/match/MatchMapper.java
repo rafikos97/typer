@@ -16,6 +16,9 @@ public interface MatchMapper {
     @Mapping(source = "tournamentCode", target = "tournament", qualifiedByName = "tournamentCodeToTournament")
     Match matchDtoToMatch(MatchDTO matchDTO, @Context TournamentRepository tournamentRepository);
 
+    @Mapping(source = "tournamentCode", target = "tournament", qualifiedByName = "tournamentCodeToTournament")
+    Match addMatchDtoToMatch(AddMatchDTO addMatchDTO, @Context TournamentRepository tournamentRepository);
+
     @Named("tournamentToTournamentCode")
     default String tournamentToTournamentCode(Tournament tournament) {
         return tournament.getTournamentCode();

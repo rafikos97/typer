@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.BetService;
-import pl.rafiki.typer.match.exceptions.MatchCannotBeFinishedDueToNullScoreException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
 import pl.rafiki.typer.tournament.Tournament;
@@ -46,10 +45,9 @@ public class MatchService {
         return MatchMapper.INSTANCE.matchToMatchDto(match);
     }
 
-    public void addNewMatch(MatchDTO matchDTO) {
-        matchDTO.setFinished(false);
-        Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
-        String tournamentCode = matchDTO.getTournamentCode();
+    public void addNewMatch(AddMatchDTO addMatchDTO) {
+        Match match = MatchMapper.INSTANCE.addMatchDtoToMatch(addMatchDTO, tournamentRepository);
+        String tournamentCode = addMatchDTO.getTournamentCode();
 
         Tournament tournament = tournamentRepository
                 .findByTournamentCode(tournamentCode)
@@ -122,18 +120,16 @@ public class MatchService {
     }
 
     @Transactional
-    public void finishMatch(Long matchId) {
+    public void finishMatch(Long matchId, FinishMatchDTO finishMatchDTO) {
         Match existingMatch = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
-        if (existingMatch.getFirstTeamScore() == null || existingMatch.getSecondTeamScore() == null) {
-            throw new MatchCannotBeFinishedDueToNullScoreException("Match cannot be finished, because the score is incomplete!");
-        }
-
         if (existingMatch.isFinished()) {
             throw new MatchIsAlreadyFinishedException("Match is already finished!");
         } else {
+            existingMatch.setFirstTeamScore(finishMatchDTO.getFirstTeamScore());
+            existingMatch.setSecondTeamScore(finishMatchDTO.getSecondTeamScore());
             existingMatch.setFinished(true);
         }
 

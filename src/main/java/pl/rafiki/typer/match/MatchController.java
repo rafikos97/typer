@@ -54,8 +54,8 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewMatch(@RequestBody @Valid MatchDTO matchDTO) {
-        matchService.addNewMatch(matchDTO);
+    public void addNewMatch(@RequestBody @Valid AddMatchDTO addMatchDTO) {
+        matchService.addNewMatch(addMatchDTO);
     }
 
     @Operation(
@@ -87,7 +87,7 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/{matchId}/finish")
-    public void finishMatch(@PathVariable(name = "matchId") Long matchId) {
-        matchService.finishMatch(matchId);
+    public void finishMatch(@PathVariable(name = "matchId") Long matchId, @Valid @RequestBody FinishMatchDTO finishMatchDTO) {
+        matchService.finishMatch(matchId, finishMatchDTO);
     }
 }
