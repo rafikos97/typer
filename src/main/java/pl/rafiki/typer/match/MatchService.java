@@ -47,6 +47,7 @@ public class MatchService {
     }
 
     public void addNewMatch(MatchDTO matchDTO) {
+        matchDTO.setFinished(false);
         Match match = MatchMapper.INSTANCE.matchDtoToMatch(matchDTO, tournamentRepository);
         String tournamentCode = matchDTO.getTournamentCode();
 
