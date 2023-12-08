@@ -3,10 +3,7 @@ package pl.rafiki.typer.bet;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.rafiki.typer.bet.exceptions.BetAlreadyExistException;
-import pl.rafiki.typer.bet.exceptions.BetDoesNotExistException;
-import pl.rafiki.typer.bet.exceptions.CannotAddBetBecauseMatchAlreadyStartedException;
-import pl.rafiki.typer.bet.exceptions.CannotUpdateBetBecauseMatchAlreadyStartedException;
+import pl.rafiki.typer.bet.exceptions.*;
 import pl.rafiki.typer.match.Match;
 import pl.rafiki.typer.match.MatchRepository;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
@@ -75,8 +72,12 @@ public class BetService {
     }
 
     public List<BetDTO> getBetsByMatchId(Long matchId) {
-        if (!matchRepository.existsById(matchId)) {
-            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
+        Match match = matchRepository
+                .findById(matchId)
+                .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
+
+        if (LocalDateTime.now().isBefore(match.getStartDateAndTime())) {
+            throw new CannotDisplayBetsAsMatchHasNotStartedException("Cannot display bets as match has not started yet!");
         }
 
         List<Bet> betList = betRepository.findAllByMatchId(matchId);
