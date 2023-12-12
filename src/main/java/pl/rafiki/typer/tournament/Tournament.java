@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.rafiki.typer.pointrules.PointRules;
 
+import java.io.Serializable;
+
 @Entity(name = "tournament")
 @Table(
         name = "tournament",
@@ -16,7 +18,7 @@ import pl.rafiki.typer.pointrules.PointRules;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tournament {
+public class Tournament implements Serializable {
     @Id
     @SequenceGenerator(
             name = "tournament_sequence",

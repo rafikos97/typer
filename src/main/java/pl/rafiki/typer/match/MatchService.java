@@ -1,11 +1,14 @@
 package pl.rafiki.typer.match;
 
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.BetService;
+import pl.rafiki.typer.match.exceptions.CannotUpdateTournamentBecauseMatchIsFinishedException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
+import pl.rafiki.typer.match.exceptions.ScoreCannotBeNullException;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
@@ -57,62 +60,73 @@ public class MatchService {
         matchRepository.save(match);
     }
 
-    public MatchDTO putUpdateMatch(Long matchId, MatchDTO matchDTO) {
-        return performMatchUpdate(matchId, matchDTO, true);
+    public MatchDTO putUpdateMatch(Long matchId, UpdateMatchDTO updateMatchDTO) {
+        return performMatchUpdate(matchId, updateMatchDTO, true);
     }
 
-    public MatchDTO patchUpdateMatch(Long matchId, MatchDTO matchDTO) {
-        return performMatchUpdate(matchId, matchDTO, false);
+    public MatchDTO patchUpdateMatch(Long matchId, UpdateMatchDTO updateMatchDTO) {
+        return performMatchUpdate(matchId, updateMatchDTO, false);
     }
 
-    private MatchDTO performMatchUpdate(Long matchId, MatchDTO matchDTO, boolean putUpdate) {
+    private MatchDTO performMatchUpdate(Long matchId, UpdateMatchDTO updateMatchDTO, boolean putUpdate) {
         Match existingMatch = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
-        if (existingMatch.isFinished()) {
-            throw new MatchIsAlreadyFinishedException("You cannot update match as it's already finished!");
-        }
+        Match existingMatchCopy = SerializationUtils.clone(existingMatch);
 
-        String tournamentCodeFromUpdate = matchDTO.getTournamentCode();
-
-        if (tournamentCodeFromUpdate != null) {
+        String tournamentCodeFromUpdate = updateMatchDTO.getTournamentCode();
+        if (tournamentCodeFromUpdate != null && !Objects.equals(tournamentCodeFromUpdate, existingMatch.getTournament().getTournamentCode())) {
             Tournament tournament = tournamentRepository
                     .findByTournamentCode(tournamentCodeFromUpdate)
                     .orElseThrow(() -> new TournamentDoesNotExistException("Tournament with code: " + tournamentCodeFromUpdate + " does not exist!"));
 
-            if (!Objects.equals(tournament, existingMatch.getTournament())) {
-                existingMatch.setTournament(tournament);
+            if (existingMatch.isFinished()) {
+                throw new CannotUpdateTournamentBecauseMatchIsFinishedException("Cannot update tournament, because match is already finished!");
             }
+
+            existingMatch.setTournament(tournament);
         }
 
-        String firstTeamNameFromUpdate = matchDTO.getFirstTeamName();
+        String firstTeamNameFromUpdate = updateMatchDTO.getFirstTeamName();
         if (firstTeamNameFromUpdate != null && !firstTeamNameFromUpdate.isEmpty() && !Objects.equals(firstTeamNameFromUpdate, existingMatch.getFirstTeamName())) {
             existingMatch.setFirstTeamName(firstTeamNameFromUpdate);
         }
 
-        String secondTeamNameFromUpdate = matchDTO.getSecondTeamName();
+        String secondTeamNameFromUpdate = updateMatchDTO.getSecondTeamName();
         if (secondTeamNameFromUpdate != null && !secondTeamNameFromUpdate.isEmpty() && !Objects.equals(secondTeamNameFromUpdate, existingMatch.getSecondTeamName())) {
             existingMatch.setSecondTeamName(secondTeamNameFromUpdate);
         }
 
-        Integer firstTeamScoreFromUpdate = matchDTO.getFirstTeamScore();
+        Integer firstTeamScoreFromUpdate = updateMatchDTO.getFirstTeamScore();
+        if (firstTeamScoreFromUpdate == null && existingMatch.isFinished() && putUpdate) {
+            throw new ScoreCannotBeNullException("Score cannot be null, because match is already finished!");
+        }
+
         if (firstTeamScoreFromUpdate == null && putUpdate) {
             existingMatch.setFirstTeamScore(null);
         } else if (!Objects.equals(firstTeamScoreFromUpdate, existingMatch.getFirstTeamScore())) {
             existingMatch.setFirstTeamScore(firstTeamScoreFromUpdate);
         }
 
-        Integer secondTeamScoreFromUpdate = matchDTO.getSecondTeamScore();
+        Integer secondTeamScoreFromUpdate = updateMatchDTO.getSecondTeamScore();
+        if (secondTeamScoreFromUpdate == null && existingMatch.isFinished() && putUpdate) {
+            throw new ScoreCannotBeNullException("Score cannot be null, because match is already finished!");
+        }
+
         if (secondTeamScoreFromUpdate == null && putUpdate) {
             existingMatch.setSecondTeamScore(null);
         } else if (!Objects.equals(secondTeamScoreFromUpdate, existingMatch.getSecondTeamScore())) {
             existingMatch.setSecondTeamScore(secondTeamScoreFromUpdate);
         }
 
-        LocalDateTime startDateTimeFromUpdate = matchDTO.getStartDateAndTime();
+        LocalDateTime startDateTimeFromUpdate = updateMatchDTO.getStartDateAndTime();
         if (startDateTimeFromUpdate != null && !Objects.equals(startDateTimeFromUpdate, existingMatch.getStartDateAndTime())) {
             existingMatch.setStartDateAndTime(startDateTimeFromUpdate);
+        }
+
+        if (existingMatch.isFinished()) {
+            betService.recalculatePoints(existingMatchCopy, existingMatch);
         }
 
         matchRepository.save(existingMatch);
@@ -133,6 +147,6 @@ public class MatchService {
             existingMatch.setFinished(true);
         }
 
-        betService.closeBets(matchId);
+        betService.closeBetsAndCalculatePoints(matchId);
     }
 }

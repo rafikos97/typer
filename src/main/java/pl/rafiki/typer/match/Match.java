@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.rafiki.typer.tournament.Tournament;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity(name = "match")
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Match {
+public class Match implements Serializable {
     @Id
     @SequenceGenerator(
             name = "match_sequence",

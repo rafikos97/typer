@@ -139,13 +139,12 @@ class MatchServiceTest {
                 false
         );
 
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
                 tournament.getTournamentCode()
         );
 
@@ -167,13 +166,12 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 0,
                 0,
-                false,
                 tournamentCode
         );
 
@@ -191,13 +189,12 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 0,
                 0,
-                false,
                 tournamentCode
         );
 
@@ -230,13 +227,12 @@ class MatchServiceTest {
                 false
         );
 
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
                 tournament.getTournamentCode()
         );
 
@@ -254,7 +250,6 @@ class MatchServiceTest {
         assertThat(capturedMatch.getSecondTeamName()).isEqualTo(updatedMatch.getSecondTeamName());
         assertThat(capturedMatch.getStartDateAndTime()).isEqualTo(updatedMatch.getStartDateAndTime());
         assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(updatedMatch.getFirstTeamScore());
-        assertThat(capturedMatch.isFinished()).isEqualTo(updatedMatch.isFinished());
         assertThat(capturedMatch.getTournament().getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
     }
 
@@ -263,13 +258,12 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
                 tournamentCode
         );
 
@@ -287,13 +281,12 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
         String tournamentCode = "testTournament";
-        MatchDTO updatedMatch = new MatchDTO(
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                false,
                 tournamentCode
         );
 
@@ -319,7 +312,7 @@ class MatchServiceTest {
         underTest.finishMatch(matchId, finishMatchDTO);
 
         // then
-        verify(betService, times(1)).closeBets(matchId);
+        verify(betService, times(1)).closeBetsAndCalculatePoints(matchId);
     }
 
     @Test
@@ -336,7 +329,7 @@ class MatchServiceTest {
                 .isInstanceOf(MatchDoesNotExistException.class)
                 .hasMessageContaining("Match with id: " + matchId + " does not exist!");
 
-        verify(betService, never()).closeBets(any());
+        verify(betService, never()).closeBetsAndCalculatePoints(any());
     }
 
     @Test
@@ -354,6 +347,6 @@ class MatchServiceTest {
                 .isInstanceOf(MatchIsAlreadyFinishedException.class)
                 .hasMessageContaining("Match is already finished!");
 
-        verify(betService, never()).closeBets(any());
+        verify(betService, never()).closeBetsAndCalculatePoints(any());
     }
 }
