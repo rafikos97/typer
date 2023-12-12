@@ -60,13 +60,13 @@ public class MatchController {
 
     @Operation(
             summary = "Update match by matchId.",
-            description = "Method to update specific match."
+            description = "Method to update specific match. For finished match, firstTeamScore and secondTeamScore fields are mandatory."
     )
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{matchId}")
-    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid MatchDTO matchDTO) {
-        return matchService.putUpdateMatch(matchId, matchDTO);
+    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid UpdateMatchDTO updateMatchDTO) {
+        return matchService.putUpdateMatch(matchId, updateMatchDTO);
     }
 
     @Operation(
@@ -76,8 +76,8 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{matchId}")
-    public MatchDTO patchUpdateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody MatchDTO matchDTO) {
-        return matchService.patchUpdateMatch(matchId, matchDTO);
+    public MatchDTO patchUpdateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody UpdateMatchDTO updateMatchDTO) {
+        return matchService.patchUpdateMatch(matchId, updateMatchDTO);
     }
 
     @Operation(

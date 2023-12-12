@@ -11,6 +11,7 @@ import pl.rafiki.typer.scoreboard.ScoreboardService;
 import pl.rafiki.typer.user.User;
 import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
+import pl.rafiki.typer.utils.Result;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -109,51 +110,77 @@ public class BetService {
     }
 
     @Transactional
-    public void closeBets(Long matchId) {
+    public void closeBetsAndCalculatePoints(Long matchId) {
         List<Bet> bets = betRepository.findAllByMatchId(matchId);
 
         Match match = matchRepository
                 .findById(matchId)
                 .orElseThrow(() -> new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!"));
 
-        Integer pointsForScore = match.getTournament().getPointRules().getScore();
-        Integer pointsForWinner = match.getTournament().getPointRules().getWinner();
+        if (!bets.isEmpty()) {
+            for (Bet bet : bets) {
+                bet.setFinished(true);
+                Result result = calculateBetResults(match, bet);
 
+                bet.setWinner(result.getResultForWinner());
+                bet.setScore(result.getResultForScore());
+                bet.setTotalPoints(result.getResultForWinner() + result.getResultForScore());
+
+                scoreboardService.addScoreToScoreboard(bet.getUser().getId(), match.getTournament().getId(), result);
+            }
+        }
+    }
+
+    @Transactional
+    public void recalculatePoints(Match match, Match updatedMatch) {
+        if (match.getFirstTeamScore().equals(updatedMatch.getFirstTeamScore()) && match.getSecondTeamScore().equals(updatedMatch.getSecondTeamScore())) {
+            return;
+        }
+
+        List<Bet> bets = betRepository.findAllByMatchId(match.getId());
+
+        if (!bets.isEmpty()) {
+            for (Bet bet : bets) {
+                Result originalResult = calculateBetResults(match, bet);
+                Result updatedResult = calculateBetResults(updatedMatch, bet);
+
+                bet.setWinner(updatedResult.getResultForWinner());
+                bet.setScore(updatedResult.getResultForScore());
+                bet.setTotalPoints(updatedResult.getResultForWinner() + updatedResult.getResultForScore());
+
+                scoreboardService.correctScoreInScoreboard(bet.getUser().getId(), updatedMatch.getTournament().getId(), originalResult, updatedResult);
+            }
+        }
+    }
+
+    private Result calculateBetResults(Match match, Bet bet) {
+        int pointsForScore = match.getTournament().getPointRules().getScore();
+        int pointsForWinner = match.getTournament().getPointRules().getWinner();
         int matchFirstTeamScore = match.getFirstTeamScore();
         int matchSecondTeamScore = match.getSecondTeamScore();
         boolean matchDraw = matchFirstTeamScore == matchSecondTeamScore;
         boolean matchFirstTeamWin = matchFirstTeamScore > matchSecondTeamScore;
         boolean matchSecondTeamWin = matchFirstTeamScore < matchSecondTeamScore;
+        int betFirstTeamScore = bet.getFirstTeamScore();
+        int betSecondTeamScore = bet.getSecondTeamScore();
+        boolean betDraw = betFirstTeamScore == betSecondTeamScore;
+        boolean betFirstTeamWin = betFirstTeamScore > betSecondTeamScore;
+        boolean betSecondTeamWin = betFirstTeamScore < betSecondTeamScore;
+        Result result = new Result();
 
-        if (!bets.isEmpty()) {
-            for (Bet bet : bets) {
-                bet.setFinished(true);
-
-                int betFirstTeamScore = bet.getFirstTeamScore();
-                int betSecondTeamScore = bet.getSecondTeamScore();
-                boolean betDraw = betFirstTeamScore == betSecondTeamScore;
-                boolean betFirstTeamWin = betFirstTeamScore > betSecondTeamScore;
-                boolean betSecondTeamWin = betFirstTeamScore < betSecondTeamScore;
-
-                if (matchDraw && betDraw) {
-                    bet.setWinner(pointsForWinner);
-                } else if ((matchFirstTeamWin && betFirstTeamWin) || (matchSecondTeamWin && betSecondTeamWin)) {
-                    bet.setWinner(pointsForWinner);
-                } else {
-                    bet.setWinner(0);
-                }
-
-                if (matchFirstTeamScore == betFirstTeamScore && matchSecondTeamScore == betSecondTeamScore) {
-                    bet.setScore(pointsForScore);
-                } else {
-                    bet.setScore(0);
-                }
-
-                bet.setTotalPoints(bet.getWinner() + bet.getScore());
-
-                scoreboardService.addScore(bet.getUser().getId(), match.getTournament().getId(), bet.getScore(), bet.getWinner());
-            }
+        if ((matchDraw && betDraw) || (matchFirstTeamWin && betFirstTeamWin) || (matchSecondTeamWin && betSecondTeamWin)) {
+            result.setResultForWinner(pointsForWinner);
+        } else {
+            result.setResultForWinner(0);
         }
+
+        if (matchFirstTeamScore == betFirstTeamScore && matchSecondTeamScore == betSecondTeamScore) {
+            result.setResultForScore(pointsForScore);
+        } else {
+            result.setResultForScore(0);
+        }
+
+        return result;
     }
 
     private static List<BetDTO> mapToDTO(List<Bet> betList) {

@@ -19,6 +19,7 @@ import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.user.User;
 import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
+import pl.rafiki.typer.utils.Result;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -379,10 +379,10 @@ class BetServiceTest {
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
-        underTest.closeBets(matchId);
+        underTest.closeBetsAndCalculatePoints(matchId);
 
         // then
-        verify(scoreboardService, times(1)).addScore(any(), any(), anyInt(), anyInt());
+        verify(scoreboardService, times(1)).addScoreToScoreboard(any(), any(), any(Result.class));
         assertThat(bet.getTotalPoints()).isEqualTo(pointRules.getScore() + pointRules.getWinner());
     }
 
@@ -430,10 +430,10 @@ class BetServiceTest {
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
-        underTest.closeBets(matchId);
+        underTest.closeBetsAndCalculatePoints(matchId);
 
         // then
-        verify(scoreboardService, times(1)).addScore(any(), any(), anyInt(), anyInt());
+        verify(scoreboardService, times(1)).addScoreToScoreboard(any(), any(), any(Result.class));
         assertThat(bet.getTotalPoints()).isEqualTo(pointRules.getWinner());
     }
 
@@ -481,10 +481,10 @@ class BetServiceTest {
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
-        underTest.closeBets(matchId);
+        underTest.closeBetsAndCalculatePoints(matchId);
 
         // then
-        verify(scoreboardService, times(1)).addScore(any(), any(), anyInt(), anyInt());
+        verify(scoreboardService, times(1)).addScoreToScoreboard(any(), any(), any(Result.class));
         assertThat(bet.getTotalPoints()).isEqualTo(pointRules.getWinner() + pointRules.getScore());
     }
 
@@ -532,10 +532,10 @@ class BetServiceTest {
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
-        underTest.closeBets(matchId);
+        underTest.closeBetsAndCalculatePoints(matchId);
 
         // then
-        verify(scoreboardService, times(1)).addScore(any(), any(), anyInt(), anyInt());
+        verify(scoreboardService, times(1)).addScoreToScoreboard(any(), any(), any(Result.class));
         assertThat(bet.getTotalPoints()).isEqualTo(pointRules.getWinner());
     }
 
@@ -583,10 +583,10 @@ class BetServiceTest {
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
-        underTest.closeBets(matchId);
+        underTest.closeBetsAndCalculatePoints(matchId);
 
         // then
-        verify(scoreboardService, times(1)).addScore(any(), any(), anyInt(), anyInt());
+        verify(scoreboardService, times(1)).addScoreToScoreboard(any(), any(), any(Result.class));
         assertThat(bet.getTotalPoints()).isEqualTo(0);
     }
 
@@ -600,7 +600,7 @@ class BetServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.closeBets(matchId))
+        assertThatThrownBy(() -> underTest.closeBetsAndCalculatePoints(matchId))
                 .isInstanceOf(MatchDoesNotExistException.class)
                 .hasMessageContaining("Match with id: " + matchId + " does not exist!");
     }

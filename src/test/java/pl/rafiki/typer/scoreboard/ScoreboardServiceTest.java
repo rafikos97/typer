@@ -13,6 +13,7 @@ import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
 import pl.rafiki.typer.user.User;
 import pl.rafiki.typer.user.UserRepository;
 import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
+import pl.rafiki.typer.utils.Result;
 
 import java.util.Optional;
 
@@ -61,13 +62,14 @@ class ScoreboardServiceTest {
         Long tournamentId = 1L;
         int scoreToUpdate = 1;
         int winnerToUpdate = 1;
+        Result result = new Result(1, 1);
 
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
         given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
 
         // when
-        underTest.addScore(userId, tournamentId, scoreToUpdate, winnerToUpdate);
+        underTest.addScoreToScoreboard(userId, tournamentId, result);
 
         // then
         ArgumentCaptor<Scoreboard> scoreArgumentCaptor = ArgumentCaptor.forClass(Scoreboard.class);
@@ -83,14 +85,13 @@ class ScoreboardServiceTest {
         // given
         Long userId = 1L;
         Long tournamentId = 1L;
-        int scoreToUpdate = 1;
-        int winnerToUpdate = 1;
+        Result result = new Result(1, 1);
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.addScore(userId, tournamentId, scoreToUpdate, winnerToUpdate))
+        assertThatThrownBy(() -> underTest.addScoreToScoreboard(userId, tournamentId, result))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining("User with id: " + userId + " does not exist!");
     }
@@ -100,15 +101,14 @@ class ScoreboardServiceTest {
         // given
         Long userId = 1L;
         Long tournamentId = 1L;
-        int scoreToUpdate = 1;
-        int winnerToUpdate = 1;
+        Result result = new Result(1, 1);
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
         given(tournamentRepository.findById(tournamentId)).willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.addScore(userId, tournamentId, scoreToUpdate, winnerToUpdate))
+        assertThatThrownBy(() -> underTest.addScoreToScoreboard(userId, tournamentId, result))
                 .isInstanceOf(TournamentDoesNotExistException.class)
                 .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
     }
@@ -118,20 +118,19 @@ class ScoreboardServiceTest {
         // given
         Long userId = 1L;
         Long tournamentId = 1L;
-        int scoreToUpdate = 1;
-        int winnerToUpdate = 1;
+        Result result = new Result(1, 1);
 
         given(scoreRepository.findByUserIdAndTournamentId(userId, tournamentId)).willReturn(Optional.of(new Scoreboard()));
 
         // when
-        underTest.addScore(userId, tournamentId, scoreToUpdate, winnerToUpdate);
+        underTest.addScoreToScoreboard(userId, tournamentId, result);
 
         // then
         ArgumentCaptor<Scoreboard> scoreArgumentCaptor = ArgumentCaptor.forClass(Scoreboard.class);
         verify(scoreRepository).save(scoreArgumentCaptor.capture());
         Integer capturedScore = scoreArgumentCaptor.getValue().getScores();
         Integer capturedWinners = scoreArgumentCaptor.getValue().getWinners();
-        assertThat(capturedScore).isEqualTo(scoreToUpdate);
-        assertThat(capturedWinners).isEqualTo(winnerToUpdate);
+        assertThat(capturedScore).isEqualTo(result.getResultForScore());
+        assertThat(capturedWinners).isEqualTo(result.getResultForWinner());
     }
 }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity(name = "pointrules")
 @Table(
         name = "pointrules",
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PointRules {
+public class PointRules implements Serializable {
     @Id
     @SequenceGenerator(
             name = "pointrules_sequence",
