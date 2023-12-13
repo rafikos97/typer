@@ -58,7 +58,7 @@ public class Match implements Serializable {
     @Column(name = "finished")
     private boolean finished;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "tournament_id",
             referencedColumnName = "tournament_id",

@@ -189,4 +189,12 @@ public class BetService {
                 .map(BetMapper.INSTANCE::betToBetDto)
                 .toList();
     }
+
+    public void deleteBet(Long betId) {
+        if (!betRepository.existsById(betId)) {
+            throw new BetDoesNotExistException("Bet with id: " + betId + " does not exist!");
+        }
+
+        betRepository.deleteById(betId);
+    }
 }

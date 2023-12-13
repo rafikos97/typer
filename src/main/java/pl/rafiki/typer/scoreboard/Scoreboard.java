@@ -29,7 +29,7 @@ public class Scoreboard {
     )
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "user_id",
@@ -38,7 +38,7 @@ public class Scoreboard {
     )
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "tournament_id",
             referencedColumnName = "tournament_id",

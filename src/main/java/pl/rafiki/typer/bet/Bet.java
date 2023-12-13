@@ -41,7 +41,7 @@ public class Bet {
     )
     private Integer secondTeamScore;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "match_id",
             referencedColumnName = "match_id",
@@ -50,7 +50,7 @@ public class Bet {
     )
     private Match match;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "user_id",
