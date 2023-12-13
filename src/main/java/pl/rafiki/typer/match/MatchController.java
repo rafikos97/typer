@@ -90,4 +90,15 @@ public class MatchController {
     public void finishMatch(@PathVariable(name = "matchId") Long matchId, @Valid @RequestBody FinishMatchDTO finishMatchDTO) {
         matchService.finishMatch(matchId, finishMatchDTO);
     }
+
+    @Operation(
+            summary = "Delete match.",
+            description = "Method to delete specific match by matchId."
+    )
+    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/{matchId}")
+    public void deleteMatch(@PathVariable("matchId") Long matchId) {
+        matchService.deleteMatch(matchId);
+    }
 }
