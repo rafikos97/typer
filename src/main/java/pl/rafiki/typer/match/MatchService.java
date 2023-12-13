@@ -149,4 +149,12 @@ public class MatchService {
 
         betService.closeBetsAndCalculatePoints(matchId);
     }
+
+    public void deleteMatch(Long matchId) {
+        if (!matchRepository.existsById(matchId)) {
+            throw new MatchDoesNotExistException("Match with id: " + matchId + " does not exist!");
+        }
+
+        matchRepository.deleteById(matchId);
+    }
 }
