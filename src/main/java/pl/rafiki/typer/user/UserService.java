@@ -185,4 +185,12 @@ public class UserService implements UserDetailsService {
                 .findById(userId)
                 .orElseThrow(() -> new UserDoesNotExistException("User with id: " + userId + " not found!"));
     }
+
+    public void deleteUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserDoesNotExistException("User with id: " + userId + " does not exist!");
+        }
+
+        userRepository.deleteById(userId);
+    }
 }
