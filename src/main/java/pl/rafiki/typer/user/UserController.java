@@ -111,4 +111,15 @@ public class UserController {
     public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordDTO dto) {
         userService.updatePassword(userId, dto);
     }
+
+    @Operation(
+            summary = "Delete user.",
+            description = "Method to delete specific user by userId."
+    )
+    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/{userId}")
+    public void deleteUser(@PathVariable("userId") Long userId) {
+        userService.deleteUser(userId);
+    }
 }
