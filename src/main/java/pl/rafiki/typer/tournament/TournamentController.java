@@ -79,4 +79,15 @@ public class TournamentController {
     public TournamentDTO patchUpdateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO tournamentDTO) {
         return tournamentService.updateTournament(tournamentId, tournamentDTO);
     }
+
+    @Operation(
+            summary = "Delete tournament.",
+            description = "Method to delete specific tournament by tournamentId."
+    )
+    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/{tournamentId}")
+    public void deleteTournament(@PathVariable("tournamentId") Long tournamentId) {
+        tournamentService.deleteTournament(tournamentId);
+    }
 }

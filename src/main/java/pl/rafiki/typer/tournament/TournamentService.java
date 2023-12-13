@@ -88,4 +88,12 @@ public class TournamentService {
         tournamentRepository.save(existingTournament);
         return TournamentMapper.INSTANCE.tournamentToTournamentDto(existingTournament);
     }
+
+    public void deleteTournament(Long tournamentId) {
+        if (!tournamentRepository.existsById(tournamentId)) {
+            throw new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!");
+        }
+
+        tournamentRepository.deleteById(tournamentId);
+    }
 }
