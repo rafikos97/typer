@@ -67,4 +67,15 @@ public class PointRulesController {
     public PointRulesDTO updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRulesDTO pointRulesDTO) {
         return pointRulesService.updatePointRules(pointrulesId, pointRulesDTO);
     }
+
+    @Operation(
+            summary = "Delete point rules.",
+            description = "Method to delete specific point rules by pointrulesId."
+    )
+    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/{pointrulesId}")
+    public void deletePointRules(@PathVariable("pointrulesId") Long pointrulesId) {
+        pointRulesService.deletePointRules(pointrulesId);
+    }
 }
