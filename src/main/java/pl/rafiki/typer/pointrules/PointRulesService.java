@@ -72,4 +72,12 @@ public class PointRulesService {
         pointRulesRepository.save(existingPointRules);
         return PointRulesMapper.INSTANCE.mapPointRulesToPointRulesDto(existingPointRules);
     }
+
+    public void deletePointRules(Long pointrulesId) {
+        if (!pointRulesRepository.existsById(pointrulesId)) {
+            throw new PointRulesDoesNotExistException("Point rules with id: " + pointrulesId + " does not exist!");
+        }
+
+        pointRulesRepository.deleteById(pointrulesId);
+    }
 }
