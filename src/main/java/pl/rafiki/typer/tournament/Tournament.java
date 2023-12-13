@@ -47,7 +47,7 @@ public class Tournament implements Serializable {
     )
     private String tournamentCode;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "pointrules_id",
             referencedColumnName = "pointrules_id",
