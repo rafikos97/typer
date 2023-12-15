@@ -17,5 +17,13 @@ services:
       DB_ADDRESS: typer-db
     env_file:
       - ./env/db.env
+
+  typer-web:
+    build: ./web
+    ports:
+      - '4200:80'
+    depends_on:
+      - typer-backend
+
 volumes:
   batchfiles:
