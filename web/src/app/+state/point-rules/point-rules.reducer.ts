@@ -17,7 +17,7 @@ export const initialPointRulesState: PointRulesState = {
     status: 'INITIAL',
 };
 
-export const pointRulesReducer = createReducer(
+export const pointRulesReducer = createReducer<PointRulesState>(
     initialPointRulesState,
     on(
         fetchPointRulesSuccess,
@@ -25,6 +25,7 @@ export const pointRulesReducer = createReducer(
         (state, { pointRules }) => ({
             ...state,
             pointRules,
+            status: 'READY',
         }),
     ),
 );

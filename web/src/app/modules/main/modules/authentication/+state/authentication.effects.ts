@@ -11,6 +11,9 @@ import { AuthenticationService } from '../services/authentication/authentication
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectRefreshToken } from './authentication.selectors';
+import { fetchMatches } from 'src/app/+state/match/match.actions';
+import { fetchPointRules } from 'src/app/+state/point-rules/point-rules.actions';
+import { fetchTournaments } from 'src/app/+state/tournament/tournament.actions';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -45,15 +48,18 @@ export class AuthenticationEffects {
         ),
     );
 
-    readonly loginSuccess$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(loginSuccess),
-                tap(() => {
-                    this.router.navigateByUrl('/main/home');
-                }),
-            ),
-        { dispatch: false },
+    readonly loginSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loginSuccess),
+            tap(() => {
+                this.router.navigateByUrl('/main/home');
+            }),
+            switchMap(() => [
+                fetchPointRules(),
+                fetchTournaments(),
+                fetchMatches(),
+            ]),
+        ),
     );
 
     readonly refreshToken$ = createEffect(() =>

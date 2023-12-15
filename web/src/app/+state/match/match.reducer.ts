@@ -14,10 +14,11 @@ export const initialMatchesState: MatchesState = {
     status: 'INITIAL',
 };
 
-export const matchesReducer = createReducer(
+export const matchesReducer = createReducer<MatchesState>(
     initialMatchesState,
     on(fetchMatchesSuccess, refetchMatchesSuccess, (state, { matches }) => ({
         ...state,
         matches,
+        status: 'READY',
     })),
 );

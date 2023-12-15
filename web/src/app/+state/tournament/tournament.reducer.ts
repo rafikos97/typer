@@ -17,7 +17,7 @@ export const initialTournamentsState: TournamentsState = {
     status: 'INITIAL',
 };
 
-export const tournamentsReducer = createReducer(
+export const tournamentsReducer = createReducer<TournamentsState>(
     initialTournamentsState,
     on(
         fetchTournamentsSuccess,
@@ -25,6 +25,7 @@ export const tournamentsReducer = createReducer(
         (state, { tournaments }) => ({
             ...state,
             tournaments,
+            status: 'READY',
         }),
     ),
 );

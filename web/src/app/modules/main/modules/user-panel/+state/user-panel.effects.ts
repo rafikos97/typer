@@ -5,6 +5,8 @@ import {
     fetchUserInformationSuccess,
     updateUserInformation,
     updateUserInformationSuccess,
+    updateUserPassword,
+    updateUserPasswordSuccess,
 } from './user-panel.actions';
 import { delay, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { UserPanelService } from '../services/user-panel/user-panel.service';
@@ -41,6 +43,20 @@ export class UserPanelEffects {
             map((userInformation: UserInformation) =>
                 updateUserInformationSuccess({ userInformation }),
             ),
+        ),
+    );
+
+    readonly updatePassword$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateUserPassword),
+            withLatestFrom(this.store.select(selectUserInformation)),
+            switchMap(([{ userPassword }, storeUserInfo]) =>
+                this.userPanelService.updateUserPassword(
+                    userPassword,
+                    storeUserInfo.id,
+                ),
+            ),
+            map(() => updateUserPasswordSuccess()),
         ),
     );
 }
