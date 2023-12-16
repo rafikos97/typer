@@ -13,7 +13,7 @@ export class UsersService {
     }
 
     createUser(match: Omit<User, 'id'>) {
-        return this.httpClient.post<User>(`${this.matchesApi}/add`, match);
+        return this.httpClient.post<User>(`${this.matchesApi}/register`, match);
     }
 
     getUser(id: string) {

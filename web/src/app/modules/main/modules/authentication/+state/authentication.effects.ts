@@ -14,6 +14,7 @@ import { selectRefreshToken } from './authentication.selectors';
 import { fetchMatches } from 'src/app/+state/match/match.actions';
 import { fetchPointRules } from 'src/app/+state/point-rules/point-rules.actions';
 import { fetchTournaments } from 'src/app/+state/tournament/tournament.actions';
+import { fetchUsers } from 'src/app/+state/users/users.actions';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -58,6 +59,7 @@ export class AuthenticationEffects {
                 fetchPointRules(),
                 fetchTournaments(),
                 fetchMatches(),
+                fetchUsers(),
             ]),
         ),
     );

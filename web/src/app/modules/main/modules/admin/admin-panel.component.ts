@@ -79,6 +79,7 @@ export class AdminPanelComponent {
         firstName: new FormControl('', Validators.required),
         lastName: new FormControl('', Validators.required),
         email: new FormControl('', Validators.required),
+        password: new FormControl('', Validators.required),
     });
 
     createUser() {
@@ -87,6 +88,7 @@ export class AdminPanelComponent {
             firstName: this.userForm.value.firstName!,
             lastName: this.userForm.value.lastName!,
             email: this.userForm.value.email!,
+            password: this.userForm.value.password!,
         };
         this.store.dispatch(createUser({ user: userToCreate }));
     }

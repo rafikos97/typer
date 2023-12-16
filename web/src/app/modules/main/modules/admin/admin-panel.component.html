@@ -1,11 +1,11 @@
 <div class="container">
-    <div class="column">
+    <div class="table-container">
         <h1>Point Rules</h1>
         <form (submit)="createPointRule()" [formGroup]="pointRuleForm">
             <table>
                 <thead>
-                    <th>Score</th>
                     <th>Winner</th>
+                    <th>Score</th>
                     <th>Point rule code</th>
                     <th></th>
                 </thead>
@@ -23,6 +23,7 @@
                             <input
                                 formControlName="score"
                                 placeholder="Score"
+                                type="number"
                                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                         </td>
@@ -57,7 +58,7 @@
             </table>
         </form>
     </div>
-    <div class="column">
+    <div class="table-container">
         <h1>Tournaments</h1>
         <form (submit)="createTournament()" [formGroup]="tournamentForm">
             <table>
@@ -133,7 +134,7 @@
             </table>
         </form>
     </div>
-    <div class="column">
+    <div class="table-container">
         <h1>Matches</h1>
         <form (submit)="createMatch()" [formGroup]="matchForm">
             <table>
@@ -235,7 +236,7 @@
             </table>
         </form>
     </div>
-    <div class="column">
+    <div class="table-container">
         <h1>Users</h1>
         <form (submit)="createUser()" [formGroup]="userForm">
             <table>
@@ -255,6 +256,12 @@
                                 class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                         </td>
+                        <td><input
+                            formControlName="password"
+                            type="password"
+                            placeholder="Password"
+                            class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        /></td>
                         <td>
                             <input
                                 formControlName="firstName"
@@ -293,6 +300,7 @@
                     >
                         <td [textContent]="user.id"></td>
                         <td [textContent]="user.username"></td>
+                        <td [textContent]="user.password"></td>
                         <td [textContent]="user.firstName"></td>
                         <td [textContent]="user.lastName"></td>
                         <td [textContent]="user.email"></td>
