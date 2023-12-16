@@ -42,7 +42,7 @@
                         >Admin</a
                     >
                 </li>
-                <li class="ml-6">
+                <li class="ml-6" *ngIf="(tournaments$ | async)?.length">
                     <select (change)="changeTournamentContext($event)">
                         <option
                             *ngFor="let tournament of tournaments$ | async"
