@@ -87,6 +87,7 @@ public class BetService {
     }
 
     public BetDTO updateBet(Long betId, BetDTO betDTO) {
+        Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
         Bet existingBet = betRepository
                 .findById(betId)
                 .orElseThrow(() -> new BetDoesNotExistException("Bet with id: " + betId + " does not exist!"));

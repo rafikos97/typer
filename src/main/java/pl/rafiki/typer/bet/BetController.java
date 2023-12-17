@@ -78,15 +78,4 @@ public class BetController {
     public BetDTO updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid BetDTO betDTO) {
         return betService.updateBet(betId, betDTO);
     }
-
-    @Operation(
-            summary = "Delete bet.",
-            description = "Method to delete specific bet by betId."
-    )
-    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping(path = "/{betId}")
-    public void deleteBet(@PathVariable("betId") Long betId) {
-        betService.deleteBet(betId);
-    }
 }
