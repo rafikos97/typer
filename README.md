@@ -2,7 +2,19 @@
 
 Typer is an application that allows you to bet on match results. It was created for amateur purposes e.g. betting on matches with friends or work colleagues. The application using the RESTful API allows administrator to register and manage users participating in the game, add and manage tournaments (e.g. world championships, league games, champions league), add and manage matches assigned to a given torunament, as well as set rules for awarding points – a given rule is assigned to a given tournament. It is also possible to add matches using batch file to make it easier to add more matches at once. Of course the application also allows user to create and manage bets, bet can be created and edited freely until the match starts. After the match ends, the administrator enters the match result and closes the match, during this operation the points obtained by users are counted. 
 
+# Technologies
 
+The backend part is written in Java using the Spring framework. Application is secured with Spring Security using token-based authentication. Below is the list of used technologies:
+* Java 17,
+* Spring Boot 3,
+* Spring JPA with Hibernate,
+* PostgreSQL,
+* Maven,
+* Spring Security (OAuth2 with JWT),
+* Spring Batch,
+* Lombok,
+* MapStruct,
+* Swagger 3
 
 # API documentation
 
