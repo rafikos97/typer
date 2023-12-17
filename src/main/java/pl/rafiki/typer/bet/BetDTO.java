@@ -1,9 +1,7 @@
 package pl.rafiki.typer.bet;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class BetDTO {
     @Schema(accessMode = AccessMode.READ_ONLY)
     private Long id;
-    @Schema(accessMode = AccessMode.READ_ONLY)
     private Long userId;
     @NotNull(message = "First team score cannot be null")
     private Integer firstTeamScore;
