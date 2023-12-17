@@ -1,6 +1,6 @@
 package pl.rafiki.typer.bet;
 
-<<<<<<< HEAD
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 =======
