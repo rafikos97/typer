@@ -86,6 +86,10 @@ public class BetService {
 
     public BetDTO updateBet(Long betId, BetDTO betDTO) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
+>>>>>>> 34abc83 (Moved validation for null values from Bet class to DTO so it is possible to use DTO in POST and PUT methods.)
 =======
         Bet bet = BetMapper.INSTANCE.betDtoToBet(betDTO, matchRepository, userRepository);
 >>>>>>> 34abc83 (Moved validation for null values from Bet class to DTO so it is possible to use DTO in POST and PUT methods.)
