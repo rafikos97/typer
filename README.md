@@ -25,3 +25,23 @@ http://localhost:8080/typer-documentation
 ```
 
 # :hammer_and_wrench: Installation steps:
+
+Assuming you are running docker engine locally, please follow this steps to run application: 
+
+* Clone the project to your local repository:
+```
+git clone https://github.com/rafikos97/typer.git
+```
+* Using terminal, run the following command in root directory:
+```
+docker compose up --build
+```
+And there you go! Backend server, database and Angular app are up and running :rocket:
+
+# How to use?
+* All API endpoints are exposed on  localhost:8080. For the details please refer to API documentation.
+* Angular app is listening on localhost:4200, you can access it by entering the following address in web browser:
+```
+http://localhost:4200/
+```
+
