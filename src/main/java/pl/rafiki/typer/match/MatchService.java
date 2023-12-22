@@ -13,6 +13,7 @@ import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +32,13 @@ public class MatchService {
         this.betService = betService;
     }
 
-    public List<MatchDTO> getMatches() {
-        List<Match> matchList = matchRepository.findAll();
-
-        return matchList
+    public List<MatchDTO> getMatches(Boolean finished, LocalDate startDateFrom, LocalDate startDateTo) {
+        return matchRepository
+                .findAll()
                 .stream()
+                .filter(match -> finished == null || match.isFinished() == finished)
+                .filter(match -> startDateFrom == null || match.getStartDateAndTime().isAfter(startDateFrom.atStartOfDay()))
+                .filter(match -> startDateTo == null || match.getStartDateAndTime().isBefore(startDateTo.atStartOfDay()))
                 .map(MatchMapper.INSTANCE::matchToMatchDto)
                 .toList();
     }
