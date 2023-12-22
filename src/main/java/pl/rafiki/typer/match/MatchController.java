@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,8 +33,11 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/all")
-    public List<MatchDTO> getMatches() {
-        return matchService.getMatches();
+    public List<MatchDTO> getMatches (
+            @RequestParam(required = false) Boolean finished,
+            @RequestParam(required = false) LocalDate startDateFrom,
+            @RequestParam(required = false) LocalDate startDateTo) {
+        return matchService.getMatches(finished, startDateFrom, startDateTo);
     }
 
     @Operation(

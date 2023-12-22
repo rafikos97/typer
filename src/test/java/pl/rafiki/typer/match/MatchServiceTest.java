@@ -43,7 +43,7 @@ class MatchServiceTest {
     @Test
     void canGetAllMatches() {
         // when
-        underTest.getMatches();
+        underTest.getMatches(null, null, null);
 
         // then
         verify(matchRepository, times(1)).findAll();
