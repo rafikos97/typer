@@ -41,6 +41,21 @@ public class MatchController {
     }
 
     @Operation(
+            summary = "Get all matches for specific tournament.",
+            description = "Method to get matches by tournamentId."
+    )
+    @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping(path = "/tournament/{tournamentId}")
+    public List<MatchDTO> getMatchesByTournamentId (
+            @PathVariable Long tournamentId,
+            @RequestParam(required = false) Boolean finished,
+            @RequestParam(required = false) LocalDate startDateFrom,
+            @RequestParam(required = false) LocalDate startDateTo) {
+        return matchService.getMatchesByTournamentId(tournamentId, finished, startDateFrom, startDateTo);
+    }
+
+    @Operation(
             summary = "Get match by matchId.",
             description = "Method to get specific match by matchId."
     )
