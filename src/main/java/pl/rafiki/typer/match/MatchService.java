@@ -43,6 +43,21 @@ public class MatchService {
                 .toList();
     }
 
+    public List<MatchDTO> getMatchesByTournamentId(Long tournamentId, Boolean finished, LocalDate startDateFrom, LocalDate startDateTo) {
+        if (!tournamentRepository.existsById(tournamentId)) {
+            throw new TournamentDoesNotExistException("Tournament with id: " + tournamentId + " does not exist!");
+        }
+
+        return matchRepository
+                .findAllByTournamentId(tournamentId)
+                .stream()
+                .filter(match -> finished == null || match.isFinished() == finished)
+                .filter(match -> startDateFrom == null || match.getStartDateAndTime().isAfter(startDateFrom.atStartOfDay()))
+                .filter(match -> startDateTo == null || match.getStartDateAndTime().isBefore(startDateTo.atStartOfDay()))
+                .map(MatchMapper.INSTANCE::matchToMatchDto)
+                .toList();
+    }
+
     public MatchDTO getMatch(Long matchId) {
         Match match = matchRepository
                 .findById(matchId)
