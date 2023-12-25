@@ -30,7 +30,7 @@ export class PointRulesService {
         );
     }
 
-    deletePointRule(id: string) {
+    deletePointRule(id: number) {
         return this.httpClient.delete<PointRule>(`${this.pointRulesApi}/${id}`);
     }
 }

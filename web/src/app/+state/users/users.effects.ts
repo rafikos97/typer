@@ -60,7 +60,7 @@ export class UsersEffects {
         this.actions$.pipe(
             ofType(deleteUser),
             switchMap(({ id }) => this.usersService.deleteUser(id)),
-            map(() => deleteUserSuccess()),
+            switchMap(() => [deleteUserSuccess(), refetchUsers()]),
         ),
     );
 }

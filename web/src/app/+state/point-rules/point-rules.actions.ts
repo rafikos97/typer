@@ -39,7 +39,7 @@ export const updatePointRuleSuccess = createAction(
 
 export const deletePointRule = createAction(
     '[Point Rules] Delete Point Rule',
-    props<{ id: string }>(),
+    props<{ id: number }>(),
 );
 
 export const deletePointRuleSuccess = createAction(

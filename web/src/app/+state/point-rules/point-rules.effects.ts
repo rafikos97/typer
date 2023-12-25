@@ -69,7 +69,7 @@ export class PointRulesEffects {
         this.actions$.pipe(
             ofType(deletePointRule),
             switchMap(({ id }) => this.pointRulesService.deletePointRule(id)),
-            map(() => deletePointRuleSuccess()),
+            switchMap(() => [deletePointRuleSuccess(), refetchPointRules()]),
         ),
     );
 }

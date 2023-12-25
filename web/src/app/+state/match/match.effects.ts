@@ -63,7 +63,7 @@ export class MatchesEffects {
         this.actions$.pipe(
             ofType(deleteMatch),
             switchMap(({ id }) => this.matchesService.deleteMatch(id)),
-            map(() => deleteMatchSuccess()),
+            switchMap(() => [deleteMatchSuccess(), refetchMatches()]),
         ),
     );
 }

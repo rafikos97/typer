@@ -13,17 +13,29 @@ import {
     Validators,
 } from '@angular/forms';
 import { selectTournaments } from '../../../../+state/tournament/tournament.selectors';
-import { createTournament } from '../../../../+state/tournament/tournament.actions';
+import {
+    createTournament,
+    deleteTournament,
+} from '../../../../+state/tournament/tournament.actions';
 import { AsyncPipe, NgFor } from '@angular/common';
 import { PointRule } from '../../../../models/point-rules.model';
 import { selectPointRules } from '../../../../+state/point-rules/point-rules.selectors';
-import { createPointRule } from '../../../../+state/point-rules/point-rules.actions';
+import {
+    createPointRule,
+    deletePointRule,
+} from '../../../../+state/point-rules/point-rules.actions';
 import { Match } from '../../../../models/match.model';
-import { createMatch } from '../../../../+state/match/match.actions';
+import {
+    createMatch,
+    deleteMatch,
+} from '../../../../+state/match/match.actions';
 import { selectMatches } from '../../../../+state/match/match.selectors';
 import { selectUsers } from '../../../../../app/+state/users/users.selectors';
 import { User } from '../../../../../app/models/users.model';
-import { createUser } from '../../../../../app/+state/users/users.actions';
+import {
+    createUser,
+    deleteUser,
+} from '../../../../../app/+state/users/users.actions';
 
 @Component({
     templateUrl: './admin-panel.component.html',
@@ -49,7 +61,7 @@ export class AdminPanelComponent {
         match: Match,
     ) => match.firstTeamName + match.startDateAndTime;
     readonly trackUserByFn: TrackByFunction<User> = (_: number, user: User) =>
-        user.id + user.id;
+        user.id;
 
     readonly pointRules$ = this.store.select(selectPointRules);
     readonly tournaments$ = this.store.select(selectTournaments);
@@ -136,5 +148,21 @@ export class AdminPanelComponent {
             tournamentCode: tournamentCode!,
         };
         this.store.dispatch(createMatch({ match: matchToCreate }));
+    }
+
+    deleteUser(id: number) {
+        this.store.dispatch(deleteUser({ id }));
+    }
+
+    deletePointRule(id: number) {
+        this.store.dispatch(deletePointRule({ id }));
+    }
+
+    deleteTournament(id: number) {
+        this.store.dispatch(deleteTournament({ id }));
+    }
+
+    deleteMatch(id: number) {
+        this.store.dispatch(deleteMatch({ id }));
     }
 }

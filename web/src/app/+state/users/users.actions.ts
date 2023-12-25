@@ -37,7 +37,7 @@ export const updateUserSuccess = createAction(
 
 export const deleteUser = createAction(
     '[User] Delete User',
-    props<{ id: string }>(),
+    props<{ id: number }>(),
 );
 
 export const deleteUserSuccess = createAction('[User] Delete User Success');

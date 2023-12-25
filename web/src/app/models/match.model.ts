@@ -6,6 +6,7 @@ export interface Match {
     secondTeamScore: number;
     finished: boolean;
     tournamentCode: string;
+    id?: number;
 }
 
 export type Matches = Match[];

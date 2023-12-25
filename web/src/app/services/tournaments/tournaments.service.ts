@@ -31,7 +31,7 @@ export class TournamentsService {
         );
     }
 
-    deleteTournament(id: string) {
+    deleteTournament(id: number) {
         return this.httpClient.delete<Tournament>(
             `${this.tournamentApi}/${id}`,
         );

@@ -24,7 +24,7 @@ export class MatchesService {
         return this.httpClient.post<Match>(`${this.matchesApi}/${id}`, match);
     }
 
-    deleteMatch(id: string) {
+    deleteMatch(id: number) {
         return this.httpClient.delete<Match>(`${this.matchesApi}/${id}`);
     }
 }

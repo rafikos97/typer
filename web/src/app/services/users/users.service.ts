@@ -24,7 +24,7 @@ export class UsersService {
         return this.httpClient.post<User>(`${this.matchesApi}/${id}`, match);
     }
 
-    deleteUser(id: string) {
+    deleteUser(id: number) {
         return this.httpClient.delete<User>(`${this.matchesApi}/${id}`);
     }
 }

@@ -71,7 +71,7 @@ export class TournamentsEffects {
         this.actions$.pipe(
             ofType(deleteTournament),
             switchMap(({ id }) => this.tournamentsService.deleteTournament(id)),
-            map(() => deleteTournamentSuccess()),
+            switchMap(() => [deleteTournamentSuccess(), refetchTournaments()]),
         ),
     );
 }

@@ -37,7 +37,7 @@ export const updateMatchSuccess = createAction(
 
 export const deleteMatch = createAction(
     '[Match] Delete Match',
-    props<{ id: string }>(),
+    props<{ id: number }>(),
 );
 
 export const deleteMatchSuccess = createAction('[Match] Delete Match Success');

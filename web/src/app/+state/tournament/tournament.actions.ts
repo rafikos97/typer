@@ -39,7 +39,7 @@ export const updateTournamentSuccess = createAction(
 
 export const deleteTournament = createAction(
     '[Tournament] Delete Tournament',
-    props<{ id: string }>(),
+    props<{ id: number }>(),
 );
 
 export const deleteTournamentSuccess = createAction(
