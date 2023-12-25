@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Scope } from '../models/scope.model';
+import { LoginResponse } from '../models/login-response.model';
 
 export const login = createAction(
     '[Login]',
@@ -8,10 +8,12 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
     '[Login] Success',
-    props<{
-        accessToken: string;
-        expiresIn: number;
-        scope: Scope;
-        tokenType: string;
-    }>(),
+    props<LoginResponse>(),
+);
+
+export const refreshToken = createAction('[Login] Refresh Token');
+
+export const refreshTokenSuccess = createAction(
+    '[Login] Refresh Token Success',
+    props<LoginResponse>(),
 );

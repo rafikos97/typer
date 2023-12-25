@@ -1,44 +1,67 @@
 <section>
-    <form
-        [formGroup]="userForm"
-        (submit)="updateUserInformation()"
-        *ngIf="dataIsFetched; else loadingTemplate"
-    >
-        <input
-            class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            name="username"
-            type="text"
-            placeholder="Username"
-            formControlName="username"
-        />
-        <input
-            class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            name="firstName"
-            type="text"
-            placeholder="First name"
-            formControlName="firstName"
-        />
-        <input
-            class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            name="lastName"
-            type="text"
-            placeholder="Last name"
-            formControlName="lastName"
-        />
-        <input
-            class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            name="email"
-            type="email"
-            placeholder="Email"
-            formControlName="email"
-        />
-        <button
-            type="submit"
-            class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-            Update information
-        </button>
-    </form>
+    <ng-container *ngIf="dataIsFetched; else loadingTemplate">
+        <form [formGroup]="userForm" (submit)="updateUserInformation()">
+            <input
+                class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="username"
+                type="text"
+                placeholder="Username"
+                formControlName="username"
+            />
+            <input
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="firstName"
+                type="text"
+                placeholder="First name"
+                formControlName="firstName"
+            />
+            <input
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="lastName"
+                type="text"
+                placeholder="Last name"
+                formControlName="lastName"
+            />
+            <input
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="email"
+                type="email"
+                placeholder="Email"
+                formControlName="email"
+            />
+            <button
+                type="submit"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                Update information
+            </button>
+        </form>
+
+        <hr class="mt-6 mb-6" />
+
+        <form [formGroup]="passwordForm" (submit)="updateUserPassword()">
+            <input
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="oldPassword"
+                type="password"
+                placeholder="Enter your current password"
+                formControlName="oldPassword"
+            />
+            <input
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="newPassword"
+                type="password"
+                placeholder="Enter new password"
+                formControlName="newPassword"
+            />
+            <button
+                type="submit"
+                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                Change password
+            </button>
+        </form>
+    </ng-container>
     <ng-template #loadingTemplate>
         <span>Loading...</span>
     </ng-template>

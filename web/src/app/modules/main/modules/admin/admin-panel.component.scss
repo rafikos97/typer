@@ -1,0 +1,12 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-container:not(:first-child) {
+    margin-top: 48px;
+}
+
+table {
+    width: 100%;
+}

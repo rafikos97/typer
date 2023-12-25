@@ -11,6 +11,22 @@ import {
 import { AuthenticationService } from './modules/main/modules/authentication/services/authentication/authentication.service';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthenticationEffects } from './modules/main/modules/authentication/+state/authentication.effects';
+import { MatchesEffects } from './+state/match/match.effects';
+import { matchesFeatureKey } from './+state/match/match.feature-key';
+import { matchesReducer } from './+state/match/match.reducer';
+import { PointRulesEffects } from './+state/point-rules/point-rules.effects';
+import { pointRulesFeatureKey } from './+state/point-rules/point-rules.feature-key';
+import { pointRulesReducer } from './+state/point-rules/point-rules.reducer';
+import { TournamentsEffects } from './+state/tournament/tournament.effects';
+import { tournamentsFeatureKey } from './+state/tournament/tournament.feature-key';
+import { tournamentsReducer } from './+state/tournament/tournament.reducer';
+import { MatchesService } from './services/matches/matches.service';
+import { PointRulesService } from './services/point-rules/point-rules.service';
+import { TournamentsService } from './services/tournaments/tournaments.service';
+import { usersFeatureKey } from './+state/users/users.feature-key';
+import { usersReducer } from './+state/users/users.reducer';
+import { UsersEffects } from './+state/users/users.effects';
+import { UsersService } from './services/users/users.service';
 
 export const APP_ROUTES: Routes = [
     {
@@ -22,10 +38,25 @@ export const APP_ROUTES: Routes = [
                     authenticationFeatureKey,
                     authenticationReducer,
                 ),
+                StoreModule.forFeature(
+                    tournamentsFeatureKey,
+                    tournamentsReducer,
+                ),
+                StoreModule.forFeature(usersFeatureKey, usersReducer),
+                EffectsModule.forFeature([
+                    TournamentsEffects,
+                    PointRulesEffects,
+                    MatchesEffects,
+                    UsersEffects,
+                    AuthenticationEffects,
+                ]),
+                StoreModule.forFeature(pointRulesFeatureKey, pointRulesReducer),
+                StoreModule.forFeature(matchesFeatureKey, matchesReducer),
             ),
-            importProvidersFrom(
-                EffectsModule.forFeature(AuthenticationEffects),
-            ),
+            PointRulesService,
+            TournamentsService,
+            MatchesService,
+            UsersService,
             AuthenticationService,
         ],
         children: [
