@@ -1,0 +1,314 @@
+<div class="container">
+    <div class="table-container">
+        <h1>Point Rules</h1>
+        <form (submit)="createPointRule()" [formGroup]="pointRuleForm">
+            <table>
+                <thead>
+                    <th>Winner</th>
+                    <th>Score</th>
+                    <th>Point rule code</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input
+                                formControlName="winner"
+                                placeholder="Winner"
+                                type="number"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="score"
+                                placeholder="Score"
+                                type="number"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="pointRulesCode"
+                                placeholder="Point Rules Code"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <button
+                                type="submit"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Create point rule
+                            </button>
+                        </td>
+                    </tr>
+                    <tr
+                        *ngFor="
+                            let pointRule of pointRules$ | async;
+                            trackBy: trackPointRuleCodesByFn
+                        "
+                    >
+                        <td [textContent]="pointRule.score"></td>
+                        <td [textContent]="pointRule.winner"></td>
+                        <td [textContent]="pointRule.pointRulesCode"></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="table-container">
+        <h1>Tournaments</h1>
+        <form (submit)="createTournament()" [formGroup]="tournamentForm">
+            <table>
+                <thead>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Point rule code</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input
+                                formControlName="tournamentName"
+                                placeholder="Tournament Name"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="tournamentCode"
+                                placeholder="Tournament Code"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <select
+                                formControlName="pointRulesCode"
+                                placeholder="Point Rules Code"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                <option>None</option>
+                                <option
+                                    *ngFor="
+                                        let pointRule of pointRules$ | async;
+                                        trackBy: trackPointRuleCodesByFn;
+                                        let i = index
+                                    "
+                                    [value]="pointRule.pointRulesCode"
+                                    [textContent]="
+                                        pointRule.winner +
+                                        ' ' +
+                                        pointRule.score +
+                                        ' (' +
+                                        pointRule.pointRulesCode +
+                                        ')'
+                                    "
+                                    [selected]="i === 0"
+                                ></option>
+                            </select>
+                        </td>
+                        <td>
+                            <button
+                                type="submit"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Create tournament
+                            </button>
+                        </td>
+                    </tr>
+                    <tr
+                        *ngFor="
+                            let tournament of tournaments$ | async;
+                            trackBy: trackTournamentsByFn
+                        "
+                    >
+                        <td [textContent]="tournament.tournamentName"></td>
+                        <td [textContent]="tournament.tournamentCode"></td>
+                        <td [textContent]="tournament.pointRulesCode"></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="table-container">
+        <h1>Matches</h1>
+        <form (submit)="createMatch()" [formGroup]="matchForm">
+            <table>
+                <thead>
+                    <th>First team name</th>
+                    <th>Second team name</th>
+                    <th>First team score</th>
+                    <th>Second team score</th>
+                    <th>Start date</th>
+                    <th>Finished</th>
+                    <th>Tournament code</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input
+                                formControlName="firstTeamName"
+                                placeholder="First team name"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="secondTeamName"
+                                placeholder="Second team name"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="firstTeamScore"
+                                placeholder="First team score"
+                                type="number"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="secondTeamScore"
+                                placeholder="Second team score"
+                                type="number"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="startDateAndTime"
+                                placeholder="Start date and time"
+                                type="datetime-local"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td></td>
+                        <td>
+                            <select
+                                formControlName="tournamentCode"
+                                placeholder="Tournament code"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                <option>None</option>
+                                <option
+                                    *ngFor="
+                                        let tournament of tournaments$ | async;
+                                        trackBy: trackTournamentsByFn;
+                                        let i = index
+                                    "
+                                    [value]="tournament.tournamentCode"
+                                    [textContent]="tournament.tournamentName"
+                                    [selected]="i === 0"
+                                ></option>
+                            </select>
+                        </td>
+                        <td>
+                            <button
+                                type="submit"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Create match
+                            </button>
+                        </td>
+                    </tr>
+                    <tr
+                        *ngFor="
+                            let match of matches$ | async;
+                            trackBy: trackMatchByFn
+                        "
+                    >
+                        <td [textContent]="match.firstTeamName"></td>
+                        <td [textContent]="match.secondTeamName"></td>
+                        <td [textContent]="match.firstTeamScore"></td>
+                        <td [textContent]="match.secondTeamScore"></td>
+                        <td [textContent]="match.startDateAndTime"></td>
+                        <td [textContent]="match.finished ? 'Yes' : 'No'"></td>
+                        <td [textContent]="match.tournamentCode"></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="table-container">
+        <h1>Users</h1>
+        <form (submit)="createUser()" [formGroup]="userForm">
+            <table>
+                <thead>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input
+                                formControlName="username"
+                                placeholder="Username"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="password"
+                                type="password"
+                                placeholder="Password"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="firstName"
+                                placeholder="First name"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="lastName"
+                                placeholder="Last name"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                formControlName="email"
+                                placeholder="Email"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            />
+                        </td>
+                        <td>
+                            <button
+                                type="submit"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Create user
+                            </button>
+                        </td>
+                    </tr>
+                    <tr
+                        *ngFor="
+                            let user of users$ | async;
+                            trackBy: trackUserByFn
+                        "
+                    >
+                        <td [textContent]="user.id"></td>
+                        <td [textContent]="user.username"></td>
+                        <td [textContent]="user.password"></td>
+                        <td [textContent]="user.firstName"></td>
+                        <td [textContent]="user.lastName"></td>
+                        <td [textContent]="user.email"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

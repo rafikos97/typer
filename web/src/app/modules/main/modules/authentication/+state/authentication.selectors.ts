@@ -17,3 +17,8 @@ export const selectUserScope = createSelector(
     selectAuthentication,
     (authentication) => !!authentication?.scope,
 );
+
+export const selectRefreshToken = createSelector(
+    selectAuthentication,
+    (authentication) => authentication?.refreshToken,
+);

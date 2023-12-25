@@ -5,4 +5,5 @@ export interface LoginResponse {
     tokenType: string;
     expiresIn: number;
     scope: Scope;
+    refreshToken: string;
 }
