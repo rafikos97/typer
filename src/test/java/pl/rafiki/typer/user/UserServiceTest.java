@@ -322,10 +322,8 @@ class UserServiceTest {
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
         User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser.getFirstName()).isEqualTo(updatedUser.getFirstName());
-        assertThat(capturedUser.getLastName()).isEqualTo(updatedUser.getLastName());
-        assertThat(capturedUser.getUsername()).isEqualTo(updatedUser.getUsername());
-        assertThat(capturedUser.getEmail()).isEqualTo(updatedUser.getEmail());
+        UserDTO capturedUserDTO = new UserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail());
+        assertThat(capturedUserDTO).isEqualTo(updatedUser);
     }
 
     @Test
