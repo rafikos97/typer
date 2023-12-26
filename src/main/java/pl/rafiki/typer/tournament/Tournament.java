@@ -59,4 +59,10 @@ public class Tournament implements Serializable {
         this.tournamentName = tournamentName;
         this.tournamentCode = tournamentCode;
     }
+
+    public Tournament(String tournamentName, String tournamentCode, PointRules pointRules) {
+        this.tournamentName = tournamentName;
+        this.tournamentCode = tournamentCode;
+        this.pointRules = pointRules;
+    }
 }
