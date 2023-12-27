@@ -2,13 +2,13 @@ package pl.rafiki.typer.scoreboard;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import pl.rafiki.typer.security.models.Role;
-import pl.rafiki.typer.security.repositories.RoleRepository;
 import pl.rafiki.typer.tournament.Tournament;
+import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.user.User;
+import pl.rafiki.typer.user.UserRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,11 +22,12 @@ class ScoreboardRepositoryTest {
 
     @Autowired
     private ScoreboardRepository underTest;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private TournamentRepository tournamentRepository;
     private Tournament tournament;
     private User user;
-    @Mock
-    private RoleRepository roleRepository;
-
 
     @BeforeEach
     void setUp() {
@@ -34,6 +35,8 @@ class ScoreboardRepositoryTest {
                 "testTournament",
                 "tst2023"
         );
+
+        tournamentRepository.save(tournament);
 
         Set<Role> roles = new HashSet<>();
         user = new User(
@@ -44,6 +47,8 @@ class ScoreboardRepositoryTest {
                 "password",
                 roles
         );
+
+        userRepository.save(user);
     }
 
     @Test
