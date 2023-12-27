@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,6 +64,21 @@ public class ExceptionHandlerAdvice {
                 .build();
 
         return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    @ResponseStatus(UNAUTHORIZED)
+    ResponseEntity<ErrorResponse> handleInsufficientAuthenticationExceptionException(HttpServletRequest request) {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .statusCode(UNAUTHORIZED.value())
+                .errorCode(INSUFFICIENT_AUTHENTICATION)
+                .message("Login credentials are missing!")
+                .timestamp(LocalDateTime.now())
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, UNAUTHORIZED);
     }
 
     @ExceptionHandler(RefreshTokenException.class)
