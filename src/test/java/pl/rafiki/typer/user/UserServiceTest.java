@@ -6,9 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
+import pl.rafiki.typer.security.services.TokenService;
 import pl.rafiki.typer.user.exceptions.*;
 
 import java.util.Optional;
@@ -29,11 +31,13 @@ class UserServiceTest {
     @Mock
     private RoleRepository roleRepository;
     @Mock
+    private TokenService tokenService;
+    @Mock
     private User user;
 
     @BeforeEach
     void setUp() {
-        underTest = new UserService(userRepository, passwordEncoder, roleRepository);
+        underTest = new UserService(userRepository, passwordEncoder, roleRepository, tokenService);
     }
 
     @Test
@@ -69,6 +73,40 @@ class UserServiceTest {
         // when
         // then
         assertThatThrownBy(() -> underTest.getUser(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " does not exist!");
+    }
+
+    @Test
+    void canGetUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.getUser(accessToken);
+
+        // then
+        verify(userRepository, times(1)).findById(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileGettingUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.getUser(accessToken))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining("User with id: " + userId + " does not exist!");
     }
@@ -397,6 +435,34 @@ class UserServiceTest {
     }
 
     @Test
+    void canUpdateUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "testUsername",
+                "a.tester@mail.com"
+        );
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.putUpdateUserByToken(accessToken, updatedUser);
+
+        // then
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User capturedUser = userArgumentCaptor.getValue();
+        UserDTO capturedUserDTO = new UserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail());
+        assertThat(capturedUserDTO).isEqualTo(updatedUser);
+    }
+
+    @Test
     void canChangePassword() {
         // given
         Long userId = 1L;
@@ -479,6 +545,62 @@ class UserServiceTest {
                 .hasMessageContaining("Provided password does not meet password policy!");
 
         verify(user, never()).setPassword(any());
+    }
+
+    @Test
+    void canLoadUserByUsername() {
+        // given
+        String username = "tester";
+
+        given(userRepository.findUserByUsername(username)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.loadUserByUsername(username);
+
+        // then
+        verify(userRepository, times(1)).findUserByUsername(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileLoadingUserByUsername() {
+        // given
+        String username = "tester";
+
+        given(userRepository.findUserByUsername(username)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.loadUserByUsername(username))
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("Username not found!");
+    }
+
+    @Test
+    void canLoadUserByUserId() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.loadUserByUserId(userId);
+
+        // then
+        verify(userRepository, times(1)).findById(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileLoadingUserByUserId() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.loadUserByUserId(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " not found!");
     }
 
     @Test
