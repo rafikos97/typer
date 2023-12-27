@@ -25,16 +25,12 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ScoreboardServiceTest {
-
     @Autowired
     private ScoreboardService underTest;
-
     @Mock
     private ScoreboardRepository scoreRepository;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private TournamentRepository tournamentRepository;
 
@@ -60,9 +56,9 @@ class ScoreboardServiceTest {
         // given
         Long userId = 1L;
         Long tournamentId = 1L;
-        int scoreToUpdate = 1;
-        int winnerToUpdate = 1;
         Result result = new Result(1, 1);
+        int scoreToUpdate = result.getResultForScore();
+        int winnerToUpdate = result.getResultForWinner();
 
 
         given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
@@ -132,5 +128,41 @@ class ScoreboardServiceTest {
         Integer capturedWinners = scoreArgumentCaptor.getValue().getWinners();
         assertThat(capturedScore).isEqualTo(result.getResultForScore());
         assertThat(capturedWinners).isEqualTo(result.getResultForWinner());
+    }
+
+    @Test
+    void canCorrectScore() {
+        // given
+        Long userId = 1L;
+        Long tournamentId = 1L;
+
+        Result originalResult = new Result(2, 1);
+        int originalScore = originalResult.getResultForScore();
+        int originalWinner = originalResult.getResultForWinner();
+
+        Result updatedResult = new Result(1, 2);
+        int scoreToUpdate = updatedResult.getResultForScore();
+        int winnerToUpdate = updatedResult.getResultForWinner();
+
+        Scoreboard existingScoreboard = new Scoreboard(
+                new User(),
+                new Tournament(),
+                originalWinner,
+                originalScore,
+                originalScore + originalWinner
+        );
+
+        given(scoreRepository.findByUserIdAndTournamentId(userId, tournamentId)).willReturn(Optional.of(existingScoreboard));
+
+        // when
+        underTest.correctScoreInScoreboard(userId, tournamentId, originalResult, updatedResult);
+
+        // then
+        ArgumentCaptor<Scoreboard> scoreArgumentCaptor = ArgumentCaptor.forClass(Scoreboard.class);
+        verify(scoreRepository).save(scoreArgumentCaptor.capture());
+        Integer capturedScore = scoreArgumentCaptor.getValue().getScores();
+        Integer capturedWinners = scoreArgumentCaptor.getValue().getWinners();
+        assertThat(capturedScore).isEqualTo(scoreToUpdate);
+        assertThat(capturedWinners).isEqualTo(winnerToUpdate);
     }
 }
