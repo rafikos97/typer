@@ -66,7 +66,7 @@ public class Match implements Serializable {
     )
     private Tournament tournament;
 
-    public Match(String firstTeamName, String secondTeamName, LocalDateTime startDateAndTime, int firstTeamScore, int secondTeamScore, boolean finished) {
+    public Match(String firstTeamName, String secondTeamName, LocalDateTime startDateAndTime, Integer firstTeamScore, Integer secondTeamScore, boolean finished) {
         this.firstTeamName = firstTeamName;
         this.secondTeamName = secondTeamName;
         this.startDateAndTime = startDateAndTime;
