@@ -14,7 +14,8 @@ The backend part is written in Java using the Spring framework. Application is s
 * Spring Batch,
 * Lombok,
 * MapStruct,
-* Swagger 3
+* Swagger 3,
+* JUnit 5 and Mockito for unit tests
 
 # API documentation
 
