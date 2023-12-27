@@ -25,8 +25,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+import pl.rafiki.typer.match.AddMatchDTO;
 import pl.rafiki.typer.match.Match;
-import pl.rafiki.typer.match.MatchDTO;
 import pl.rafiki.typer.match.MatchRepository;
 import pl.rafiki.typer.tournament.TournamentRepository;
 
@@ -47,9 +47,9 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<MatchDTO> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile) {
+    public FlatFileItemReader<AddMatchDTO> reader(@Value("#{jobParameters[fullPathFileName]}") String pathToFile) {
 
-        return new FlatFileItemReaderBuilder<MatchDTO>()
+        return new FlatFileItemReaderBuilder<AddMatchDTO>()
                 .name("matchItemReader")
                 .resource(new FileSystemResource(new File(pathToFile)))
                 .linesToSkip(1)
@@ -57,17 +57,17 @@ public class BatchConfiguration {
                 .build();
     }
 
-    private LineMapper<MatchDTO> lineMapper() {
-        DefaultLineMapper<MatchDTO> lineMapper = new DefaultLineMapper<>();
+    private LineMapper<AddMatchDTO> lineMapper() {
+        DefaultLineMapper<AddMatchDTO> lineMapper = new DefaultLineMapper<>();
 
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter(",");
         lineTokenizer.setStrict(false);
         lineTokenizer.setNames("firstTeamName", "secondTeamName", "startDateAndTime", "tournamentCode");
 
-        BeanWrapperFieldSetMapper<MatchDTO> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        BeanWrapperFieldSetMapper<AddMatchDTO> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
         fieldSetMapper.setConversionService(myConversionService());
-        fieldSetMapper.setTargetType(MatchDTO.class);
+        fieldSetMapper.setTargetType(AddMatchDTO.class);
 
         lineMapper.setLineTokenizer(lineTokenizer);
         lineMapper.setFieldSetMapper(fieldSetMapper);
@@ -100,9 +100,9 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<MatchDTO> itemReader) {
+    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<AddMatchDTO> itemReader) {
         return new StepBuilder("step 1", jobRepository)
-                .<MatchDTO, Match> chunk(3, transactionManager)
+                .<AddMatchDTO, Match> chunk(3, transactionManager)
                 .reader(itemReader)
                 .processor(processor())
                 .writer(writer())
@@ -114,7 +114,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<MatchDTO> itemReader) {
+    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, FlatFileItemReader<AddMatchDTO> itemReader) {
         return new JobBuilder("importMatches", jobRepository)
                 .flow(step1(jobRepository, transactionManager, itemReader))
                 .end()
