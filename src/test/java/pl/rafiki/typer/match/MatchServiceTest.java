@@ -7,13 +7,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.rafiki.typer.bet.BetService;
+import pl.rafiki.typer.match.exceptions.CannotUpdateTournamentBecauseMatchIsFinishedException;
 import pl.rafiki.typer.match.exceptions.MatchDoesNotExistException;
 import pl.rafiki.typer.match.exceptions.MatchIsAlreadyFinishedException;
+import pl.rafiki.typer.match.exceptions.ScoreCannotBeNullException;
 import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.tournament.TournamentRepository;
 import pl.rafiki.typer.tournament.exceptions.TournamentDoesNotExistException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -54,7 +57,23 @@ class MatchServiceTest {
         // given
         Long matchId = 1L;
 
-        given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false
+        );
+
+        match.setTournament(tournament);
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
         underTest.getMatch(matchId);
@@ -78,26 +97,78 @@ class MatchServiceTest {
     }
 
     @Test
+    void canGetMatchByTournamentId() {
+        // given
+        Long tournamentId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false
+        );
+
+        match.setTournament(tournament);
+
+        given(tournamentRepository.existsById(tournamentId)).willReturn(true);
+        given(matchRepository.findAllByTournamentId(tournamentId)).willReturn(List.of(match));
+
+        // when
+        underTest.getMatchesByTournamentId(tournamentId, null, null, null);
+
+        // then
+        verify(matchRepository, times(1)).findAllByTournamentId(tournamentId);
+    }
+
+    @Test
+    void willThrowWhenTournamentDoesNotExistWhileGettingMatchesByTournamentId() {
+        // given
+        Long tournamentId = 1L;
+
+        given(tournamentRepository.existsById(tournamentId)).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.getMatchesByTournamentId(tournamentId, null, null, null))
+                .isInstanceOf(TournamentDoesNotExistException.class)
+                .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
+    }
+
+    @Test
     void canAddNewMatch() {
         // given
         String tournamentCode = "testTournament";
-        AddMatchDTO match = new AddMatchDTO(
+        AddMatchDTO matchDTO = new AddMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 tournamentCode
         );
 
-        given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.of(new Tournament()));
+        Tournament tournament = new Tournament(
+                "test",
+                tournamentCode,
+                null
+        );
+
+        given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.of(tournament));
 
         // when
-        underTest.addNewMatch(match);
+        underTest.addNewMatch(matchDTO);
 
         // then
         ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(matchArgumentCaptor.capture());
         Match capturedMatch = matchArgumentCaptor.getValue();
-        assertThat(capturedMatch).isEqualTo(match);
+        AddMatchDTO capturedMatchDTO = new AddMatchDTO(capturedMatch.getFirstTeamName(), capturedMatch.getSecondTeamName(), capturedMatch.getStartDateAndTime(), capturedMatch.getTournament().getTournamentCode());
+        assertThat(capturedMatchDTO).isEqualTo(matchDTO);
     }
 
     @Test
@@ -139,17 +210,25 @@ class MatchServiceTest {
                 false
         );
 
+        match.setTournament(tournament);
+
+        Tournament tournamentFromUpdate = new Tournament(
+                "UpdateTestTournament",
+                "UpdateTestTournament"
+        );
+
         UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                tournament.getTournamentCode()
+                tournamentFromUpdate.getTournamentCode()
         );
 
+
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
-        given(tournamentRepository.findByTournamentCode(tournament.getTournamentCode())).willReturn(Optional.of(tournament));
+        given(tournamentRepository.findByTournamentCode(tournamentFromUpdate.getTournamentCode())).willReturn(Optional.of(tournamentFromUpdate));
 
         // when
         underTest.putUpdateMatch(matchId, updatedMatch);
@@ -158,7 +237,8 @@ class MatchServiceTest {
         ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(matchArgumentCaptor.capture());
         Match capturedMatch = matchArgumentCaptor.getValue();
-        assertThat(capturedMatch).isEqualTo(updatedMatch);
+        UpdateMatchDTO capturedMatchDTO = new UpdateMatchDTO(capturedMatch.getFirstTeamName(), capturedMatch.getSecondTeamName(), capturedMatch.getStartDateAndTime(), capturedMatch.getFirstTeamScore(), capturedMatch.getSecondTeamScore(), capturedMatch.getTournament().getTournamentCode());
+        assertThat(capturedMatchDTO).isEqualTo(updatedMatch);
     }
 
     @Test
@@ -188,7 +268,24 @@ class MatchServiceTest {
     void willThrowWhenTournamentDoesNotExistDuringUpdate() {
         // given
         Long matchId = 1L;
-        String tournamentCode = "testTournament";
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false
+        );
+
+        match.setTournament(tournament);
+
+        String tournamentCode = "UpdateTestTournament";
         UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
@@ -198,7 +295,7 @@ class MatchServiceTest {
                 tournamentCode
         );
 
-        given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
         given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.empty());
 
         // when
@@ -206,6 +303,207 @@ class MatchServiceTest {
         assertThatThrownBy(() -> underTest.putUpdateMatch(matchId, updatedMatch))
                 .isInstanceOf(TournamentDoesNotExistException.class)
                 .hasMessageContaining("Tournament with code: " + tournamentCode + " does not exist!");
+    }
+
+    @Test
+    void willThrowWhenMatchIsFinishedAndUserTriesToUpdateTournamentCode() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                true
+        );
+
+        match.setTournament(tournament);
+
+        String tournamentCode = "UpdateTestTournament";
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                0,
+                0,
+                tournamentCode
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+        given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.of(new Tournament()));
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.putUpdateMatch(matchId, updatedMatch))
+                .isInstanceOf(CannotUpdateTournamentBecauseMatchIsFinishedException.class)
+                .hasMessageContaining("Cannot update tournament, because match is already finished!");
+    }
+
+    @Test
+    void willThrowWhenMatchIsFinishedAndUserTriesToSetFirstTeamScoreToNull() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                true
+        );
+
+        match.setTournament(tournament);
+
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                null,
+                0,
+                null
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.putUpdateMatch(matchId, updatedMatch))
+                .isInstanceOf(ScoreCannotBeNullException.class)
+                .hasMessageContaining("Score cannot be null, because match is already finished!");
+    }
+
+    @Test
+    void willThrowWhenMatchIsFinishedAndUserTriesToSetSecondTeamScoreToNull() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                true
+        );
+
+        match.setTournament(tournament);
+
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                0,
+                null,
+                null
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.putUpdateMatch(matchId, updatedMatch))
+                .isInstanceOf(ScoreCannotBeNullException.class)
+                .hasMessageContaining("Score cannot be null, because match is already finished!");
+    }
+
+    @Test
+    void isPointsRecalculationTriggeredWhenFinishedMatchIsUpdated() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                true
+        );
+
+        match.setTournament(tournament);
+
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                0,
+                0,
+                null
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+
+        // when
+        underTest.putUpdateMatch(matchId, updatedMatch);
+
+        // then
+        verify(betService, times(1)).recalculatePoints(any(), any());
+    }
+
+    @Test
+    void areScoreValuesSetToNullWhenTheyAreNotProvidedInPutUpdateRequest() {
+        // given
+        Long matchId = 1L;
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false
+        );
+
+        match.setTournament(tournament);
+
+        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
+                "Poland",
+                "Germany",
+                LocalDateTime.now(),
+                null,
+                null,
+                null
+        );
+
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
+
+        // when
+        underTest.putUpdateMatch(matchId, updatedMatch);
+
+        // then
+        ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
+        verify(matchRepository).save(matchArgumentCaptor.capture());
+        Match capturedMatch = matchArgumentCaptor.getValue();
+        assertThat(capturedMatch.getFirstTeamScore()).isNull();
+        assertThat(capturedMatch.getSecondTeamScore()).isNull();
     }
 
     @Test
@@ -227,17 +525,25 @@ class MatchServiceTest {
                 false
         );
 
+        match.setTournament(tournament);
+
+        Tournament tournamentFromUpdate = new Tournament(
+                "UpdateTestTournament",
+                "UpdateTestTournament"
+        );
+
         UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
                 1,
                 1,
-                tournament.getTournamentCode()
+                tournamentFromUpdate.getTournamentCode()
         );
 
+
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
-        given(tournamentRepository.findByTournamentCode(tournament.getTournamentCode())).willReturn(Optional.of(tournament));
+        given(tournamentRepository.findByTournamentCode(tournamentFromUpdate.getTournamentCode())).willReturn(Optional.of(tournamentFromUpdate));
 
         // when
         underTest.patchUpdateMatch(matchId, updatedMatch);
@@ -246,58 +552,51 @@ class MatchServiceTest {
         ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
         verify(matchRepository).save(matchArgumentCaptor.capture());
         Match capturedMatch = matchArgumentCaptor.getValue();
-        assertThat(capturedMatch.getFirstTeamName()).isEqualTo(updatedMatch.getFirstTeamName());
-        assertThat(capturedMatch.getSecondTeamName()).isEqualTo(updatedMatch.getSecondTeamName());
-        assertThat(capturedMatch.getStartDateAndTime()).isEqualTo(updatedMatch.getStartDateAndTime());
-        assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(updatedMatch.getFirstTeamScore());
-        assertThat(capturedMatch.getTournament().getTournamentCode()).isEqualTo(updatedMatch.getTournamentCode());
+        UpdateMatchDTO capturedMatchDTO = new UpdateMatchDTO(capturedMatch.getFirstTeamName(), capturedMatch.getSecondTeamName(), capturedMatch.getStartDateAndTime(), capturedMatch.getFirstTeamScore(), capturedMatch.getSecondTeamScore(), capturedMatch.getTournament().getTournamentCode());
+        assertThat(capturedMatchDTO).isEqualTo(updatedMatch);
     }
 
     @Test
-    void willThrowWhenMatchDoesNotExistDuringPatchUpdate() {
+    void doScoreValuesStayUnchangedWhenTheyAreNotProvidedInPatchUpdateRequest() {
         // given
         Long matchId = 1L;
-        String tournamentCode = "testTournament";
+
+        Tournament tournament = new Tournament(
+                "testTournament",
+                "testTournament"
+        );
+
+        Match match = new Match(
+                "Spain",
+                "Italy",
+                LocalDateTime.now().minusDays(1),
+                2,
+                3,
+                false
+        );
+
+        match.setTournament(tournament);
+
         UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
                 "Poland",
                 "Germany",
                 LocalDateTime.now(),
-                1,
-                1,
-                tournamentCode
+                null,
+                null,
+                null
         );
 
-        given(matchRepository.findById(matchId)).willReturn(Optional.empty());
+        given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
 
         // when
+        underTest.patchUpdateMatch(matchId, updatedMatch);
+
         // then
-        assertThatThrownBy(() -> underTest.patchUpdateMatch(matchId, updatedMatch))
-                .isInstanceOf(MatchDoesNotExistException.class)
-                .hasMessageContaining("Match with id: " + matchId + " does not exist!");
-    }
-
-    @Test
-    void willThrowWhenTournamentDoesNotExistDuringPatchUpdate() {
-        // given
-        Long matchId = 1L;
-        String tournamentCode = "testTournament";
-        UpdateMatchDTO updatedMatch = new UpdateMatchDTO(
-                "Poland",
-                "Germany",
-                LocalDateTime.now(),
-                1,
-                1,
-                tournamentCode
-        );
-
-        given(matchRepository.findById(matchId)).willReturn(Optional.of(new Match()));
-        given(tournamentRepository.findByTournamentCode(tournamentCode)).willReturn(Optional.empty());
-
-        // when
-        // then
-        assertThatThrownBy(() -> underTest.patchUpdateMatch(matchId, updatedMatch))
-                .isInstanceOf(TournamentDoesNotExistException.class)
-                .hasMessageContaining("Tournament with code: " + tournamentCode + " does not exist!");
+        ArgumentCaptor<Match> matchArgumentCaptor = ArgumentCaptor.forClass(Match.class);
+        verify(matchRepository).save(matchArgumentCaptor.capture());
+        Match capturedMatch = matchArgumentCaptor.getValue();
+        assertThat(capturedMatch.getFirstTeamScore()).isEqualTo(match.getFirstTeamScore());
+        assertThat(capturedMatch.getSecondTeamScore()).isEqualTo(match.getSecondTeamScore());
     }
 
     @Test
@@ -348,5 +647,35 @@ class MatchServiceTest {
                 .hasMessageContaining("Match is already finished!");
 
         verify(betService, never()).closeBetsAndCalculatePoints(any());
+    }
+
+    @Test
+    void canDeleteMatch() {
+        // given
+        Long matchId = 1L;
+
+        given(matchRepository.existsById(matchId)).willReturn(true);
+
+        // when
+        underTest.deleteMatch(matchId);
+
+        // then
+        verify(matchRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    void willThrowWhenMatchDoesNotExistWhileDeletingMatch() {
+        // given
+        Long matchId = 1L;
+
+        given(matchRepository.existsById(matchId)).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.deleteMatch(matchId))
+                .isInstanceOf(MatchDoesNotExistException.class)
+                .hasMessageContaining("Match with id: " + matchId + " does not exist!");
+
+        verify(matchRepository, never()).deleteById(any());
     }
 }
