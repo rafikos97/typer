@@ -6,13 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.rafiki.typer.security.models.Role;
 import pl.rafiki.typer.security.repositories.RoleRepository;
-import pl.rafiki.typer.user.exceptions.EmailAddressAlreadyTakenException;
-import pl.rafiki.typer.user.exceptions.IncorrectPasswordException;
-import pl.rafiki.typer.user.exceptions.UserDoesNotExistException;
-import pl.rafiki.typer.user.exceptions.UsernameAlreadyTakenException;
+import pl.rafiki.typer.security.services.TokenService;
+import pl.rafiki.typer.user.exceptions.*;
 
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-
     private UserService underTest;
     @Mock
     private UserRepository userRepository;
@@ -33,11 +31,13 @@ class UserServiceTest {
     @Mock
     private RoleRepository roleRepository;
     @Mock
+    private TokenService tokenService;
+    @Mock
     private User user;
 
     @BeforeEach
     void setUp() {
-        underTest = new UserService(userRepository, passwordEncoder, roleRepository);
+        underTest = new UserService(userRepository, passwordEncoder, roleRepository, tokenService);
     }
 
     @Test
@@ -78,6 +78,40 @@ class UserServiceTest {
     }
 
     @Test
+    void canGetUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.getUser(accessToken);
+
+        // then
+        verify(userRepository, times(1)).findById(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileGettingUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.getUser(accessToken))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " does not exist!");
+    }
+
+    @Test
     void canAddNewUser() {
         // given
         RegisterUserDTO user = new RegisterUserDTO(
@@ -85,7 +119,7 @@ class UserServiceTest {
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password"
+                "Password123#"
         );
 
         given(roleRepository.findByAuthority(any())).willReturn(Optional.of(new Role()));
@@ -98,7 +132,9 @@ class UserServiceTest {
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
         User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(user);
+
+        RegisterUserDTO capturedUserAsRegisterUserDTO = new RegisterUserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail(), capturedUser.getPassword());
+        assertThat(capturedUserAsRegisterUserDTO).isEqualTo(user);
     }
 
     @Test
@@ -109,7 +145,7 @@ class UserServiceTest {
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password"
+                "Password123#"
         );
 
         given(userRepository.existsByEmail(user.getEmail())).willReturn(true);
@@ -131,7 +167,7 @@ class UserServiceTest {
                 "Tester",
                 "username",
                 "a.tester@mail.com",
-                "password"
+                "Password123#"
         );
 
         given(userRepository.existsByUsername(user.getUsername())).willReturn(true);
@@ -141,6 +177,48 @@ class UserServiceTest {
         assertThatThrownBy(() -> underTest.registerUser(user))
                 .isInstanceOf(UsernameAlreadyTakenException.class)
                 .hasMessageContaining("Login already taken!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenEmailDoesNotMatchRegex() {
+        // given
+        String email = "a.tester$mail.com";
+        RegisterUserDTO user = new RegisterUserDTO(
+                "Andrew",
+                "Tester",
+                "username",
+                email,
+                "Password123#"
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.registerUser(user))
+                .isInstanceOf(InvalidEmailException.class)
+                .hasMessageContaining("Provided email is invalid!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void willThrowWhenPasswordDoesNotMeetThePasswordPolicy() {
+        // given
+        String password = "password";
+        RegisterUserDTO user = new RegisterUserDTO(
+                "Andrew",
+                "Tester",
+                "username",
+                "a.tester@mail.com",
+                password
+        );
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.registerUser(user))
+                .isInstanceOf(PasswordDoesNotMatchPatternException.class)
+                .hasMessageContaining("Provided password does not meet password policy!");
 
         verify(userRepository, never()).save(any());
     }
@@ -165,7 +243,8 @@ class UserServiceTest {
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
         User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(updatedUser);
+        UserDTO capturedUserDTO = new UserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail());
+        assertThat(capturedUserDTO).isEqualTo(updatedUser);
     }
 
     @Test
@@ -239,6 +318,29 @@ class UserServiceTest {
     }
 
     @Test
+    void willThrowWhenEmailDoesNotMatchRegexDuringUpdate() {
+        // given
+        Long userId = 1L;
+        String email = "a.tester$mail.com";
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "username",
+                email
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.putUpdateUser(userId, updatedUser))
+                .isInstanceOf(InvalidEmailException.class)
+                .hasMessageContaining("Provided email is invalid!");
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
     void canPatchUpdateUser() {
         // given
         Long userId = 1L;
@@ -258,10 +360,8 @@ class UserServiceTest {
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
         User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser.getFirstName()).isEqualTo(updatedUser.getFirstName());
-        assertThat(capturedUser.getLastName()).isEqualTo(updatedUser.getLastName());
-        assertThat(capturedUser.getUsername()).isEqualTo(updatedUser.getUsername());
-        assertThat(capturedUser.getEmail()).isEqualTo(updatedUser.getEmail());
+        UserDTO capturedUserDTO = new UserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail());
+        assertThat(capturedUserDTO).isEqualTo(updatedUser);
     }
 
     @Test
@@ -335,13 +435,41 @@ class UserServiceTest {
     }
 
     @Test
+    void canUpdateUserByToken() {
+        // given
+        Long userId = 1L;
+        String accessToken = "Bearer accessToken";
+        String accessTokenWithoutPrefix = "accessToken";
+
+        UserDTO updatedUser = new UserDTO(
+                "Andrew",
+                "Tester",
+                "testUsername",
+                "a.tester@mail.com"
+        );
+
+        given(tokenService.getUserIdFromToken(accessTokenWithoutPrefix)).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.putUpdateUserByToken(accessToken, updatedUser);
+
+        // then
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userArgumentCaptor.capture());
+        User capturedUser = userArgumentCaptor.getValue();
+        UserDTO capturedUserDTO = new UserDTO(capturedUser.getFirstName(), capturedUser.getLastName(), capturedUser.getUsername(), capturedUser.getEmail());
+        assertThat(capturedUserDTO).isEqualTo(updatedUser);
+    }
+
+    @Test
     void canChangePassword() {
         // given
         Long userId = 1L;
 
         PasswordDTO passwordDTO = new PasswordDTO(
-                "oldPassword",
-                "newPassword"
+                "oldPassword123#",
+                "newPassword123#"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -360,8 +488,8 @@ class UserServiceTest {
         Long userId = 1L;
 
         PasswordDTO passwordDTO = new PasswordDTO(
-                "oldPassword",
-                "newPassword"
+                "oldPassword123#",
+                "newPassword123#"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -381,8 +509,8 @@ class UserServiceTest {
         Long userId = 1L;
 
         PasswordDTO passwordDTO = new PasswordDTO(
-                "oldPassword",
-                "newPassword"
+                "oldPassword123#",
+                "newPassword123#"
         );
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -395,5 +523,113 @@ class UserServiceTest {
                 .hasMessageContaining("Old password is incorrect!");
 
         verify(user, never()).setPassword(any());
+    }
+
+    @Test
+    void willThrowWhenNewPasswordDoesNotMeetThePasswordPolicyWhileChangingPassword() {
+        // given
+        Long userId = 1L;
+
+        PasswordDTO passwordDTO = new PasswordDTO(
+                "oldPassword123#",
+                "password"
+        );
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.updatePassword(userId, passwordDTO))
+                .isInstanceOf(PasswordDoesNotMatchPatternException.class)
+                .hasMessageContaining("Provided password does not meet password policy!");
+
+        verify(user, never()).setPassword(any());
+    }
+
+    @Test
+    void canLoadUserByUsername() {
+        // given
+        String username = "tester";
+
+        given(userRepository.findUserByUsername(username)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.loadUserByUsername(username);
+
+        // then
+        verify(userRepository, times(1)).findUserByUsername(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileLoadingUserByUsername() {
+        // given
+        String username = "tester";
+
+        given(userRepository.findUserByUsername(username)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.loadUserByUsername(username))
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("Username not found!");
+    }
+
+    @Test
+    void canLoadUserByUserId() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(new User()));
+
+        // when
+        underTest.loadUserByUserId(userId);
+
+        // then
+        verify(userRepository, times(1)).findById(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileLoadingUserByUserId() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.loadUserByUserId(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " not found!");
+    }
+
+    @Test
+    void canDeleteUser() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.existsById(userId)).willReturn(true);
+
+        // when
+        underTest.deleteUser(userId);
+
+        // then
+        verify(userRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    void willThrowWhenUserDoesNotExistWhileDeletingUser() {
+        // given
+        Long userId = 1L;
+
+        given(userRepository.existsById(userId)).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.deleteUser(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining("User with id: " + userId + " does not exist!");
+
+        verify(userRepository, never()).deleteById(any());
     }
 }

@@ -33,7 +33,7 @@ class PointRulesServiceTest {
     }
 
     @Test
-    void getAllPointRules() {
+    void canGetAllPointRules() {
         // when
         underTest.getAllPointRules();
 
@@ -42,7 +42,7 @@ class PointRulesServiceTest {
     }
 
     @Test
-    void getPointRules() {
+    void canGetPointRulesById() {
         // when
         Long pointRulesId = 1L;
 
@@ -70,7 +70,7 @@ class PointRulesServiceTest {
     }
 
     @Test
-    void addNewPointRules() {
+    void canAddNewPointRules() {
         // given
         String pointrulesCode = "testPointRules";
         PointRulesDTO pointRules = new PointRulesDTO (
@@ -88,7 +88,8 @@ class PointRulesServiceTest {
         ArgumentCaptor<PointRules> pointRulesArgumentCaptor = ArgumentCaptor.forClass(PointRules.class);
         verify(pointRulesRepository).save(pointRulesArgumentCaptor.capture());
         PointRules capturedPointRules = pointRulesArgumentCaptor.getValue();
-        assertThat(capturedPointRules).isEqualTo(pointRules);
+        PointRulesDTO capturedPointRulesDTO = new PointRulesDTO(capturedPointRules.getPointRulesCode(), capturedPointRules.getWinner(), capturedPointRules.getScore());
+        assertThat(capturedPointRulesDTO).isEqualTo(pointRules);
     }
 
     @Test
@@ -111,7 +112,7 @@ class PointRulesServiceTest {
     }
 
     @Test
-    void updatePointRules() {
+    void canUpdatePointRules() {
         // given
         Long pointRulesId = 1L;
         String pointrulesCode = "testPointRules";
@@ -131,7 +132,8 @@ class PointRulesServiceTest {
         ArgumentCaptor<PointRules> pointRulesArgumentCaptor = ArgumentCaptor.forClass(PointRules.class);
         verify(pointRulesRepository).save(pointRulesArgumentCaptor.capture());
         PointRules capturedPointRules = pointRulesArgumentCaptor.getValue();
-        assertThat(capturedPointRules).isEqualTo(updatedPointRules);
+        PointRulesDTO capturedPointRulesDTO = new PointRulesDTO(capturedPointRules.getPointRulesCode(), capturedPointRules.getWinner(), capturedPointRules.getScore());
+        assertThat(capturedPointRulesDTO).isEqualTo(updatedPointRules);
     }
 
     @Test
@@ -177,5 +179,35 @@ class PointRulesServiceTest {
                 .hasMessageContaining("Point rules with id: " + pointRulesId + " does not exist!");
 
         verify(pointRulesRepository, never()).save(any());
+    }
+
+    @Test
+    void canDeletePointRules() {
+        // given
+        Long pointrulesId = 1L;
+
+        given(pointRulesRepository.existsById(pointrulesId)).willReturn(true);
+
+        // when
+        underTest.deletePointRules(pointrulesId);
+
+        // then
+        verify(pointRulesRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    void willThrowWhenPointRulesDoesNotExistWhileDeletingPointRules() {
+        // given
+        Long pointrulesId = 1L;
+
+        given(pointRulesRepository.existsById(pointrulesId)).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.deletePointRules(pointrulesId))
+                .isInstanceOf(PointRulesDoesNotExistException.class)
+                .hasMessageContaining("Point rules with id: " + pointrulesId + " does not exist!");
+
+        verify(pointRulesRepository, never()).deleteById(any());
     }
 }

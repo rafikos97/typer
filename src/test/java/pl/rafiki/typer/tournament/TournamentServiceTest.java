@@ -46,11 +46,24 @@ class TournamentServiceTest {
     }
 
     @Test
-    void getTournament() {
+    void canGetTournament() {
         // given
         Long tournamentId = 1L;
+        String pointRulesCode = "testPointRulesCode";
 
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        PointRules pointRules = new PointRules(
+                pointRulesCode,
+                1,
+                2
+        );
+
+        Tournament tournament = new Tournament(
+                "test",
+                "test",
+                pointRules
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(tournament));
 
         // when
         underTest.getTournament(tournamentId);
@@ -74,42 +87,71 @@ class TournamentServiceTest {
     }
 
     @Test
-    void addNewTournament() {
+    void canAddNewTournament() {
         // given
         String pointRulesCode = "testPointRulesCode";
-        TournamentDTO tournament = new TournamentDTO(
+        TournamentDTO tournamentDTO = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
         );
 
-        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(new PointRules()));
+        PointRules pointRules = new PointRules(
+                pointRulesCode,
+                1,
+                2
+        );
+
+
+        Tournament tournament = new Tournament(
+                "test",
+                "test",
+                pointRules
+        );
+
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(tournament.getPointRules()));
 
         // when
-        underTest.addNewTournament(tournament);
+        underTest.addNewTournament(tournamentDTO);
 
         // then
         ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
         verify(tournamentRepository).save(tournamentArgumentCaptor.capture());
         Tournament capturedTournament = tournamentArgumentCaptor.getValue();
-        assertThat(capturedTournament).isEqualTo(tournament);
+        TournamentDTO capturedTournamentDTO = new TournamentDTO(capturedTournament.getTournamentName(), capturedTournament.getTournamentCode(), capturedTournament.getPointRules().getPointRulesCode());
+        assertThat(capturedTournamentDTO).isEqualTo(tournamentDTO);
     }
 
     @Test
     void willThrowWhenTournamentCodeIsAlreadyTaken() {
         // given
         String tournamentCode = "MS2022";
-        TournamentDTO tournament = new TournamentDTO(
+        String pointRulesCode = "testPointRulesCode";
+        TournamentDTO tournamentDTO = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 tournamentCode,
-                "testPointRulesCode"
+                pointRulesCode
+        );
+
+        PointRules pointRules = new PointRules(
+                pointRulesCode,
+                1,
+                2
+        );
+
+
+        Tournament tournament = new Tournament(
+                "test",
+                "test",
+                pointRules
         );
 
         given(tournamentRepository.existsByTournamentCode(tournamentCode)).willReturn(true);
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(tournament.getPointRules()));
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.addNewTournament(tournament))
+        assertThatThrownBy(() -> underTest.addNewTournament(tournamentDTO))
                 .isInstanceOf(TournamentCodeAlreadyTakenException.class)
                 .hasMessageContaining("Tournament code already taken!");
     }
@@ -118,7 +160,7 @@ class TournamentServiceTest {
     void willThrowWhenPointRulesCodeDoesNotExist() {
         // given
         String pointRulesCode = "testPointRulesCode";
-        TournamentDTO tournament = new TournamentDTO(
+        TournamentDTO tournamentDTO = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
                 pointRulesCode
@@ -128,31 +170,37 @@ class TournamentServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> underTest.addNewTournament(tournament))
+        assertThatThrownBy(() -> underTest.addNewTournament(tournamentDTO))
                 .isInstanceOf(PointRulesDoesNotExistException.class)
-                .hasMessageContaining("Point rules with code " + pointRulesCode + " does not exist!");
+                .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
     }
 
     @Test
     void canUpdateTournament() {
         // given
         Long tournamentId = 1L;
-        String pointRulesCode = "testPointRulesCode";
-
-        PointRules pointRules = new PointRules(
-                pointRulesCode,
-                1,
-                2
-        );
+        String pointRulesCodeFromUpdate = "testPointRulesCode";
 
         TournamentDTO updatedTournament = new TournamentDTO(
                 "Mistrzostwa Świata 2022",
                 "MS2022",
-                pointRulesCode
+                pointRulesCodeFromUpdate
         );
 
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
-        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
+        PointRules pointRules = new PointRules(
+                pointRulesCodeFromUpdate,
+                1,
+                2
+        );
+
+        Tournament existingTournament = new Tournament(
+                "test",
+                "test",
+                new PointRules("test", 2, 1)
+        );
+
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(existingTournament));
+        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCodeFromUpdate)).willReturn(Optional.of(pointRules));
 
         // when
         underTest.updateTournament(tournamentId, updatedTournament);
@@ -161,11 +209,9 @@ class TournamentServiceTest {
         ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
         verify(tournamentRepository).save(tournamentArgumentCaptor.capture());
         Tournament capturedTournament = tournamentArgumentCaptor.getValue();
+        TournamentDTO capturedTournamentDTO = new TournamentDTO(capturedTournament.getTournamentName(), capturedTournament.getTournamentCode(), capturedTournament.getPointRules().getPointRulesCode());
 
-        assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
-        assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
-        assertThat(capturedTournament.getPointRules().getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
-        assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
+        assertThat(capturedTournamentDTO).isEqualTo(updatedTournament);
     }
 
     @Test
@@ -224,110 +270,20 @@ class TournamentServiceTest {
                 pointRulesCode
         );
 
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
-        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.empty());
-
-        // when
-        // then
-        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
-                .isInstanceOf(PointRulesDoesNotExistException.class)
-                .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
-
-        verify(tournamentRepository, never()).save(any());
-    }
-
-    @Test
-    void canPatchUpdateTournament() {
-        // given
-        Long tournamentId = 1L;
-        String pointRulesCode = "testPointRulesCode";
-
         PointRules pointRules = new PointRules(
-                pointRulesCode,
+                "test",
                 1,
                 2
         );
 
-        TournamentDTO updatedTournament = new TournamentDTO(
-                "Mistrzostwa Świata 2022",
-                "MS2022",
-                pointRulesCode
+
+        Tournament existingTournament = new Tournament(
+                "test",
+                "test",
+                pointRules
         );
 
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
-        given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.of(pointRules));
-
-        // when
-        underTest.updateTournament(tournamentId, updatedTournament);
-
-        // then
-        ArgumentCaptor<Tournament> tournamentArgumentCaptor = ArgumentCaptor.forClass(Tournament.class);
-        verify(tournamentRepository).save(tournamentArgumentCaptor.capture());
-        Tournament capturedTournament = tournamentArgumentCaptor.getValue();
-
-        assertThat(capturedTournament.getTournamentName()).isEqualTo(updatedTournament.getTournamentName());
-        assertThat(capturedTournament.getTournamentCode()).isEqualTo(updatedTournament.getTournamentCode());
-        assertThat(capturedTournament.getPointRules().getPointRulesCode()).isEqualTo(updatedTournament.getPointRulesCode());
-        assertThat(capturedTournament.getPointRules()).isEqualTo(pointRules);
-    }
-
-    @Test
-    void willThrowWhenTournamentDoesNotExistDuringPatchUpdate() {
-        // given
-        Long tournamentId = 1L;
-        String pointRulesCode = "testPointRulesCode";
-        TournamentDTO updatedTournament = new TournamentDTO(
-                "Mistrzostwa Świata 2022",
-                "MS2022",
-                pointRulesCode
-        );
-
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.empty());
-
-        // when
-        // then
-        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
-                .isInstanceOf(TournamentDoesNotExistException.class)
-                .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
-
-        verify(tournamentRepository, never()).save(any());
-    }
-
-    @Test
-    void willThrowWhenTournamentCodeIsAlreadyTakenDuringPatchUpdate() {
-        // given
-        Long tournamentId = 1L;
-        String tournamentCode = "MS2022";
-        TournamentDTO updatedTournament = new TournamentDTO(
-                "Mistrzostwa Świata 2022",
-                tournamentCode,
-                "testPointRulesCode"
-        );
-
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
-        given(tournamentRepository.existsByTournamentCode(tournamentCode)).willReturn(true);
-
-        // when
-        // then
-        assertThatThrownBy(() -> underTest.updateTournament(tournamentId, updatedTournament))
-                .isInstanceOf(TournamentCodeAlreadyTakenException.class)
-                .hasMessageContaining("Tournament code: " + tournamentCode + " already taken!");
-
-        verify(tournamentRepository, never()).save(any());
-    }
-
-    @Test
-    void willThrowWhenPointRulesCodeDoesNotExistDuringPatchUpdate() {
-        // given
-        Long tournamentId = 1L;
-        String pointRulesCode = "testPointRulesCode";
-        TournamentDTO updatedTournament = new TournamentDTO(
-                "Mistrzostwa Świata 2022",
-                "MS2022",
-                pointRulesCode
-        );
-
-        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(new Tournament()));
+        given(tournamentRepository.findById(tournamentId)).willReturn(Optional.of(existingTournament));
         given(pointRulesRepository.findPointRulesByPointRulesCode(pointRulesCode)).willReturn(Optional.empty());
 
         // when
@@ -337,5 +293,35 @@ class TournamentServiceTest {
                 .hasMessageContaining("Point rules with code: " + pointRulesCode + " does not exist!");
 
         verify(tournamentRepository, never()).save(any());
+    }
+
+    @Test
+    void canDeleteTournament() {
+        // given
+        Long tournamentId = 1L;
+
+        given(tournamentRepository.existsById(tournamentId)).willReturn(true);
+
+        // when
+        underTest.deleteTournament(tournamentId);
+
+        // then
+        verify(tournamentRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    void willThrowWhenTournamentDoesNotExistWhileDeletingTournament() {
+        // given
+        Long tournamentId = 1L;
+
+        given(tournamentRepository.existsById(tournamentId)).willReturn(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> underTest.deleteTournament(tournamentId))
+                .isInstanceOf(TournamentDoesNotExistException.class)
+                .hasMessageContaining("Tournament with id: " + tournamentId + " does not exist!");
+
+        verify(tournamentRepository, never()).deleteById(any());
     }
 }

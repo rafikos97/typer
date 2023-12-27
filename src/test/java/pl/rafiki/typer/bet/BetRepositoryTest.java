@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import pl.rafiki.typer.match.Match;
+import pl.rafiki.typer.match.MatchRepository;
 import pl.rafiki.typer.user.User;
+import pl.rafiki.typer.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,9 +18,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class BetRepositoryTest {
-
     @Autowired
     private BetRepository underTest;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MatchRepository matchRepository;
     private User applicationUser;
     private Match match;
 
@@ -33,6 +38,8 @@ class BetRepositoryTest {
                 null
         );
 
+        userRepository.save(applicationUser);
+
         match = new Match(
                 "Poland",
                 "Germany",
@@ -41,6 +48,8 @@ class BetRepositoryTest {
                 0,
                 false
         );
+
+        matchRepository.save(match);
     }
 
     @Test
