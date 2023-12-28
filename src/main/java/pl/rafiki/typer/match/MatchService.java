@@ -2,7 +2,6 @@ package pl.rafiki.typer.match;
 
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.SerializationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.BetService;
 import pl.rafiki.typer.match.exceptions.CannotUpdateTournamentBecauseMatchIsFinishedException;
@@ -25,7 +24,6 @@ public class MatchService {
     private final TournamentRepository tournamentRepository;
     private final BetService betService;
 
-    @Autowired
     public MatchService(MatchRepository matchRepository, TournamentRepository tournamentRepository, BetService betService) {
         this.matchRepository = matchRepository;
         this.tournamentRepository = tournamentRepository;

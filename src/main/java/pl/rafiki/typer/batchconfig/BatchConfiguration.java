@@ -15,7 +15,6 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +38,6 @@ public class BatchConfiguration {
     private final MatchRepository matchRepository;
     private final TournamentRepository tournamentRepository;
 
-    @Autowired
     public BatchConfiguration(MatchRepository matchRepository, TournamentRepository tournamentRepository) {
         this.matchRepository = matchRepository;
         this.tournamentRepository = tournamentRepository;
