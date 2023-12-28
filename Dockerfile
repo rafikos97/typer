@@ -12,5 +12,6 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 EXPOSE 8080
 ENV DB_ADDRESS typer-db
+ENV BACKEND_ADDRESS typer-backend
 COPY --from=builder /app/target/*.jar /app/*.jar
 ENTRYPOINT ["java", "-jar", "/app/*.jar"]
