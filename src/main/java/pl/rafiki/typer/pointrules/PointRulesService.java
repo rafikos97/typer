@@ -1,6 +1,5 @@
 package pl.rafiki.typer.pointrules;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.pointrules.exceptions.PointRulesCodeAlreadyTakenException;
 import pl.rafiki.typer.pointrules.exceptions.PointRulesDoesNotExistException;
@@ -12,7 +11,6 @@ import java.util.Objects;
 public class PointRulesService {
     private final PointRulesRepository pointRulesRepository;
 
-    @Autowired
     public PointRulesService(PointRulesRepository pointRulesRepository) {
         this.pointRulesRepository = pointRulesRepository;
     }

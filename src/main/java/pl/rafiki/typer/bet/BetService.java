@@ -1,7 +1,6 @@
 package pl.rafiki.typer.bet;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.rafiki.typer.bet.exceptions.*;
 import pl.rafiki.typer.match.Match;
@@ -24,7 +23,6 @@ public class BetService {
     private final MatchRepository matchRepository;
     private final ScoreboardService scoreboardService;
 
-    @Autowired
     public BetService(BetRepository betRepository, UserRepository userRepository, MatchRepository matchRepository, ScoreboardService scoreboardService) {
         this.betRepository = betRepository;
         this.userRepository = userRepository;
