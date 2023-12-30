@@ -17,6 +17,16 @@ The backend part is written in Java using the Spring framework. Application is s
 * Swagger 3,
 * JUnit 5 and Mockito for unit tests
 
+The frontend part is built with TypeScript, Angular, where NgRx is used for state management. The complete list of frontend technologies is as follows:
+* TypeScript,
+* Angular,
+* RxJS,
+* NgRx,
+* Jest,
+* Cypress,
+* SCSS,
+* Tailwind
+
 # API documentation
 
 Complete API documentation can be obtained when application is running locally by entering the following address in web browser:
