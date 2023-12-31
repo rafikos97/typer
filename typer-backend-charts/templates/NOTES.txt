@@ -1,0 +1,2 @@
+# Run below command to expose external IP for typer-backend service:
+minikube tunnel

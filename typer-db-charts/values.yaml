@@ -1,0 +1,10 @@
+appName: typer-db
+
+namespace: default
+
+image:
+  name: rafiki90/typer-db
+  tag: latest
+
+secretRef:
+  name: db-secret
