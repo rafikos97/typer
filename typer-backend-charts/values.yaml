@@ -1,0 +1,14 @@
+appName: typer-backend
+
+namespace: default
+
+image:
+  name: rafiki90/typer-backend
+  tag: latest
+
+secretRef:
+  name: db-secret
+
+env:
+  value:
+    DB_ADDRESS: typer-db.default
