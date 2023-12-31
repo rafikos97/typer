@@ -6,12 +6,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web
-    template:
-      metadata:
-        labels:
-          app: web
-      spec:
-        containers:
-          - name: web
-            image: rafiki90/typer-web:latest
+      app: typer-web
+  template:
+    metadata:
+      labels:
+        app: typer-web
+    spec:
+      containers:
+        - name: typer-web
+          image: rafiki90/typer-web:latest
