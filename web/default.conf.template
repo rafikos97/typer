@@ -15,6 +15,7 @@ server {
   root /usr/share/nginx/html;
 
   index index.html;
+  error_page 404 =200 /index.html;
 
   location /typer {
    proxy_pass http://${BACKEND_ADDRESS}:8080/typer;
