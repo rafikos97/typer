@@ -1,0 +1,7 @@
+appName: typer-web
+
+namespace: default
+
+image:
+  name: rafiki90/typer-web
+  tag: latest
