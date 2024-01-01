@@ -24,6 +24,8 @@ services:
     build: ./web
     ports:
       - '4200:80'
+    environment:
+      BACKEND_ADDRESS: typer-backend
     depends_on:
       - typer-backend
 

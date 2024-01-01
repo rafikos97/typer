@@ -1,11 +1,11 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY . /app
-ENV BACKEND_ADDRESS=typer-backend
 RUN npm install
 RUN npm run build
 
 FROM nginx:latest
-COPY /nginx.conf /etc/nginx/conf.d/default.conf
+RUN mkdir /etc/nginx/templates
+COPY default.conf.template /etc/nginx/templates
 EXPOSE 4200
 COPY --from=builder /app/dist/typer /usr/share/nginx/html
