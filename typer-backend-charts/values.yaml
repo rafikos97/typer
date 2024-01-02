@@ -11,4 +11,4 @@ secretRef:
 
 env:
   value:
-    DB_ADDRESS: typer-db.default
+    DB_ADDRESS: typer-db

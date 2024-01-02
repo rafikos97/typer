@@ -16,3 +16,6 @@ spec:
       containers:
         - name: typer-web
           image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          env:
+            - name: BACKEND_ADDRESS
+              value: "{{ .Values.env.value.BACKEND_ADDRESS }}.{{ .Values.namespace }}"
