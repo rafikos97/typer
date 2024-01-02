@@ -15,8 +15,6 @@ services:
       - batchfiles:/app/batchfiles
     depends_on:
       - typer-db
-    environment:
-      DB_ADDRESS: typer-db
     env_file:
       - ./env/db.env
 
@@ -24,8 +22,6 @@ services:
     build: ./web
     ports:
       - '4200:80'
-    environment:
-      BACKEND_ADDRESS: typer-backend
     depends_on:
       - typer-backend
 
