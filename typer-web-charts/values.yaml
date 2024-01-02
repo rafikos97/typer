@@ -5,3 +5,7 @@ namespace: default
 image:
   name: rafiki90/typer-web
   tag: latest
+
+env:
+  value:
+    BACKEND_ADDRESS: typer-backend
