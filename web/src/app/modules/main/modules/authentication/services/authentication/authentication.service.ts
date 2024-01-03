@@ -16,7 +16,7 @@ export class AuthenticationService {
         });
     }
 
-    peristAuthentication(loginResponse: LoginResponse) {
+    persistAuthentication(loginResponse: LoginResponse) {
         localStorage.setItem(this.storageKey, JSON.stringify(loginResponse));
     }
 

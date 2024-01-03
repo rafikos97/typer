@@ -7,7 +7,7 @@ import {
     redirectToLogin,
     useExistingAuthentication,
 } from './authentication.actions';
-import { EMPTY, iif, of, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication/authentication.service';
 import { Router } from '@angular/router';
 
@@ -23,9 +23,17 @@ export class AuthenticationEffects {
             switchMap(({ username, password }) =>
                 this.authenticationService.login(username, password),
             ),
-            switchMap(({ accessToken, scope, expiresIn, tokenType }) => [
-                loginSuccess({ accessToken, expiresIn, tokenType, scope }),
-            ]),
+            switchMap(({ accessToken, scope, expiresIn, tokenType }) => {
+                this.authenticationService.persistAuthentication({
+                    accessToken,
+                    scope,
+                    expiresIn,
+                    tokenType,
+                });
+                return [
+                    loginSuccess({ accessToken, expiresIn, tokenType, scope }),
+                ];
+            }),
         ),
     );
 
@@ -49,6 +57,15 @@ export class AuthenticationEffects {
         { dispatch: false },
     );
 
+    readonly redirectToHome$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(useExistingAuthentication),
+                tap(() => this.router.navigateByUrl('/main/home')),
+            ),
+        { dispatch: false },
+    );
+
     readonly initializeAuthentication$ = createEffect(() =>
         this.actions$.pipe(
             ofType(initializeAuthentication),
@@ -56,11 +73,7 @@ export class AuthenticationEffects {
                 const existingAuthentication =
                     this.authenticationService.retrieveAuthenticationFromStorage();
                 if (existingAuthentication) {
-                    return [
-                        useExistingAuthentication({
-                            payload: existingAuthentication,
-                        }),
-                    ];
+                    return [useExistingAuthentication(existingAuthentication)];
                 } else {
                     return [redirectToLogin()];
                 }

@@ -1,6 +1,5 @@
 import { createAction, props } from '@ngrx/store';
 import { Scope } from '../models/scope.model';
-import { LoginResponse } from '../models/login-response.model';
 
 export const login = createAction(
     '[Authentication]',
@@ -23,7 +22,12 @@ export const initializeAuthentication = createAction(
 
 export const useExistingAuthentication = createAction(
     '[Authentication] Use Existing Authentication',
-    props<{ payload: LoginResponse }>(),
+    props<{
+        accessToken: string;
+        expiresIn: number;
+        scope: Scope;
+        tokenType: string;
+    }>(),
 );
 
 export const redirectToLogin = createAction(

@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import {
     Router,
     RouterLink,
@@ -17,13 +17,15 @@ import { initializeAuthentication } from './modules/main/modules/authentication/
     standalone: true,
     imports: [RouterLink, RouterLinkActive, RouterOutlet, NgIf, AsyncPipe],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit {
     private readonly router = inject(Router);
     private readonly store = inject(Store);
     readonly authenticated$ = this.store.select(selectUserAuthenticated);
 
-    ngOnInit() {
-        this.store.dispatch(initializeAuthentication());
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.store.dispatch(initializeAuthentication());
+        });
     }
 
     get routerActiveClassName() {
