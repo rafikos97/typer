@@ -1,7 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { login, loginSuccess } from './authentication.actions';
-import { switchMap, tap } from 'rxjs';
+import {
+    initializeAuthentication,
+    login,
+    loginSuccess,
+    redirectToLogin,
+    useExistingAuthentication,
+} from './authentication.actions';
+import { EMPTY, iif, of, switchMap, tap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication/authentication.service';
 import { Router } from '@angular/router';
 
@@ -32,5 +38,33 @@ export class AuthenticationEffects {
                 }),
             ),
         { dispatch: false },
+    );
+
+    readonly redirectToLogin$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(redirectToLogin),
+                tap(() => this.router.navigateByUrl('/login')),
+            ),
+        { dispatch: false },
+    );
+
+    readonly initializeAuthentication$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(initializeAuthentication),
+            switchMap(() => {
+                const existingAuthentication =
+                    this.authenticationService.retrieveAuthenticationFromStorage();
+                if (existingAuthentication) {
+                    return [
+                        useExistingAuthentication({
+                            payload: existingAuthentication,
+                        }),
+                    ];
+                } else {
+                    return [redirectToLogin()];
+                }
+            }),
+        ),
     );
 }

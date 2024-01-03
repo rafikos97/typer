@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectUserAuthenticated } from './modules/main/modules/authentication/+state/authentication.selectors';
+import { initializeAuthentication } from './modules/main/modules/authentication/+state/authentication.actions';
 
 @Component({
     selector: 'app-root',
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
     readonly authenticated$ = this.store.select(selectUserAuthenticated);
 
     ngOnInit() {
-        this.router.navigateByUrl('/login');
+        this.store.dispatch(initializeAuthentication());
     }
 
     get routerActiveClassName() {

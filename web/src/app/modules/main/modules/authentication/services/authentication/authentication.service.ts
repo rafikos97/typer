@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthenticationService {
+    private readonly storageKey = 'typer-authentication';
     private readonly httpClient = inject(HttpClient);
 
     login(username: string, password: string): Observable<LoginResponse> {
@@ -13,5 +14,13 @@ export class AuthenticationService {
             username,
             password,
         });
+    }
+
+    peristAuthentication(loginResponse: LoginResponse) {
+        localStorage.setItem(this.storageKey, JSON.stringify(loginResponse));
+    }
+
+    retrieveAuthenticationFromStorage(): LoginResponse {
+        return JSON.parse(localStorage.getItem(this.storageKey)!);
     }
 }
