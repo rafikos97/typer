@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
+    initializeAuthentication,
     login,
     loginSuccess,
+    redirectToLogin,
     refreshToken,
     refreshTokenSuccess,
+    useExistingAuthentication,
 } from './authentication.actions';
-import { switchMap, tap, withLatestFrom } from 'rxjs';
+import { catchError, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AuthenticationService } from '../services/authentication/authentication.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -29,23 +32,10 @@ export class AuthenticationEffects {
             switchMap(({ username, password }) =>
                 this.authenticationService.login(username, password),
             ),
-            switchMap(
-                ({
-                    accessToken,
-                    scope,
-                    expiresIn,
-                    tokenType,
-                    refreshToken,
-                }) => [
-                    loginSuccess({
-                        accessToken,
-                        expiresIn,
-                        tokenType,
-                        scope,
-                        refreshToken,
-                    }),
-                ],
-            ),
+            switchMap((loginResponse) => {
+                this.authenticationService.persistAuthentication(loginResponse);
+                return [loginSuccess(loginResponse)];
+            }),
         ),
     );
 
@@ -71,23 +61,54 @@ export class AuthenticationEffects {
             switchMap(([_, refreshToken]) =>
                 this.authenticationService.refreshToken(refreshToken!),
             ),
-            switchMap(
-                ({
-                    accessToken,
-                    scope,
-                    expiresIn,
-                    tokenType,
-                    refreshToken,
-                }) => [
-                    refreshTokenSuccess({
-                        accessToken,
-                        expiresIn,
-                        tokenType,
-                        scope,
-                        refreshToken,
-                    }),
-                ],
+            switchMap((loginResponse) => {
+                this.authenticationService.persistAuthentication(loginResponse);
+                return [refreshTokenSuccess(loginResponse)];
+            }),
+        ),
+    );
+
+    readonly redirectToLogin$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(redirectToLogin),
+                tap(() => this.router.navigateByUrl('/login')),
             ),
+        { dispatch: false },
+    );
+
+    readonly redirectToCurrentPath = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(useExistingAuthentication),
+                tap(() => {
+                    const currentPathIsIndex = location.pathname === '/';
+                    this.router.navigateByUrl(
+                        currentPathIsIndex ? '/main/home' : location.pathname,
+                    );
+                }),
+            ),
+        { dispatch: false },
+    );
+
+    readonly initializeAuthentication$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(initializeAuthentication),
+            switchMap(() => {
+                const existingAuthentication =
+                    this.authenticationService.retrieveAuthenticationFromStorage();
+                if (existingAuthentication) {
+                    return this.authenticationService.refreshToken(
+                        existingAuthentication.refreshToken,
+                    );
+                }
+
+                throw new Error('No existing authentication found.');
+            }),
+            switchMap((refreshedAuthentication) => {
+                return [useExistingAuthentication(refreshedAuthentication)];
+            }),
+            catchError(() => of(redirectToLogin())),
         ),
     );
 }

@@ -35,10 +35,6 @@ export const APP_ROUTES: Routes = [
         providers: [
             importProvidersFrom(
                 StoreModule.forFeature(
-                    authenticationFeatureKey,
-                    authenticationReducer,
-                ),
-                StoreModule.forFeature(
                     tournamentsFeatureKey,
                     tournamentsReducer,
                 ),
@@ -48,7 +44,6 @@ export const APP_ROUTES: Routes = [
                     PointRulesEffects,
                     MatchesEffects,
                     UsersEffects,
-                    AuthenticationEffects,
                 ]),
                 StoreModule.forFeature(pointRulesFeatureKey, pointRulesReducer),
                 StoreModule.forFeature(matchesFeatureKey, matchesReducer),
@@ -57,7 +52,6 @@ export const APP_ROUTES: Routes = [
             TournamentsService,
             MatchesService,
             UsersService,
-            AuthenticationService,
         ],
         children: [
             {

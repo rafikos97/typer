@@ -4,8 +4,9 @@ import { LoginResponse } from '../../models/login-response.model';
 import { loginApi, refreshTokenApi } from './authentication.constants';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
+    private readonly storageKey = 'typer-authentication';
     private readonly httpClient = inject(HttpClient);
 
     login(username: string, password: string): Observable<LoginResponse> {
@@ -19,5 +20,13 @@ export class AuthenticationService {
         return this.httpClient.post<LoginResponse>(refreshTokenApi, {
             refreshToken,
         });
+    }
+
+    persistAuthentication(loginResponse: LoginResponse) {
+        localStorage.setItem(this.storageKey, JSON.stringify(loginResponse));
+    }
+
+    retrieveAuthenticationFromStorage(): LoginResponse {
+        return JSON.parse(localStorage.getItem(this.storageKey)!);
     }
 }

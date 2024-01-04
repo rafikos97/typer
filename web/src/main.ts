@@ -17,6 +17,11 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthenticationInterceptor } from './app/modules/main/modules/authentication/interceptors/authentication.interceptor';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AuthenticationEffects } from './app/modules/main/modules/authentication/+state/authentication.effects';
+import {
+    authenticationFeatureKey,
+    authenticationReducer,
+} from './app/modules/main/modules/authentication/+state/authentication.reducer';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -26,13 +31,13 @@ bootstrapApplication(AppComponent, {
             useClass: AuthenticationInterceptor,
             multi: true,
         },
-        provideRouter(
-            APP_ROUTES,
-            withPreloading(PreloadAllModules),
-            withDebugTracing(),
+        provideRouter(APP_ROUTES, withPreloading(PreloadAllModules)),
+        importProvidersFrom(
+            StoreModule.forRoot({
+                [authenticationFeatureKey]: authenticationReducer,
+            }),
         ),
-        importProvidersFrom(StoreModule.forRoot({})),
-        importProvidersFrom(EffectsModule.forRoot()),
+        importProvidersFrom(EffectsModule.forRoot([AuthenticationEffects])),
         importProvidersFrom(StoreDevtoolsModule.instrument()),
     ],
 }).catch((err) => console.error(err));

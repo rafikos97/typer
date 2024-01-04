@@ -1,5 +1,5 @@
+import { AfterViewInit, Component, ElementRef, inject } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import {
     Router,
     RouterLink,
@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { refreshToken } from './modules/main/modules/authentication/+state/authentication.actions';
 import { selectTournaments } from './+state/tournament/tournament.selectors';
 import { switchTournamentContext } from './+state/application-context/application-context.actions';
+import { initializeAuthentication } from './modules/main/modules/authentication/+state/authentication.actions';
 
 @Component({
     selector: 'app-root',
@@ -28,7 +29,7 @@ import { switchTournamentContext } from './+state/application-context/applicatio
         AsyncPipe,
     ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit {
     private readonly router = inject(Router);
     private readonly store = inject(Store);
     private readonly elementRef = inject(ElementRef);
@@ -46,8 +47,8 @@ export class AppComponent implements OnInit {
         )
         .subscribe(() => this.store.dispatch(refreshToken()));
 
-    ngOnInit() {
-        this.router.navigateByUrl('/login');
+    ngAfterViewInit() {
+        this.store.dispatch(initializeAuthentication());
     }
 
     changeTournamentContext({ target }: Event) {

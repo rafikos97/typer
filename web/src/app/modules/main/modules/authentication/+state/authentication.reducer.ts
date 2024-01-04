@@ -1,5 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
-import { loginSuccess, refreshTokenSuccess } from './authentication.actions';
+import {
+    loginSuccess,
+    refreshTokenSuccess,
+    useExistingAuthentication,
+} from './authentication.actions';
 import { Scope } from '../models/scope.model';
 
 export interface AuthenticationState {
@@ -25,6 +29,7 @@ export const authenticationReducer = createReducer(
     on(
         loginSuccess,
         refreshTokenSuccess,
+        useExistingAuthentication,
         (_, { expiresIn, accessToken, tokenType, scope, refreshToken }) => ({
             expiresIn,
             accessToken,
