@@ -61,7 +61,7 @@ export class AuthenticationEffects {
         () =>
             this.actions$.pipe(
                 ofType(useExistingAuthentication),
-                tap(() => this.router.navigateByUrl('/main/home')),
+                tap(() => this.router.navigateByUrl(location.pathname)),
             ),
         { dispatch: false },
     );
