@@ -52,7 +52,15 @@
                         <td [textContent]="pointRule.score"></td>
                         <td [textContent]="pointRule.winner"></td>
                         <td [textContent]="pointRule.pointRulesCode"></td>
-                        <td><button (click)="deletePointRule(pointRule.id!)" type="button" class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">Delete</button></td>
+                        <td>
+                            <button
+                                (click)="deletePointRule(pointRule.id!)"
+                                type="button"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -128,7 +136,15 @@
                         <td [textContent]="tournament.tournamentName"></td>
                         <td [textContent]="tournament.tournamentCode"></td>
                         <td [textContent]="tournament.pointRulesCode"></td>
-                        <td><button type="button" (click)="deleteTournament(tournament.id!)" class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">Delete</button></td>
+                        <td>
+                            <button
+                                type="button"
+                                (click)="deleteTournament(tournament.id!)"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -230,7 +246,15 @@
                         <td [textContent]="match.startDateAndTime"></td>
                         <td [textContent]="match.finished ? 'Yes' : 'No'"></td>
                         <td [textContent]="match.tournamentCode"></td>
-                        <td><button type="button" (click)="deleteMatch(match.id!)" class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">Delete</button></td>
+                        <td>
+                            <button
+                                type="button"
+                                (click)="deleteMatch(match.id!)"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -307,7 +331,15 @@
                         <td [textContent]="user.firstName"></td>
                         <td [textContent]="user.lastName"></td>
                         <td [textContent]="user.email"></td>
-                        <td><button type="button" (click)="deleteUser(user.id!)" class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">Delete</button></td>
+                        <td>
+                            <button
+                                type="button"
+                                (click)="deleteUser(user.id!)"
+                                class="block w-full p-4 mt-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
