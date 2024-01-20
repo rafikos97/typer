@@ -9,5 +9,5 @@ export const selectApplicationContext =
 
 export const selectTournamentId = createSelector(
     selectApplicationContext,
-    (selectApplicationContext) => selectApplicationContext.tournamentId,
+    (selectApplicationContext) => selectApplicationContext?.tournamentId,
 );

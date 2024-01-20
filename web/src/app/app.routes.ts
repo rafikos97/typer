@@ -21,6 +21,8 @@ import { usersFeatureKey } from './+state/users/users.feature-key';
 import { usersReducer } from './+state/users/users.reducer';
 import { UsersEffects } from './+state/users/users.effects';
 import { UsersService } from './services/users/users.service';
+import { applicationContextFeatureKey } from './+state/application-context/application-context.feature-key';
+import { applicationContextReducer } from './+state/application-context/application-context.reducer';
 
 export const APP_ROUTES: Routes = [
     {
@@ -41,6 +43,10 @@ export const APP_ROUTES: Routes = [
                 ]),
                 StoreModule.forFeature(pointRulesFeatureKey, pointRulesReducer),
                 StoreModule.forFeature(matchesFeatureKey, matchesReducer),
+                StoreModule.forFeature(
+                    applicationContextFeatureKey,
+                    applicationContextReducer,
+                ),
             ),
             PointRulesService,
             TournamentsService,
