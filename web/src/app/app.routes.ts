@@ -4,13 +4,7 @@ import { authenticatedGuard } from './guards/authenticated/authenticated.guard';
 import { unauthenticatedGuard } from './guards/unauthenticated/unauthenticated.guard';
 import { importProvidersFrom } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
-import {
-    authenticationFeatureKey,
-    authenticationReducer,
-} from './modules/main/modules/authentication/+state/authentication.reducer';
-import { AuthenticationService } from './modules/main/modules/authentication/services/authentication/authentication.service';
 import { EffectsModule } from '@ngrx/effects';
-import { AuthenticationEffects } from './modules/main/modules/authentication/+state/authentication.effects';
 import { MatchesEffects } from './+state/match/match.effects';
 import { matchesFeatureKey } from './+state/match/match.feature-key';
 import { matchesReducer } from './+state/match/match.reducer';
