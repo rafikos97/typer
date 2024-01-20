@@ -2,15 +2,7 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-    Observable,
-    filter,
-    first,
-    interval,
-    shareReplay,
-    switchMap,
-    timer,
-} from 'rxjs';
+import { Observable, filter, switchMap, timer } from 'rxjs';
 import { selectTournamentId } from 'src/app/+state/application-context/application-context.selectors';
 
 interface ScoreboardDTO {
