@@ -77,18 +77,22 @@ export class AuthenticationEffects {
         { dispatch: false },
     );
 
-    readonly redirectToCurrentPath = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(useExistingAuthentication),
-                tap(() => {
-                    const currentPathIsIndex = location.pathname === '/';
-                    this.router.navigateByUrl(
-                        currentPathIsIndex ? '/main/home' : location.pathname,
-                    );
-                }),
-            ),
-        { dispatch: false },
+    readonly redirectToCurrentPath = createEffect(() =>
+        this.actions$.pipe(
+            ofType(useExistingAuthentication),
+            switchMap(() => [
+                fetchPointRules(),
+                fetchTournaments(),
+                fetchMatches(),
+                fetchUsers(),
+            ]),
+            tap(() => {
+                const currentPathIsIndex = location.pathname === '/';
+                this.router.navigateByUrl(
+                    currentPathIsIndex ? '/main/home' : location.pathname,
+                );
+            }),
+        ),
     );
 
     readonly initializeAuthentication$ = createEffect(() =>
