@@ -1,20 +1,8 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {
-    Component,
-    ChangeDetectionStrategy,
-    inject,
-    InjectionToken,
-    OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-    Observable,
-    first,
-    shareReplay,
-    switchMap,
-    withLatestFrom,
-} from 'rxjs';
+import { Observable, first, shareReplay, switchMap } from 'rxjs';
 import { selectTournamentId } from 'src/app/+state/application-context/application-context.selectors';
 
 interface ScoreboardDTO {
@@ -86,10 +74,4 @@ export class DashboardComponent {
             }),
             shareReplay(1),
         );
-
-    // ngOnInit(): void {
-    //     this.store.select(selectTournamentId).subscribe(())
-    //     this.httpClient.get('/typer/scoreboard' + tournamenetId).
-    //     throw new Error('Method not implemented.');
-    // }
 }

@@ -54,7 +54,7 @@ export class AppComponent implements AfterViewInit {
     changeTournamentContext({ target }: Event) {
         this.store.dispatch(
             switchTournamentContext({
-                tournamentCode: (<HTMLSelectElement>target).value!,
+                tournamentId: Number((<HTMLSelectElement>target).value!),
             }),
         );
     }
