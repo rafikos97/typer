@@ -2,7 +2,15 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, first, shareReplay, switchMap } from 'rxjs';
+import {
+    Observable,
+    filter,
+    first,
+    interval,
+    shareReplay,
+    switchMap,
+    timer,
+} from 'rxjs';
 import { selectTournamentId } from 'src/app/+state/application-context/application-context.selectors';
 
 interface ScoreboardDTO {
@@ -63,15 +71,16 @@ export class DashboardComponent {
     private readonly store = inject(Store);
     private readonly httpClient = inject(HttpClient);
 
-    readonly scoreboards$: Observable<Scoreboards> = this.store
-        .select(selectTournamentId)
-        .pipe(
-            first((tournamentId) => tournamentId !== null),
-            switchMap((tournamentId) => {
-                return this.httpClient.get<Scoreboards>(
-                    `/typer/scoreboard/${tournamentId}`,
-                );
-            }),
-            shareReplay(1),
-        );
+    readonly scoreboards$: Observable<Scoreboards> = timer(0, 5000).pipe(
+        switchMap(() =>
+            this.store.select(selectTournamentId).pipe(
+                filter((tournamentId) => tournamentId !== null),
+                switchMap((tournamentId) => {
+                    return this.httpClient.get<Scoreboards>(
+                        `/typer/scoreboard/${tournamentId}`,
+                    );
+                }),
+            ),
+        ),
+    );
 }

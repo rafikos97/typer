@@ -28,6 +28,7 @@
                 </li>
                 <li class="ml-6" *ngIf="(tournaments$ | async)?.length">
                     <select (change)="changeTournamentContext($event)">
+                        <option [value]="null">None</option>
                         <option
                             *ngFor="let tournament of tournaments$ | async"
                             [value]="tournament.id"
