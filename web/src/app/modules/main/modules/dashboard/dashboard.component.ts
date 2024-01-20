@@ -42,7 +42,18 @@ type Scoreboards = Array<ScoreboardDTO>;
         </table>
     `,
     imports: [NgIf, NgFor],
-    styleUrls: [],
+    styles: [
+        `
+            th {
+                padding: 4px 8px;
+            }
+
+            td {
+                border: 1px solid;
+                padding: 2px 4px;
+            }
+        `,
+    ],
 })
 export class DashboardComponent {
     scoreboards: Scoreboards = [
