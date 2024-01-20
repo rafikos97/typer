@@ -7,7 +7,7 @@ export const selectApplicationContext =
         applicationContextFeatureKey,
     );
 
-export const selectTournamentCode = createSelector(
+export const selectTournamentId = createSelector(
     selectApplicationContext,
-    (selectApplicationContext) => selectApplicationContext.tournamentCode,
+    (selectApplicationContext) => selectApplicationContext.tournamentId,
 );

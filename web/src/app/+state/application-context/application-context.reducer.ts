@@ -2,16 +2,16 @@ import { createReducer, on } from '@ngrx/store';
 import { switchTournamentContext } from './application-context.actions';
 
 export interface ApplicationContextState {
-    tournamentCode: string | null;
+    tournamentId: number | null;
 }
 
 export const initialApplicationContextState: ApplicationContextState = {
-    tournamentCode: null,
+    tournamentId: null,
 };
 
 export const applicationContextReducer = createReducer<ApplicationContextState>(
     initialApplicationContextState,
-    on(switchTournamentContext, (_, { tournamentCode }) => ({
-        tournamentCode,
+    on(switchTournamentContext, (_, { tournamentId }) => ({
+        tournamentId,
     })),
 );

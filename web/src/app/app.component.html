@@ -30,7 +30,7 @@
                     <select (change)="changeTournamentContext($event)">
                         <option
                             *ngFor="let tournament of tournaments$ | async"
-                            [value]="tournament.tournamentCode"
+                            [value]="tournament.id"
                             [textContent]="tournament.tournamentName"
                         ></option>
                     </select>
