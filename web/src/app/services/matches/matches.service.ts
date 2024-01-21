@@ -12,8 +12,18 @@ export class MatchesService {
         return this.httpClient.get<Matches>(`${this.matchesApi}/all`);
     }
 
-    createMatch(match: Match) {
-        return this.httpClient.post<Match>(`${this.matchesApi}/add`, match);
+    createMatch({
+        firstTeamName,
+        secondTeamName,
+        tournamentCode,
+        startDateAndTime,
+    }: Match) {
+        return this.httpClient.post<Match>(`${this.matchesApi}/add`, {
+            firstTeamName,
+            secondTeamName,
+            tournamentCode,
+            startDateAndTime,
+        });
     }
 
     getMatch(id: string) {
