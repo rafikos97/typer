@@ -5,24 +5,23 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
-import pl.rafiki.typer.tournament.Tournament;
 import pl.rafiki.typer.user.User;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ScoreboardMapper {
     ScoreboardMapper INSTANCE = Mappers.getMapper(ScoreboardMapper.class);
 
-    @Mapping(source = "tournament", target = "tournamentId", qualifiedByName = "tournamentToTournamentId")
-    @Mapping(source = "user", target = "userId", qualifiedByName = "userToUserId")
+    @Mapping(source = "user", target = "userFirstName", qualifiedByName = "userToUserFirstName")
+    @Mapping(source = "user", target = "userLastName", qualifiedByName = "userToUserLastName")
     ScoreboardDTO scoreboardToScoreboardDto(Scoreboard scoreboard);
 
-    @Named("tournamentToTournamentId")
-    default Long tournamentToTournamentId(Tournament tournament) {
-        return tournament.getId();
+    @Named("userToUserFirstName")
+    default String userToUserFirstName(User user) {
+        return user.getFirstName();
     }
 
-    @Named("userToUserId")
-    default Long userToUserId(User user) {
-        return user.getId();
+    @Named("userToUserLastName")
+    default String userToUserLastName(User user) {
+        return user.getLastName();
     }
 }

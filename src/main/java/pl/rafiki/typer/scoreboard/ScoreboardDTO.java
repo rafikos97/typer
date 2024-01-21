@@ -12,6 +12,6 @@ public class ScoreboardDTO {
     private Integer winners;
     private Integer scores;
     private Integer totalPoints;
-    private Long userId;
-    private Long tournamentId;
+    private String userFirstName;
+    private String userLastName;
 }
