@@ -10,8 +10,8 @@ interface ScoreboardDTO {
     winners: number;
     scores: number;
     totalPoints: number;
-    userId: number;
-    tournamentId: number;
+    userFirstName: string;
+    userLastName: string;
 }
 
 type Scoreboards = Array<ScoreboardDTO>;
@@ -27,8 +27,8 @@ type Scoreboards = Array<ScoreboardDTO>;
                 <th>Winners</th>
                 <th>Scores</th>
                 <th>Total Points</th>
-                <th>User ID</th>
-                <th>Tournament ID</th>
+                <th>User First Name</th>
+                <th>User Last Name</th>
             </thead>
             <tbody>
                 <tr *ngFor="let scoreboard of scoreboards$ | async">
@@ -36,8 +36,8 @@ type Scoreboards = Array<ScoreboardDTO>;
                     <td [textContent]="scoreboard.winners"></td>
                     <td [textContent]="scoreboard.scores"></td>
                     <td [textContent]="scoreboard.totalPoints"></td>
-                    <td [textContent]="scoreboard.userId"></td>
-                    <td [textContent]="scoreboard.tournamentId"></td>
+                    <td [textContent]="scoreboard.userFirstName"></td>
+                    <td [textContent]="scoreboard.userLastName"></td>
                 </tr>
                 <tr *ngIf="!(scoreboards$ | async)?.length">
                     <td colspan="6">No data.</td>
