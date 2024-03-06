@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +32,9 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/all")
-    public List<TournamentDTO> getTournaments() {
-        return tournamentService.getTournaments();
+    public ResponseEntity<List<TournamentDTO>> getTournaments() {
+        List<TournamentDTO> tournamentList = tournamentService.getTournaments();
+        return new ResponseEntity<>(tournamentList, HttpStatus.OK);
     }
 
     @Operation(
@@ -41,8 +44,9 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{tournamentId}")
-    public TournamentDTO getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
-        return tournamentService.getTournament(tournamentId);
+    public ResponseEntity<TournamentDTO> getTournament(@PathVariable(name = "tournamentId") Long tournamentId) {
+        TournamentDTO tournament = tournamentService.getTournament(tournamentId);
+        return new ResponseEntity<>(tournament, HttpStatus.OK);
     }
 
     @Operation(
@@ -52,8 +56,9 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewTournament(@RequestBody @Valid TournamentDTO tournamentDTO) {
+    public ResponseEntity<?> addNewTournament(@RequestBody @Valid TournamentDTO tournamentDTO) {
         tournamentService.addNewTournament(tournamentDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(
@@ -63,8 +68,9 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{tournamentId}")
-    public TournamentDTO updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid TournamentDTO tournamentDTO) {
-        return tournamentService.updateTournament(tournamentId, tournamentDTO);
+    public ResponseEntity<TournamentDTO> updateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody @Valid TournamentDTO tournamentDTO) {
+        TournamentDTO tournament = tournamentService.updateTournament(tournamentId, tournamentDTO);
+        return new ResponseEntity<>(tournament, HttpStatus.OK);
     }
 
     @Operation(
@@ -74,8 +80,9 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{tournamentId}")
-    public TournamentDTO patchUpdateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO tournamentDTO) {
-        return tournamentService.updateTournament(tournamentId, tournamentDTO);
+    public ResponseEntity<TournamentDTO> patchUpdateTournament(@PathVariable(name = "tournamentId") Long tournamentId, @RequestBody TournamentDTO tournamentDTO) {
+        TournamentDTO tournament = tournamentService.updateTournament(tournamentId, tournamentDTO);
+        return new ResponseEntity<>(tournament, HttpStatus.OK);
     }
 
     @Operation(
@@ -85,7 +92,8 @@ public class TournamentController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{tournamentId}")
-    public void deleteTournament(@PathVariable("tournamentId") Long tournamentId) {
+    public ResponseEntity<?> deleteTournament(@PathVariable("tournamentId") Long tournamentId) {
         tournamentService.deleteTournament(tournamentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
