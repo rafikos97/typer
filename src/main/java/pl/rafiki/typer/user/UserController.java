@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<UserDTO> getUsers() {
-        return userService.getUsers();
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        List<UserDTO> usersList = userService.getUsers();
+        return new ResponseEntity<>(usersList, HttpStatus.OK);
     }
 
     @Operation(
@@ -40,8 +43,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{userId}")
-    public UserDTO getUser(@PathVariable("userId") Long userId) {
-        return userService.getUser(userId);
+    public ResponseEntity<UserDTO> getUser(@PathVariable("userId") Long userId) {
+        UserDTO user = userService.getUser(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(
@@ -51,8 +55,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping()
-    public UserDTO getUser(@RequestHeader("Authorization") String bearerToken) {
-        return userService.getUser(bearerToken);
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String bearerToken) {
+        UserDTO user = userService.getUser(bearerToken);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(
@@ -62,8 +67,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/register")
-    public void registerUser(@RequestBody @Valid RegisterUserDTO registerUserDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterUserDTO registerUserDTO) {
         userService.registerUser(registerUserDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(
@@ -73,8 +79,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{userId}")
-    public UserDTO updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserDTO userDTO) {
-        return userService.putUpdateUser(userId, userDTO);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserDTO userDTO) {
+        UserDTO user = userService.putUpdateUser(userId, userDTO);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(
@@ -84,8 +91,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping()
-    public UserDTO updateUserByToken(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid UserDTO userDTO) {
-        return userService.putUpdateUserByToken(bearerToken, userDTO);
+    public ResponseEntity<UserDTO> updateUserByToken(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid UserDTO userDTO) {
+        UserDTO user = userService.putUpdateUserByToken(bearerToken, userDTO);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(
@@ -95,8 +103,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(path = "/{userId}")
-    public UserDTO patchUpdateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO userDTO) {
-        return userService.patchUpdateUser(userId, userDTO);
+    public ResponseEntity<UserDTO> patchUpdateUser(@PathVariable("userId") Long userId, @RequestBody UserDTO userDTO) {
+        UserDTO user = userService.patchUpdateUser(userId, userDTO);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(
@@ -106,8 +115,9 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping(path = "/{userId}/password")
-    public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordDTO dto) {
+    public ResponseEntity<?> changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordDTO dto) {
         userService.updatePassword(userId, dto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(
@@ -117,7 +127,8 @@ public class UserController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{userId}")
-    public void deleteUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
