@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +33,12 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/all")
-    public List<MatchDTO> getMatches (
+    public ResponseEntity<List<MatchDTO>> getMatches (
             @RequestParam(required = false) Boolean finished,
             @RequestParam(required = false) LocalDate startDateFrom,
             @RequestParam(required = false) LocalDate startDateTo) {
-        return matchService.getMatches(finished, startDateFrom, startDateTo);
+        List<MatchDTO> matchList = matchService.getMatches(finished, startDateFrom, startDateTo);
+        return new ResponseEntity<>(matchList, HttpStatus.OK);
     }
 
     @Operation(
@@ -45,12 +48,13 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/tournament/{tournamentId}")
-    public List<MatchDTO> getMatchesByTournamentId (
+    public ResponseEntity<List<MatchDTO>> getMatchesByTournamentId (
             @PathVariable Long tournamentId,
             @RequestParam(required = false) Boolean finished,
             @RequestParam(required = false) LocalDate startDateFrom,
             @RequestParam(required = false) LocalDate startDateTo) {
-        return matchService.getMatchesByTournamentId(tournamentId, finished, startDateFrom, startDateTo);
+        List<MatchDTO> matchList = matchService.getMatchesByTournamentId(tournamentId, finished, startDateFrom, startDateTo);
+        return new ResponseEntity<>(matchList, HttpStatus.OK);
     }
 
     @Operation(
@@ -60,8 +64,9 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{matchId}")
-    public MatchDTO getMatch(@PathVariable(name = "matchId") Long matchId) {
-        return matchService.getMatch(matchId);
+    public ResponseEntity<MatchDTO> getMatch(@PathVariable(name = "matchId") Long matchId) {
+        MatchDTO match = matchService.getMatch(matchId);
+        return new ResponseEntity<>(match, HttpStatus.OK);
     }
 
     @Operation(
@@ -71,8 +76,9 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewMatch(@RequestBody @Valid AddMatchDTO addMatchDTO) {
+    public ResponseEntity<?> addNewMatch(@RequestBody @Valid AddMatchDTO addMatchDTO) {
         matchService.addNewMatch(addMatchDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(
@@ -82,8 +88,9 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{matchId}")
-    public MatchDTO updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid UpdateMatchDTO updateMatchDTO) {
-        return matchService.putUpdateMatch(matchId, updateMatchDTO);
+    public ResponseEntity<MatchDTO> updateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody @Valid UpdateMatchDTO updateMatchDTO) {
+        MatchDTO match = matchService.putUpdateMatch(matchId, updateMatchDTO);
+        return new ResponseEntity<>(match, HttpStatus.OK);
     }
 
     @Operation(
@@ -93,8 +100,9 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(path = "/{matchId}")
-    public MatchDTO patchUpdateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody UpdateMatchDTO updateMatchDTO) {
-        return matchService.patchUpdateMatch(matchId, updateMatchDTO);
+    public ResponseEntity<MatchDTO> patchUpdateMatch(@PathVariable(name = "matchId") Long matchId, @RequestBody UpdateMatchDTO updateMatchDTO) {
+        MatchDTO match = matchService.patchUpdateMatch(matchId, updateMatchDTO);
+        return new ResponseEntity<>(match, HttpStatus.OK);
     }
 
     @Operation(
@@ -104,8 +112,9 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/{matchId}/finish")
-    public void finishMatch(@PathVariable(name = "matchId") Long matchId, @Valid @RequestBody FinishMatchDTO finishMatchDTO) {
+    public ResponseEntity<?> finishMatch(@PathVariable(name = "matchId") Long matchId, @Valid @RequestBody FinishMatchDTO finishMatchDTO) {
         matchService.finishMatch(matchId, finishMatchDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(
@@ -115,7 +124,8 @@ public class MatchController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{matchId}")
-    public void deleteMatch(@PathVariable("matchId") Long matchId) {
+    public ResponseEntity<?> deleteMatch(@PathVariable("matchId") Long matchId) {
         matchService.deleteMatch(matchId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
