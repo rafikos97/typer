@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,9 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping(path = "/{userId}/{matchId}")
-    public void addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid BetDTO betDTO) {
+    public ResponseEntity<?> addNewBet(@PathVariable(name = "userId") Long userId, @PathVariable("matchId") Long matchId, @RequestBody @Valid BetDTO betDTO) {
         betService.addNewBet(userId, matchId, betDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(
@@ -40,8 +43,9 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<BetDTO> getBets() {
-        return betService.getBets();
+    public ResponseEntity<List<BetDTO>> getBets() {
+        List<BetDTO> betList = betService.getBets();
+        return new ResponseEntity<>(betList, HttpStatus.OK);
     }
 
     @Operation(
@@ -51,8 +55,9 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping(path = "/{userId}")
-    public List<BetDTO> getUserBets(@PathVariable(name = "userId") Long userId) {
-        return betService.getBetsByUserId(userId);
+    public ResponseEntity<List<BetDTO>> getUserBets(@PathVariable(name = "userId") Long userId) {
+        List<BetDTO> betList = betService.getBetsByUserId(userId);
+        return new ResponseEntity<>(betList, HttpStatus.OK);
     }
 
     @Operation(
@@ -62,8 +67,9 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/match/{matchId}")
-    public List<BetDTO> getBetsByMatchId(@PathVariable(name = "matchId") Long matchId) {
-        return betService.getBetsByMatchId(matchId);
+    public ResponseEntity<List<BetDTO>> getBetsByMatchId(@PathVariable(name = "matchId") Long matchId) {
+        List<BetDTO> betList = betService.getBetsByMatchId(matchId);
+        return new ResponseEntity<>(betList, HttpStatus.OK);
     }
 
     @Operation(
@@ -73,8 +79,9 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping(path = "/{betId}")
-    public BetDTO updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid BetDTO betDTO) {
-        return betService.updateBet(betId, betDTO);
+    public ResponseEntity<BetDTO> updateBet(@PathVariable(name = "betId") Long betId, @RequestBody @Valid BetDTO betDTO) {
+        BetDTO bet = betService.updateBet(betId, betDTO);
+        return new ResponseEntity<>(bet, HttpStatus.OK);
     }
 
     @Operation(
@@ -84,7 +91,8 @@ public class BetController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{betId}")
-    public void deleteBet(@PathVariable("betId") Long betId) {
+    public ResponseEntity<?> deleteBet(@PathVariable("betId") Long betId) {
         betService.deleteBet(betId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
