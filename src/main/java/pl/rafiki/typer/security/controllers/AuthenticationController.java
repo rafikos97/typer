@@ -3,6 +3,8 @@ package pl.rafiki.typer.security.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.rafiki.typer.security.models.JwtResponse;
 import pl.rafiki.typer.security.models.LoginRequest;
@@ -22,8 +24,9 @@ public class AuthenticationController {
             description = "Method that allows user to log in and obtain access token."
     )
     @PostMapping("/login")
-    public JwtResponse loginUser(@RequestBody LoginRequest body) {
-        return authenticationService.loginUser(body.getUsername(), body.getPassword());
+    public ResponseEntity<JwtResponse> loginUser(@RequestBody LoginRequest body) {
+        JwtResponse jwtResponse = authenticationService.loginUser(body.getUsername(), body.getPassword());
+        return new ResponseEntity<>(jwtResponse, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -31,7 +34,8 @@ public class AuthenticationController {
             description = "Method that allows to refresh access token."
     )
     @PostMapping("/refreshtoken")
-    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return authenticationService.refreshToken(refreshTokenRequest);
+    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        JwtResponse jwtResponse = authenticationService.refreshToken(refreshTokenRequest);
+        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 }
