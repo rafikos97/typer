@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,9 @@ public class PointRulesController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/all")
-    public List<PointRulesDTO> getAllPointRules() {
-        return pointRulesService.getAllPointRules();
+    public ResponseEntity<List<PointRulesDTO>> getAllPointRules() {
+        List<PointRulesDTO> pointRulesList = pointRulesService.getAllPointRules();
+        return new ResponseEntity<>(pointRulesList, HttpStatus.OK);
     }
 
     @Operation(
@@ -40,8 +43,9 @@ public class PointRulesController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(path = "/{pointrulesId}")
-    public PointRulesDTO getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
-        return pointRulesService.getPointRules(pointRulesId);
+    public ResponseEntity<PointRulesDTO> getPointRules(@PathVariable(name = "pointrulesId") Long pointRulesId) {
+        PointRulesDTO pointRules = pointRulesService.getPointRules(pointRulesId);
+        return new ResponseEntity<>(pointRules, HttpStatus.OK);
     }
 
     @Operation(
@@ -51,8 +55,9 @@ public class PointRulesController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/add")
-    public void addNewPointRules(@RequestBody @Valid PointRulesDTO pointRulesDTO) {
+    public ResponseEntity<?> addNewPointRules(@RequestBody @Valid PointRulesDTO pointRulesDTO) {
         pointRulesService.addNewPointRules(pointRulesDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(
@@ -62,8 +67,9 @@ public class PointRulesController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(path = "/{pointrulesId}")
-    public PointRulesDTO updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRulesDTO pointRulesDTO) {
-        return pointRulesService.updatePointRules(pointrulesId, pointRulesDTO);
+    public ResponseEntity<PointRulesDTO> updatePointRules(@PathVariable(name = "pointrulesId") Long pointrulesId, @RequestBody @Valid PointRulesDTO pointRulesDTO) {
+        PointRulesDTO pointRules = pointRulesService.updatePointRules(pointrulesId, pointRulesDTO);
+        return new ResponseEntity<>(pointRules, HttpStatus.OK);
     }
 
     @Operation(
@@ -73,7 +79,8 @@ public class PointRulesController {
     @Parameter(name = "Authorization", description = "Bearer token", required = true, in = ParameterIn.HEADER)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{pointrulesId}")
-    public void deletePointRules(@PathVariable("pointrulesId") Long pointrulesId) {
+    public ResponseEntity<?> deletePointRules(@PathVariable("pointrulesId") Long pointrulesId) {
         pointRulesService.deletePointRules(pointrulesId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
