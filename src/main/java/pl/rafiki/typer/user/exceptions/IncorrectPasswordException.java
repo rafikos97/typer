@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.INCORRECT_PASSWORD;
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class IncorrectPasswordException extends TyperException {
 
     public IncorrectPasswordException(String message) {

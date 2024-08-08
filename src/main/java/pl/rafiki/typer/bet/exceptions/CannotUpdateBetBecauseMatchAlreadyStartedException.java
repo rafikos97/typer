@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.CANNOT_UPDATE_BECAUSE_
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class CannotUpdateBetBecauseMatchAlreadyStartedException extends TyperException {
 
     public CannotUpdateBetBecauseMatchAlreadyStartedException(String message) {

@@ -1,6 +1,8 @@
 package pl.rafiki.typer.exceptionhandling;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -97,18 +99,20 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(TyperException.class)
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
     ResponseEntity<ErrorResponse> handleTyperException(HttpServletRequest request, TyperException typerException) {
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(typerException.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = (responseStatus != null) ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(httpStatus.value())
                 .errorCode(typerException.getErrorCode())
                 .message(typerException.getMessage())
                 .timestamp(LocalDateTime.now())
                 .path(request.getRequestURI())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(Exception.class)

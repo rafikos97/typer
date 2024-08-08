@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.USERNAME_ALREADY_TAKEN
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class UsernameAlreadyTakenException extends TyperException {
     public UsernameAlreadyTakenException(String message) {
         super(message);

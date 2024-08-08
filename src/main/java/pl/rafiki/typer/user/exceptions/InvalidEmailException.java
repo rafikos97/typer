@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.INVALID_EMAIL;
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidEmailException extends TyperException {
 
     public InvalidEmailException(String message) {

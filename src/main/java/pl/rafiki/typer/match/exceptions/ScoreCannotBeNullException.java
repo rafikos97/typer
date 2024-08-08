@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.SCORE_CANNOT_BE_NULL;
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ScoreCannotBeNullException extends TyperException {
 
     public ScoreCannotBeNullException(String message) {

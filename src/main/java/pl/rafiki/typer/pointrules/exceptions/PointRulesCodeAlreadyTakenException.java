@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.POINT_RULES_CODE_ALREA
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class PointRulesCodeAlreadyTakenException extends TyperException {
 
     public PointRulesCodeAlreadyTakenException(String message) {

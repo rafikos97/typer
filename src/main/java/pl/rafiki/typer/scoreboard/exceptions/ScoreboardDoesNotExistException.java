@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.SCOREBOARD_DOES_NOT_EX
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class ScoreboardDoesNotExistException extends TyperException {
 
     public ScoreboardDoesNotExistException(String message) {

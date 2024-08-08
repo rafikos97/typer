@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.BET_DOES_NOT_EXIST;
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class BetDoesNotExistException extends TyperException {
 
     public BetDoesNotExistException(String message) {

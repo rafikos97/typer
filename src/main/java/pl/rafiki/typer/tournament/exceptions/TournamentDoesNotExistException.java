@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.TOURNAMENT_DOES_NOT_EX
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class TournamentDoesNotExistException extends TyperException {
 
     public TournamentDoesNotExistException(String message) {

@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.MATCH_IS_ALREADY_FINIS
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class MatchIsAlreadyFinishedException extends TyperException {
 
     public MatchIsAlreadyFinishedException(String message) {

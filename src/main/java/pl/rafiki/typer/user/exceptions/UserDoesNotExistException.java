@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.USER_DOES_NOT_EXIST;
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class UserDoesNotExistException extends TyperException {
     public UserDoesNotExistException(String message) {
         super(message);

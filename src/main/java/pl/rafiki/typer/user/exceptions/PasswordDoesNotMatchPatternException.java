@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.PASSWORD_DOES_NOT_MATC
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class PasswordDoesNotMatchPatternException extends TyperException {
 
     public PasswordDoesNotMatchPatternException(String message) {

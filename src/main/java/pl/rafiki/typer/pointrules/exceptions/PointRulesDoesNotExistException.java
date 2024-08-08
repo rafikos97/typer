@@ -11,7 +11,7 @@ import static pl.rafiki.typer.exceptionhandling.ErrorCode.POINT_RULES_DOES_NOT_E
 
 @Getter
 @Setter
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class PointRulesDoesNotExistException extends TyperException {
 
     public PointRulesDoesNotExistException(String message) {
